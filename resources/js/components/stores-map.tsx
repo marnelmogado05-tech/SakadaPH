@@ -198,7 +198,7 @@ export default function StoresMap({
                                     </p>
                                 )}
                                 <a
-                                    href={storesShow(store.id)}
+                                    href={storesShow.url(store.id)}
                                     style={{
                                         fontSize: '12px',
                                         fontWeight: 500,
