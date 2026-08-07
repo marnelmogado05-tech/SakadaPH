@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Seller;
 
 use App\Enums\ProductAvailability;
 use App\Http\Controllers\Controller;
+use App\Models\Store;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -12,7 +14,11 @@ class DashboardController extends Controller
 {
     public function __invoke(Request $request): Response
     {
-        $store = $request->user()->store->loadCount([
+        /** @var User $user */
+        $user = $request->user();
+        /** @var Store $store */
+        $store = $user->store;
+        $store->loadCount([
             'products',
             'products as in_stock_count' => fn ($q) => $q->where('availability', ProductAvailability::InStock),
             'products as low_stock_count' => fn ($q) => $q->where('availability', ProductAvailability::LowStock),

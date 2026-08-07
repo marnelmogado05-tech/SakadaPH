@@ -6,6 +6,7 @@ use App\Enums\ProductAvailability;
 use App\Enums\SellerStatus;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -49,12 +50,15 @@ class StoreController extends Controller
             $lngF = number_format($lng, 7, '.', '');
             $distExpr = "IF(latitude IS NOT NULL AND longitude IS NOT NULL, ST_Distance_Sphere(POINT(longitude, latitude), POINT({$lngF}, {$latF})) / 1000, NULL)";
 
+            // @phpstan-ignore-next-line
             $query->addSelect(DB::raw("{$distExpr} AS distance_km"));
 
             if ($maxDistance) {
+                // @phpstan-ignore-next-line
                 $query->whereRaw("({$distExpr}) IS NOT NULL AND ({$distExpr}) <= {$maxDistance}");
             }
 
+            // @phpstan-ignore-next-line
             $query->orderByRaw("({$distExpr}) IS NULL, ({$distExpr}) ASC");
         } else {
             $query->orderBy('stores.name');
@@ -105,7 +109,7 @@ class StoreController extends Controller
             ->whereNot('availability', ProductAvailability::OutOfStock)
             ->orderBy('name')
             ->get()
-            ->map(fn ($product) => [
+            ->map(fn (Product $product) => [
                 'id' => $product->id,
                 'name' => $product->name,
                 'description' => $product->description,

@@ -23,11 +23,11 @@ use Illuminate\Support\Facades\Mail;
  * @property string $address
  * @property string|null $contact_number
  * @property SellerStatus $status
- * @property StoreType $type
+ * @property StoreType|null $type
  * @property float|null $latitude
  * @property float|null $longitude
  * @property float|null $service_radius_km
- * @property array|null $operating_hours
+ * @property array<string, mixed>|null $operating_hours
  * @property string|null $logo_path
  * @property string|null $rejection_reason
  * @property Carbon|null $approved_at
@@ -35,6 +35,15 @@ use Illuminate\Support\Facades\Mail;
  * @property int|null $approved_by
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read int|null $products_count
+ * @property-read int|null $in_stock_count
+ * @property-read int|null $low_stock_count
+ * @property-read int|null $out_of_stock_count
+ * @property-read int|null $followers_count
+ * @property-read string|null $products_max_last_updated_at
+ * @property-read float|null $distance_km
+ * @property-read string|null $products_min_price
+ * @property-read string|null $products_max_price
  */
 class Store extends Model
 {
@@ -74,21 +83,25 @@ class Store extends Model
         ];
     }
 
+    /** @return HasMany<Product, $this> */
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
 
+    /** @return BelongsToMany<User, $this> */
     public function followers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'store_follows');

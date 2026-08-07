@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Seller\ProductStoreRequest;
 use App\Jobs\SendStockAlert;
 use App\Models\Product;
+use App\Models\Store;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -18,7 +20,11 @@ class ProductController extends Controller
 {
     public function index(Request $request): Response
     {
-        $products = $request->user()->store->products()
+        /** @var User $user */
+        $user = $request->user();
+        /** @var Store $store */
+        $store = $user->store;
+        $products = $store->products()
             ->orderBy('name')
             ->get()
             ->map(fn (Product $product) => [
@@ -60,7 +66,11 @@ class ProductController extends Controller
             $validated['image_path'] = $request->file('image')->store('products', 'public');
         }
 
-        $request->user()->store->products()->create($validated);
+        /** @var User $user */
+        $user = $request->user();
+        /** @var Store $store */
+        $store = $user->store;
+        $store->products()->create($validated);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Product added.']);
 
@@ -69,7 +79,11 @@ class ProductController extends Controller
 
     public function edit(Request $request, Product $product): Response
     {
-        abort_unless($product->store_id === $request->user()->store->id, 403);
+        /** @var User $user */
+        $user = $request->user();
+        /** @var Store $store */
+        $store = $user->store;
+        abort_unless($product->store_id === $store->id, 403);
 
         return Inertia::render('seller/products/edit', [
             'product' => [
@@ -93,7 +107,11 @@ class ProductController extends Controller
 
     public function update(ProductStoreRequest $request, Product $product): RedirectResponse
     {
-        abort_unless($product->store_id === $request->user()->store->id, 403);
+        /** @var User $user */
+        $user = $request->user();
+        /** @var Store $store */
+        $store = $user->store;
+        abort_unless($product->store_id === $store->id, 403);
 
         $validated = $request->safe()->except('image');
 
@@ -114,7 +132,11 @@ class ProductController extends Controller
 
     public function updateAvailability(Request $request, Product $product): RedirectResponse
     {
-        abort_unless($product->store_id === $request->user()->store->id, 403);
+        /** @var User $user */
+        $user = $request->user();
+        /** @var Store $store */
+        $store = $user->store;
+        abort_unless($product->store_id === $store->id, 403);
 
         $validated = $request->validate([
             'availability' => ['required', new Enum(ProductAvailability::class)],
@@ -134,7 +156,11 @@ class ProductController extends Controller
 
     public function destroy(Request $request, Product $product): RedirectResponse
     {
-        abort_unless($product->store_id === $request->user()->store->id, 403);
+        /** @var User $user */
+        $user = $request->user();
+        /** @var Store $store */
+        $store = $user->store;
+        abort_unless($product->store_id === $store->id, 403);
 
         if ($product->image_path) {
             Storage::disk('public')->delete($product->image_path);

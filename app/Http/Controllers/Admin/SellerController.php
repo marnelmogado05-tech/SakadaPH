@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\SellerStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Store;
+use App\Models\User;
 use App\Notifications\SellerApprovedNotification;
 use App\Notifications\SellerRejectedNotification;
 use Illuminate\Http\RedirectResponse;
@@ -32,27 +33,31 @@ class SellerController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20)
             ->withQueryString()
-            ->through(fn (Store $store) => [
-                'id' => $store->id,
-                'name' => $store->name,
-                'address' => $store->address,
-                'description' => $store->description,
-                'contact_number' => $store->contact_number,
-                'status' => $store->status->value,
-                'rejection_reason' => $store->rejection_reason,
-                'created_at' => $store->created_at?->toDateTimeString(),
-                'is_stale' => $store->status === SellerStatus::Approved && (
-                    $store->products_count === 0
-                    || ($store->products_max_last_updated_at !== null && Carbon::parse($store->products_max_last_updated_at)->lt($staleThreshold))
-                ),
-                'seller' => [
-                    'id' => $store->user->id,
-                    'first_name' => $store->user->first_name,
-                    'last_name' => $store->user->last_name,
-                    'email' => $store->user->email,
-                    'contact_number' => $store->user->contact_number,
-                ],
-            ]);
+            ->through(function (Store $store) use ($staleThreshold) {
+                assert($store->user instanceof User);
+
+                return [
+                    'id' => $store->id,
+                    'name' => $store->name,
+                    'address' => $store->address,
+                    'description' => $store->description,
+                    'contact_number' => $store->contact_number,
+                    'status' => $store->status->value,
+                    'rejection_reason' => $store->rejection_reason,
+                    'created_at' => $store->created_at?->toDateTimeString(),
+                    'is_stale' => $store->status === SellerStatus::Approved && (
+                        $store->products_count === 0
+                        || ($store->products_max_last_updated_at !== null && Carbon::parse($store->products_max_last_updated_at)->lt($staleThreshold))
+                    ),
+                    'seller' => [
+                        'id' => $store->user->id,
+                        'first_name' => $store->user->first_name,
+                        'last_name' => $store->user->last_name,
+                        'email' => $store->user->email,
+                        'contact_number' => $store->user->contact_number,
+                    ],
+                ];
+            });
 
         return Inertia::render('admin/sellers/index', [
             'stores' => $stores,
@@ -69,8 +74,10 @@ class SellerController extends Controller
             return back();
         }
 
-        $store->approve($request->user());
-        $store->user->notify(new SellerApprovedNotification($store));
+        /** @var User $user */
+        $user = $request->user();
+        $store->approve($user);
+        $store->user?->notify(new SellerApprovedNotification($store));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "Store \"{$store->name}\" approved."]);
 
@@ -87,8 +94,10 @@ class SellerController extends Controller
             return back();
         }
 
-        $store->reject($request->user(), $validated['reason']);
-        $store->user->notify(new SellerRejectedNotification($store));
+        /** @var User $user */
+        $user = $request->user();
+        $store->reject($user, $validated['reason']);
+        $store->user?->notify(new SellerRejectedNotification($store));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "Store \"{$store->name}\" rejected."]);
 
@@ -105,7 +114,9 @@ class SellerController extends Controller
             return back();
         }
 
-        $store->suspend($request->user(), $validated['reason']);
+        /** @var User $user */
+        $user = $request->user();
+        $store->suspend($user, $validated['reason']);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "Store \"{$store->name}\" suspended."]);
 
@@ -118,7 +129,9 @@ class SellerController extends Controller
             return back();
         }
 
-        $store->approve($request->user());
+        /** @var User $user */
+        $user = $request->user();
+        $store->approve($user);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "Store \"{$store->name}\" reinstated."]);
 

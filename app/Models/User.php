@@ -65,11 +65,13 @@ class User extends Authenticatable implements PasskeyUser
         return $this->banned_at !== null;
     }
 
+    /** @return BelongsToMany<Store, $this> */
     public function followedStores(): BelongsToMany
     {
         return $this->belongsToMany(Store::class, 'store_follows');
     }
 
+    /** @return HasOne<Store, $this> */
     public function store(): HasOne
     {
         return $this->hasOne(Store::class);

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Seller;
 use App\Enums\StoreType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Seller\StoreUpdateRequest;
+use App\Models\Store;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,7 +16,10 @@ class StoreController extends Controller
 {
     public function edit(Request $request): Response
     {
-        $store = $request->user()->store;
+        /** @var User $user */
+        $user = $request->user();
+        /** @var Store $store */
+        $store = $user->store;
 
         return Inertia::render('seller/store', [
             'store' => [
@@ -36,7 +41,11 @@ class StoreController extends Controller
 
     public function update(StoreUpdateRequest $request): RedirectResponse
     {
-        $request->user()->store->update($request->validated());
+        /** @var User $user */
+        $user = $request->user();
+        /** @var Store $store */
+        $store = $user->store;
+        $store->update($request->validated());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Store details updated.']);
 
