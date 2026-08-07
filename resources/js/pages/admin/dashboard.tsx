@@ -51,14 +51,22 @@ function StatCard({
                 <Icon
                     className={[
                         'size-5',
-                        highlight && value > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground',
+                        highlight && value > 0
+                            ? 'text-amber-600 dark:text-amber-400'
+                            : 'text-muted-foreground',
                     ].join(' ')}
                 />
             </div>
             <div>
-                <p className="text-2xl font-semibold tabular-nums text-foreground">{value}</p>
+                <p className="text-2xl font-semibold text-foreground tabular-nums">
+                    {value}
+                </p>
                 <p className="text-sm font-medium text-foreground">{label}</p>
-                {description && <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>}
+                {description && (
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                        {description}
+                    </p>
+                )}
             </div>
         </div>
     );
@@ -77,8 +85,12 @@ export default function AdminDashboard({ stats }: Props) {
 
             <div className="space-y-8 p-6">
                 <div>
-                    <h1 className="text-lg font-semibold text-foreground">Dashboard</h1>
-                    <p className="text-sm text-muted-foreground">Platform overview and quick actions.</p>
+                    <h1 className="text-lg font-semibold text-foreground">
+                        Dashboard
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                        Platform overview and quick actions.
+                    </p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -114,23 +126,33 @@ export default function AdminDashboard({ stats }: Props) {
                 </div>
 
                 <div className="rounded-xl border border-border bg-card p-5">
-                    <h2 className="mb-1 text-sm font-semibold text-foreground">Inventory health</h2>
+                    <h2 className="mb-1 text-sm font-semibold text-foreground">
+                        Inventory health
+                    </h2>
                     <p className="mb-4 text-xs text-muted-foreground">
                         Across all approved stores with products.
                     </p>
                     <div className="flex items-center gap-4">
                         <div>
-                            <p className="text-xl font-semibold tabular-nums text-green-700 dark:text-green-400">
+                            <p className="text-xl font-semibold text-green-700 tabular-nums dark:text-green-400">
                                 {stats.in_stock_stores}
                             </p>
-                            <p className="text-xs text-muted-foreground">stores with stock</p>
+                            <p className="text-xs text-muted-foreground">
+                                stores with stock
+                            </p>
                         </div>
                         <div className="h-8 w-px bg-border" />
                         <div>
-                            <p className="text-xl font-semibold tabular-nums text-red-600 dark:text-red-400">
-                                {Math.max(0, stats.approved_sellers - stats.in_stock_stores)}
+                            <p className="text-xl font-semibold text-red-600 tabular-nums dark:text-red-400">
+                                {Math.max(
+                                    0,
+                                    stats.approved_sellers -
+                                        stats.in_stock_stores,
+                                )}
                             </p>
-                            <p className="text-xs text-muted-foreground">stores out of stock</p>
+                            <p className="text-xs text-muted-foreground">
+                                stores out of stock
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -1,11 +1,21 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { LayoutList, Loader2, Map, MapPin, Navigation, Package, Search, Truck } from 'lucide-react';
+import {
+    LayoutList,
+    Loader2,
+    Map,
+    MapPin,
+    Navigation,
+    Package,
+    Search,
+    Truck,
+} from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import StoresMap from '@/components/stores-map';
 import { Input } from '@/components/ui/input';
 import { index as storesIndex, show as storesShow } from '@/routes/stores';
 
-type StoreAvailability = 'in_stock' | 'low_stock' | 'out_of_stock' | 'no_products';
+type StoreAvailability =
+    'in_stock' | 'low_stock' | 'out_of_stock' | 'no_products';
 
 type Store = {
     id: number;
@@ -100,15 +110,29 @@ function relativeTime(iso: string | null): string | null {
 
 function AvailabilityBadge({ status }: { status: StoreAvailability }) {
     const map: Record<StoreAvailability, { label: string; cls: string }> = {
-        in_stock: { label: 'In Stock', cls: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400' },
-        low_stock: { label: 'Low Stock', cls: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400' },
-        out_of_stock: { label: 'Out of Stock', cls: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400' },
-        no_products: { label: 'No Products', cls: 'bg-secondary text-muted-foreground' },
+        in_stock: {
+            label: 'In Stock',
+            cls: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400',
+        },
+        low_stock: {
+            label: 'Low Stock',
+            cls: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
+        },
+        out_of_stock: {
+            label: 'Out of Stock',
+            cls: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400',
+        },
+        no_products: {
+            label: 'No Products',
+            cls: 'bg-secondary text-muted-foreground',
+        },
     };
     const { label, cls } = map[status];
 
     return (
-        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}>
+        <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}
+        >
             {label}
         </span>
     );
@@ -116,7 +140,9 @@ function AvailabilityBadge({ status }: { status: StoreAvailability }) {
 
 export default function StoresIndex({ stores, filters }: Props) {
     const [search, setSearch] = useState(filters.search);
-    const [locationStatus, setLocationStatus] = useState<'idle' | 'requesting' | 'granted' | 'denied'>(() => {
+    const [locationStatus, setLocationStatus] = useState<
+        'idle' | 'requesting' | 'granted' | 'denied'
+    >(() => {
         if (filters.lat && filters.lng) {
             return 'granted';
         }
@@ -128,7 +154,9 @@ export default function StoresIndex({ stores, filters }: Props) {
         return 'idle';
     });
     const latLng = useRef<{ lat: number; lng: number } | null>(
-        filters.lat && filters.lng ? { lat: filters.lat, lng: filters.lng } : null,
+        filters.lat && filters.lng
+            ? { lat: filters.lat, lng: filters.lng }
+            : null,
     );
     const [hoveredStoreId, setHoveredStoreId] = useState<number | null>(null);
     const [mobileView, setMobileView] = useState<'list' | 'map'>('list');
@@ -140,13 +168,26 @@ export default function StoresIndex({ stores, filters }: Props) {
                 storesIndex(),
                 {
                     search: (overrides.search ?? search) || undefined,
-                    type: (overrides.type !== undefined ? overrides.type : filters.type) || undefined,
-                    in_stock_only: (overrides.in_stock_only !== undefined ? overrides.in_stock_only : filters.in_stock_only) || undefined,
-                    max_distance: (overrides.max_distance !== undefined ? overrides.max_distance : filters.max_distance) || undefined,
+                    type:
+                        (overrides.type !== undefined
+                            ? overrides.type
+                            : filters.type) || undefined,
+                    in_stock_only:
+                        (overrides.in_stock_only !== undefined
+                            ? overrides.in_stock_only
+                            : filters.in_stock_only) || undefined,
+                    max_distance:
+                        (overrides.max_distance !== undefined
+                            ? overrides.max_distance
+                            : filters.max_distance) || undefined,
                     lat: overrides.lat ?? ll?.lat ?? undefined,
                     lng: overrides.lng ?? ll?.lng ?? undefined,
                 },
-                { preserveScroll: true, replace: true, only: ['stores', 'filters'] },
+                {
+                    preserveScroll: true,
+                    replace: true,
+                    only: ['stores', 'filters'],
+                },
             );
         },
         [filters, search],
@@ -156,7 +197,10 @@ export default function StoresIndex({ stores, filters }: Props) {
     function handleSearch(value: string) {
         setSearch(value);
         clearTimeout(searchTimeout.current);
-        searchTimeout.current = setTimeout(() => applyFilters({ search: value }), 350);
+        searchTimeout.current = setTimeout(
+            () => applyFilters({ search: value }),
+            350,
+        );
     }
 
     useEffect(() => {
@@ -198,9 +242,18 @@ export default function StoresIndex({ stores, filters }: Props) {
     return (
         <>
             <Head title="Find Water Suppliers">
-                <meta name="description" content="Browse water suppliers near you in the Philippines. Filter by location, check real-time stock availability, and find pickup or delivery options." />
-                <meta property="og:title" content="Find Water Suppliers — Sakada PH" />
-                <meta property="og:description" content="Browse water suppliers near you in the Philippines. Filter by location, check real-time stock availability, and find pickup or delivery options." />
+                <meta
+                    name="description"
+                    content="Browse water suppliers near you in the Philippines. Filter by location, check real-time stock availability, and find pickup or delivery options."
+                />
+                <meta
+                    property="og:title"
+                    content="Find Water Suppliers — Sakada PH"
+                />
+                <meta
+                    property="og:description"
+                    content="Browse water suppliers near you in the Philippines. Filter by location, check real-time stock availability, and find pickup or delivery options."
+                />
                 <meta property="og:type" content="website" />
             </Head>
 
@@ -222,14 +275,17 @@ export default function StoresIndex({ stores, filters }: Props) {
                     <div className="mb-4 flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm dark:border-amber-900 dark:bg-amber-950/30">
                         <Navigation className="size-4 shrink-0 text-amber-600 dark:text-amber-500" />
                         <p className="text-amber-800 dark:text-amber-400">
-                            Allow location access in your browser to see nearby stores sorted by distance.
+                            Allow location access in your browser to see nearby
+                            stores sorted by distance.
                         </p>
                     </div>
                 )}
                 {locationStatus === 'requesting' && (
                     <div className="mb-4 flex items-center gap-3 rounded-lg border border-border bg-secondary/40 px-4 py-3 text-sm">
                         <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
-                        <p className="text-muted-foreground">Detecting your location…</p>
+                        <p className="text-muted-foreground">
+                            Detecting your location…
+                        </p>
                     </div>
                 )}
 
@@ -246,40 +302,55 @@ export default function StoresIndex({ stores, filters }: Props) {
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
-                        {(['', 'pickup', 'delivery', 'both'] as const).map((t) => (
-                            <button
-                                key={t}
-                                type="button"
-                                onClick={() => applyFilters({ type: t })}
-                                className={[
-                                    'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors',
-                                    filters.type === t
-                                        ? 'border-primary bg-primary text-primary-foreground'
-                                        : 'border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground',
-                                ].join(' ')}
-                            >
-                                {t === '' ? 'All types' : TYPE_LABELS[t]}
-                            </button>
-                        ))}
+                        {(['', 'pickup', 'delivery', 'both'] as const).map(
+                            (t) => (
+                                <button
+                                    key={t}
+                                    type="button"
+                                    onClick={() => applyFilters({ type: t })}
+                                    className={[
+                                        'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                                        filters.type === t
+                                            ? 'border-primary bg-primary text-primary-foreground'
+                                            : 'border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground',
+                                    ].join(' ')}
+                                >
+                                    {t === '' ? 'All types' : TYPE_LABELS[t]}
+                                </button>
+                            ),
+                        )}
 
                         <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground">
                             <input
                                 type="checkbox"
                                 className="accent-primary"
                                 checked={filters.in_stock_only}
-                                onChange={(e) => applyFilters({ in_stock_only: e.target.checked })}
+                                onChange={(e) =>
+                                    applyFilters({
+                                        in_stock_only: e.target.checked,
+                                    })
+                                }
                             />
                             In Stock only
                         </label>
 
                         {hasLocation && (
                             <div className="flex items-center gap-1.5">
-                                <span className="text-xs text-muted-foreground">Within:</span>
+                                <span className="text-xs text-muted-foreground">
+                                    Within:
+                                </span>
                                 {DISTANCE_PRESETS.map((d) => (
                                     <button
                                         key={d}
                                         type="button"
-                                        onClick={() => applyFilters({ max_distance: filters.max_distance === d ? null : d })}
+                                        onClick={() =>
+                                            applyFilters({
+                                                max_distance:
+                                                    filters.max_distance === d
+                                                        ? null
+                                                        : d,
+                                            })
+                                        }
                                         className={[
                                             'inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium transition-colors',
                                             filters.max_distance === d
@@ -326,18 +397,26 @@ export default function StoresIndex({ stores, filters }: Props) {
                 </div>
 
                 {/* Mobile map view */}
-                {mobileView === 'map' && <div className="lg:hidden">{mapPanel}</div>}
+                {mobileView === 'map' && (
+                    <div className="lg:hidden">{mapPanel}</div>
+                )}
 
                 {/* Main content: list + map side by side on desktop */}
-                <div className={`flex items-start gap-6 ${mobileView === 'map' ? 'hidden lg:flex' : ''}`}>
+                <div
+                    className={`flex items-start gap-6 ${mobileView === 'map' ? 'hidden lg:flex' : ''}`}
+                >
                     {/* List column */}
                     <div className="min-w-0 flex-1">
                         {stores.data.length === 0 ? (
                             <div className="flex flex-col items-center justify-center rounded-xl border border-border/60 py-20 text-center">
                                 <Package className="mb-3 size-8 text-muted-foreground/50" />
-                                <p className="text-sm font-medium text-foreground">No suppliers found</p>
+                                <p className="text-sm font-medium text-foreground">
+                                    No suppliers found
+                                </p>
                                 <p className="mt-1 text-sm text-muted-foreground">
-                                    {filters.search ? 'Try a different search term.' : 'Try adjusting the filters.'}
+                                    {filters.search
+                                        ? 'Try a different search term.'
+                                        : 'Try adjusting the filters.'}
                                 </p>
                             </div>
                         ) : (
@@ -348,21 +427,31 @@ export default function StoresIndex({ stores, filters }: Props) {
                                             key={store.id}
                                             href={storesShow(store.id)}
                                             className="group flex flex-col rounded-xl border border-border/60 bg-card p-4 transition-shadow hover:shadow-md"
-                                            onMouseEnter={() => setHoveredStoreId(store.id)}
-                                            onMouseLeave={() => setHoveredStoreId(null)}
+                                            onMouseEnter={() =>
+                                                setHoveredStoreId(store.id)
+                                            }
+                                            onMouseLeave={() =>
+                                                setHoveredStoreId(null)
+                                            }
                                         >
                                             {/* Name + availability */}
                                             <div className="mb-2 flex items-start justify-between gap-2">
-                                                <h2 className="text-sm font-semibold leading-snug text-foreground group-hover:text-primary">
+                                                <h2 className="text-sm leading-snug font-semibold text-foreground group-hover:text-primary">
                                                     {store.name}
                                                 </h2>
-                                                <AvailabilityBadge status={store.store_availability} />
+                                                <AvailabilityBadge
+                                                    status={
+                                                        store.store_availability
+                                                    }
+                                                />
                                             </div>
 
                                             {/* Address + distance */}
                                             <div className="mb-1.5 flex items-start gap-1.5 text-xs text-muted-foreground">
                                                 <MapPin className="mt-0.5 size-3 shrink-0" />
-                                                <span className="line-clamp-1">{store.address}</span>
+                                                <span className="line-clamp-1">
+                                                    {store.address}
+                                                </span>
                                                 {store.distance_km !== null && (
                                                     <span className="ml-auto shrink-0 font-medium text-foreground">
                                                         {store.distance_km} km
@@ -374,7 +463,13 @@ export default function StoresIndex({ stores, filters }: Props) {
                                             {store.type && (
                                                 <div className="mb-2 flex items-center gap-1 text-xs text-muted-foreground">
                                                     <Truck className="size-3 shrink-0" />
-                                                    <span>{TYPE_LABELS[store.type]}</span>
+                                                    <span>
+                                                        {
+                                                            TYPE_LABELS[
+                                                                store.type
+                                                            ]
+                                                        }
+                                                    </span>
                                                 </div>
                                             )}
 
@@ -389,16 +484,30 @@ export default function StoresIndex({ stores, filters }: Props) {
                                                 <span className="flex items-center gap-1">
                                                     <Package className="size-3" />
                                                     {store.products_count}{' '}
-                                                    {store.products_count === 1 ? 'product' : 'products'}
+                                                    {store.products_count === 1
+                                                        ? 'product'
+                                                        : 'products'}
                                                 </span>
                                                 <div className="flex items-center gap-3">
-                                                    {priceRange(store.price_min, store.price_max) && (
+                                                    {priceRange(
+                                                        store.price_min,
+                                                        store.price_max,
+                                                    ) && (
                                                         <span className="font-medium text-foreground">
-                                                            {priceRange(store.price_min, store.price_max)}
+                                                            {priceRange(
+                                                                store.price_min,
+                                                                store.price_max,
+                                                            )}
                                                         </span>
                                                     )}
-                                                    {relativeTime(store.last_updated_at) && (
-                                                        <span>{relativeTime(store.last_updated_at)}</span>
+                                                    {relativeTime(
+                                                        store.last_updated_at,
+                                                    ) && (
+                                                        <span>
+                                                            {relativeTime(
+                                                                store.last_updated_at,
+                                                            )}
+                                                        </span>
                                                     )}
                                                 </div>
                                             </div>
@@ -420,7 +529,9 @@ export default function StoresIndex({ stores, filters }: Props) {
                                                           ? 'text-muted-foreground hover:bg-secondary hover:text-foreground'
                                                           : 'cursor-default text-muted-foreground/40',
                                                 ].join(' ')}
-                                                dangerouslySetInnerHTML={{ __html: link.label }}
+                                                dangerouslySetInnerHTML={{
+                                                    __html: link.label,
+                                                }}
                                                 preserveState
                                             />
                                         ))}

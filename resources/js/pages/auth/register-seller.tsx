@@ -6,7 +6,13 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/seller/register';
@@ -35,7 +41,7 @@ export default function RegisterSeller({ passwordRules }: Props) {
                     <>
                         {/* Account details */}
                         <div className="grid gap-4">
-                            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Account details
                             </p>
 
@@ -79,7 +85,9 @@ export default function RegisterSeller({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="extension_name">Extension Name</Label>
+                                <Label htmlFor="extension_name">
+                                    Extension Name
+                                </Label>
                                 <Select
                                     value={extensionName}
                                     onValueChange={setExtensionName}
@@ -114,7 +122,9 @@ export default function RegisterSeller({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="contact_number">Contact number</Label>
+                                <Label htmlFor="contact_number">
+                                    Contact number
+                                </Label>
                                 <Input
                                     id="contact_number"
                                     name="contact_number"
@@ -126,7 +136,9 @@ export default function RegisterSeller({ passwordRules }: Props) {
                                     inputMode="numeric"
                                     value={contactNumber}
                                     onChange={(e) =>
-                                        setContactNumber(e.target.value.replace(/\D/g, ''))
+                                        setContactNumber(
+                                            e.target.value.replace(/\D/g, ''),
+                                        )
                                     }
                                 />
                                 <InputError message={errors.contact_number} />
@@ -146,7 +158,9 @@ export default function RegisterSeller({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">Confirm password</Label>
+                                <Label htmlFor="password_confirmation">
+                                    Confirm password
+                                </Label>
                                 <PasswordInput
                                     id="password_confirmation"
                                     name="password_confirmation"
@@ -155,18 +169,22 @@ export default function RegisterSeller({ passwordRules }: Props) {
                                     placeholder="Confirm password"
                                     passwordrules={passwordRules}
                                 />
-                                <InputError message={errors.password_confirmation} />
+                                <InputError
+                                    message={errors.password_confirmation}
+                                />
                             </div>
                         </div>
 
                         {/* Store details */}
                         <div className="grid gap-4 border-t border-border pt-4">
-                            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                            <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                                 Store details
                             </p>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="store_name">Store / Business name</Label>
+                                <Label htmlFor="store_name">
+                                    Store / Business name
+                                </Label>
                                 <Input
                                     id="store_name"
                                     name="store_name"
@@ -192,7 +210,9 @@ export default function RegisterSeller({ passwordRules }: Props) {
                             <div className="grid gap-2">
                                 <Label htmlFor="store_description">
                                     Description{' '}
-                                    <span className="text-muted-foreground">(optional)</span>
+                                    <span className="text-muted-foreground">
+                                        (optional)
+                                    </span>
                                 </Label>
                                 <Input
                                     id="store_description"
@@ -200,13 +220,17 @@ export default function RegisterSeller({ passwordRules }: Props) {
                                     type="text"
                                     placeholder="Brief description of your water business"
                                 />
-                                <InputError message={errors.store_description} />
+                                <InputError
+                                    message={errors.store_description}
+                                />
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="store_contact_number">
                                     Store contact number{' '}
-                                    <span className="text-muted-foreground">(optional)</span>
+                                    <span className="text-muted-foreground">
+                                        (optional)
+                                    </span>
                                 </Label>
                                 <Input
                                     id="store_contact_number"
@@ -218,10 +242,14 @@ export default function RegisterSeller({ passwordRules }: Props) {
                                     inputMode="numeric"
                                     value={storeContactNumber}
                                     onChange={(e) =>
-                                        setStoreContactNumber(e.target.value.replace(/\D/g, ''))
+                                        setStoreContactNumber(
+                                            e.target.value.replace(/\D/g, ''),
+                                        )
                                     }
                                 />
-                                <InputError message={errors.store_contact_number} />
+                                <InputError
+                                    message={errors.store_contact_number}
+                                />
                             </div>
                         </div>
 

@@ -19,17 +19,26 @@ export default function SellerSuspended() {
                         Account suspended
                     </h1>
                     <p className="mb-8 text-sm leading-relaxed text-muted-foreground">
-                        Your store has been suspended and is no longer visible to customers. Please
-                        contact our support team if you believe this is a mistake or to resolve the
-                        issue.
+                        Your store has been suspended and is no longer visible
+                        to customers. Please contact our support team if you
+                        believe this is a mistake or to resolve the issue.
                     </p>
 
                     <div className="mb-6 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-left text-sm text-muted-foreground">
-                        <p className="font-medium text-foreground">What can you do?</p>
+                        <p className="font-medium text-foreground">
+                            What can you do?
+                        </p>
                         <ul className="mt-2 space-y-1 text-sm">
-                            <li>• Review the suspension reason sent to your email</li>
-                            <li>• Contact support to appeal or resolve the issue</li>
-                            <li>• Once reinstated, your store will go live again</li>
+                            <li>
+                                • Review the suspension reason sent to your
+                                email
+                            </li>
+                            <li>
+                                • Contact support to appeal or resolve the issue
+                            </li>
+                            <li>
+                                • Once reinstated, your store will go live again
+                            </li>
                         </ul>
                     </div>
 

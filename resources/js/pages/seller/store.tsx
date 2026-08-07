@@ -36,7 +36,10 @@ export default function Store({ store, storeTypes }: StoreProps) {
         type: store.type,
         latitude: store.latitude !== null ? String(store.latitude) : '',
         longitude: store.longitude !== null ? String(store.longitude) : '',
-        service_radius_km: store.service_radius_km !== null ? String(store.service_radius_km) : '',
+        service_radius_km:
+            store.service_radius_km !== null
+                ? String(store.service_radius_km)
+                : '',
     });
 
     function submit(e: React.FormEvent) {
@@ -63,7 +66,9 @@ export default function Store({ store, storeTypes }: StoreProps) {
                                 name="name"
                                 className="mt-1 block w-full"
                                 value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
+                                onChange={(e) =>
+                                    setData('name', e.target.value)
+                                }
                                 required
                                 placeholder="e.g. Juan's Water Station"
                             />
@@ -77,7 +82,9 @@ export default function Store({ store, storeTypes }: StoreProps) {
                                 name="address"
                                 className="mt-1 block w-full"
                                 value={data.address}
-                                onChange={(e) => setData('address', e.target.value)}
+                                onChange={(e) =>
+                                    setData('address', e.target.value)
+                                }
                                 required
                                 placeholder="e.g. 123 Main St, Ilocos Norte"
                             />
@@ -85,13 +92,17 @@ export default function Store({ store, storeTypes }: StoreProps) {
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="contact_number">Contact number</Label>
+                            <Label htmlFor="contact_number">
+                                Contact number
+                            </Label>
                             <Input
                                 id="contact_number"
                                 name="contact_number"
                                 className="mt-1 block w-full"
                                 value={data.contact_number}
-                                onChange={(e) => setData('contact_number', e.target.value)}
+                                onChange={(e) =>
+                                    setData('contact_number', e.target.value)
+                                }
                                 placeholder="e.g. 09123456789"
                             />
                             <InputError message={errors.contact_number} />
@@ -102,9 +113,11 @@ export default function Store({ store, storeTypes }: StoreProps) {
                             <select
                                 id="type"
                                 name="type"
-                                className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
                                 value={data.type}
-                                onChange={(e) => setData('type', e.target.value)}
+                                onChange={(e) =>
+                                    setData('type', e.target.value)
+                                }
                             >
                                 {storeTypes.map((t) => (
                                     <option key={t.value} value={t.value}>
@@ -122,7 +135,9 @@ export default function Store({ store, storeTypes }: StoreProps) {
                                 name="description"
                                 className="mt-1 min-h-28 w-full"
                                 value={data.description}
-                                onChange={(e) => setData('description', e.target.value)}
+                                onChange={(e) =>
+                                    setData('description', e.target.value)
+                                }
                                 placeholder="Tell customers about your water supply business…"
                             />
                             <InputError message={errors.description} />
@@ -131,7 +146,9 @@ export default function Store({ store, storeTypes }: StoreProps) {
                         <div>
                             <h2 className="mb-4 text-sm font-medium text-foreground">
                                 Location coordinates{' '}
-                                <span className="font-normal text-muted-foreground">(optional)</span>
+                                <span className="font-normal text-muted-foreground">
+                                    (optional)
+                                </span>
                             </h2>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="grid gap-2">
@@ -145,7 +162,9 @@ export default function Store({ store, storeTypes }: StoreProps) {
                                         max="90"
                                         className="mt-1 block w-full"
                                         value={data.latitude}
-                                        onChange={(e) => setData('latitude', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('latitude', e.target.value)
+                                        }
                                         placeholder="e.g. 18.1974"
                                     />
                                     <InputError message={errors.latitude} />
@@ -162,7 +181,9 @@ export default function Store({ store, storeTypes }: StoreProps) {
                                         max="180"
                                         className="mt-1 block w-full"
                                         value={data.longitude}
-                                        onChange={(e) => setData('longitude', e.target.value)}
+                                        onChange={(e) =>
+                                            setData('longitude', e.target.value)
+                                        }
                                         placeholder="e.g. 120.5960"
                                     />
                                     <InputError message={errors.longitude} />
@@ -173,7 +194,9 @@ export default function Store({ store, storeTypes }: StoreProps) {
                         <div className="grid gap-2">
                             <Label htmlFor="service_radius_km">
                                 Service radius (km){' '}
-                                <span className="font-normal text-muted-foreground">(optional)</span>
+                                <span className="font-normal text-muted-foreground">
+                                    (optional)
+                                </span>
                             </Label>
                             <Input
                                 id="service_radius_km"
@@ -184,7 +207,9 @@ export default function Store({ store, storeTypes }: StoreProps) {
                                 max="100"
                                 className="mt-1 block w-full"
                                 value={data.service_radius_km}
-                                onChange={(e) => setData('service_radius_km', e.target.value)}
+                                onChange={(e) =>
+                                    setData('service_radius_km', e.target.value)
+                                }
                                 placeholder="e.g. 5"
                             />
                             <InputError message={errors.service_radius_km} />

@@ -67,21 +67,34 @@ function BanDialog({ user }: { user: User }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-destructive hover:text-destructive"
+                >
                     <ShieldBan className="mr-1.5 size-3.5" />
                     Ban
                 </Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogTitle>Ban {user.first_name} {user.last_name}</DialogTitle>
+                <DialogTitle>
+                    Ban {user.first_name} {user.last_name}
+                </DialogTitle>
                 <DialogDescription>
-                    This user will be immediately logged out and unable to log in.
+                    This user will be immediately logged out and unable to log
+                    in.
                 </DialogDescription>
-                <Form action={ban.url(user.id)} method="post" className="space-y-4">
+                <Form
+                    action={ban.url(user.id)}
+                    method="post"
+                    className="space-y-4"
+                >
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor={`ban-reason-${user.id}`}>Reason</Label>
+                                <Label htmlFor={`ban-reason-${user.id}`}>
+                                    Reason
+                                </Label>
                                 <Textarea
                                     id={`ban-reason-${user.id}`}
                                     name="reason"
@@ -91,13 +104,23 @@ function BanDialog({ user }: { user: User }) {
                                     value={reason}
                                     onChange={(e) => setReason(e.target.value)}
                                 />
-                                {errors.reason && <p className="text-sm text-destructive">{errors.reason}</p>}
+                                {errors.reason && (
+                                    <p className="text-sm text-destructive">
+                                        {errors.reason}
+                                    </p>
+                                )}
                             </div>
                             <DialogFooter>
                                 <DialogClose asChild>
-                                    <Button type="button" variant="ghost">Cancel</Button>
+                                    <Button type="button" variant="ghost">
+                                        Cancel
+                                    </Button>
                                 </DialogClose>
-                                <Button type="submit" variant="destructive" disabled={processing || !reason.trim()}>
+                                <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    disabled={processing || !reason.trim()}
+                                >
                                     {processing && <Spinner />}
                                     Confirm ban
                                 </Button>
@@ -118,7 +141,10 @@ export default function AdminUsersIndex({ users, filters }: Props) {
             usersIndex(),
             {
                 search: (overrides.search ?? search) || undefined,
-                status: (overrides.status !== undefined ? overrides.status : filters.status) || undefined,
+                status:
+                    (overrides.status !== undefined
+                        ? overrides.status
+                        : filters.status) || undefined,
             },
             { preserveScroll: true, replace: true },
         );
@@ -129,7 +155,10 @@ export default function AdminUsersIndex({ users, filters }: Props) {
     function handleSearch(value: string) {
         setSearch(value);
         clearTimeout(searchTimeout.current);
-        searchTimeout.current = setTimeout(() => applyFilter({ search: value }), 350);
+        searchTimeout.current = setTimeout(
+            () => applyFilter({ search: value }),
+            350,
+        );
     }
 
     return (
@@ -138,8 +167,12 @@ export default function AdminUsersIndex({ users, filters }: Props) {
 
             <div className="space-y-6 p-6">
                 <div>
-                    <h1 className="text-lg font-semibold text-foreground">Users</h1>
-                    <p className="text-sm text-muted-foreground">Manage consumer and seller accounts.</p>
+                    <h1 className="text-lg font-semibold text-foreground">
+                        Users
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                        Manage consumer and seller accounts.
+                    </p>
                 </div>
 
                 {/* Search + status filter */}
@@ -158,7 +191,9 @@ export default function AdminUsersIndex({ users, filters }: Props) {
                             <button
                                 key={opt.value}
                                 type="button"
-                                onClick={() => applyFilter({ status: opt.value })}
+                                onClick={() =>
+                                    applyFilter({ status: opt.value })
+                                }
                                 className={[
                                     'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors',
                                     filters.status === opt.value
@@ -177,29 +212,53 @@ export default function AdminUsersIndex({ users, filters }: Props) {
 
                 {/* User table */}
                 {users.data.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No users match the current filter.</p>
+                    <p className="text-sm text-muted-foreground">
+                        No users match the current filter.
+                    </p>
                 ) : (
                     <div className="overflow-hidden rounded-lg border border-border">
                         <table className="w-full text-sm">
                             <thead className="bg-secondary/50">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Name</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Email</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Role</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Status</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">Joined</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">
+                                        Name
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">
+                                        Email
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">
+                                        Role
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">
+                                        Status
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">
+                                        Joined
+                                    </th>
                                     <th className="px-4 py-3" />
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
                                 {users.data.map((user) => (
-                                    <tr key={user.id} className={user.banned_at ? 'bg-red-50/40 dark:bg-red-950/10' : ''}>
+                                    <tr
+                                        key={user.id}
+                                        className={
+                                            user.banned_at
+                                                ? 'bg-red-50/40 dark:bg-red-950/10'
+                                                : ''
+                                        }
+                                    >
                                         <td className="px-4 py-3 font-medium text-foreground">
                                             {user.first_name} {user.last_name}
                                         </td>
-                                        <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
+                                        <td className="px-4 py-3 text-muted-foreground">
+                                            {user.email}
+                                        </td>
                                         <td className="px-4 py-3">
-                                            <Badge variant="secondary" className="capitalize">
+                                            <Badge
+                                                variant="secondary"
+                                                className="capitalize"
+                                            >
                                                 {user.role}
                                             </Badge>
                                         </td>
@@ -221,19 +280,30 @@ export default function AdminUsersIndex({ users, filters }: Props) {
                                                 </Badge>
                                             )}
                                         </td>
-                                        <td className="px-4 py-3 text-xs text-muted-foreground">{user.created_at}</td>
+                                        <td className="px-4 py-3 text-xs text-muted-foreground">
+                                            {user.created_at}
+                                        </td>
                                         <td className="px-4 py-3 text-right">
                                             {user.banned_at ? (
-                                                <Form action={unban.url(user.id)} method="post">
+                                                <Form
+                                                    action={unban.url(user.id)}
+                                                    method="post"
+                                                >
                                                     {({ processing }) => (
                                                         <Button
                                                             type="submit"
                                                             variant="outline"
                                                             size="sm"
-                                                            disabled={processing}
+                                                            disabled={
+                                                                processing
+                                                            }
                                                             className="text-green-700 hover:text-green-700"
                                                         >
-                                                            {processing ? <Spinner /> : <ShieldCheck className="mr-1.5 size-3.5" />}
+                                                            {processing ? (
+                                                                <Spinner />
+                                                            ) : (
+                                                                <ShieldCheck className="mr-1.5 size-3.5" />
+                                                            )}
                                                             Unban
                                                         </Button>
                                                     )}

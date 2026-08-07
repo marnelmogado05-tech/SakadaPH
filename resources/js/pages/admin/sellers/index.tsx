@@ -17,7 +17,13 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { dashboard } from '@/routes/admin';
-import { index as sellersIndex, approve, reject, suspend, unsuspend } from '@/routes/admin/sellers';
+import {
+    index as sellersIndex,
+    approve,
+    reject,
+    suspend,
+    unsuspend,
+} from '@/routes/admin/sellers';
 
 type Seller = {
     id: number;
@@ -74,18 +80,34 @@ const STATUS_OPTIONS = [
 
 function StatusBadge({ status }: { status: Store['status'] }) {
     if (status === 'approved') {
-        return <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Approved</Badge>;
+        return (
+            <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                Approved
+            </Badge>
+        );
     }
 
     if (status === 'rejected') {
-        return <Badge className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Rejected</Badge>;
+        return (
+            <Badge className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                Rejected
+            </Badge>
+        );
     }
 
     if (status === 'suspended') {
-        return <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">Suspended</Badge>;
+        return (
+            <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
+                Suspended
+            </Badge>
+        );
     }
 
-    return <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Pending</Badge>;
+    return (
+        <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+            Pending
+        </Badge>
+    );
 }
 
 function RejectDialog({ store }: { store: Store }) {
@@ -94,18 +116,31 @@ function RejectDialog({ store }: { store: Store }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-destructive hover:text-destructive"
+                >
                     Reject
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogTitle>Reject "{store.name}"</DialogTitle>
-                <DialogDescription>Provide a reason for rejection. This will be emailed to the seller.</DialogDescription>
-                <Form action={reject.url(store.id)} method="post" className="space-y-4">
+                <DialogDescription>
+                    Provide a reason for rejection. This will be emailed to the
+                    seller.
+                </DialogDescription>
+                <Form
+                    action={reject.url(store.id)}
+                    method="post"
+                    className="space-y-4"
+                >
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor={`reason-${store.id}`}>Reason</Label>
+                                <Label htmlFor={`reason-${store.id}`}>
+                                    Reason
+                                </Label>
                                 <Textarea
                                     id={`reason-${store.id}`}
                                     name="reason"
@@ -115,13 +150,23 @@ function RejectDialog({ store }: { store: Store }) {
                                     value={reason}
                                     onChange={(e) => setReason(e.target.value)}
                                 />
-                                {errors.reason && <p className="text-sm text-destructive">{errors.reason}</p>}
+                                {errors.reason && (
+                                    <p className="text-sm text-destructive">
+                                        {errors.reason}
+                                    </p>
+                                )}
                             </div>
                             <DialogFooter>
                                 <DialogClose asChild>
-                                    <Button type="button" variant="ghost">Cancel</Button>
+                                    <Button type="button" variant="ghost">
+                                        Cancel
+                                    </Button>
                                 </DialogClose>
-                                <Button type="submit" variant="destructive" disabled={processing || !reason.trim()}>
+                                <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    disabled={processing || !reason.trim()}
+                                >
                                     {processing && <Spinner />}
                                     Confirm rejection
                                 </Button>
@@ -140,20 +185,31 @@ function SuspendDialog({ store }: { store: Store }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="text-orange-600 hover:text-orange-600">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-orange-600 hover:text-orange-600"
+                >
                     Suspend
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogTitle>Suspend "{store.name}"</DialogTitle>
                 <DialogDescription>
-                    This store will be hidden from customers and the seller will be locked out of their dashboard.
+                    This store will be hidden from customers and the seller will
+                    be locked out of their dashboard.
                 </DialogDescription>
-                <Form action={suspend.url(store.id)} method="post" className="space-y-4">
+                <Form
+                    action={suspend.url(store.id)}
+                    method="post"
+                    className="space-y-4"
+                >
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor={`suspend-${store.id}`}>Reason</Label>
+                                <Label htmlFor={`suspend-${store.id}`}>
+                                    Reason
+                                </Label>
                                 <Textarea
                                     id={`suspend-${store.id}`}
                                     name="reason"
@@ -163,11 +219,17 @@ function SuspendDialog({ store }: { store: Store }) {
                                     value={reason}
                                     onChange={(e) => setReason(e.target.value)}
                                 />
-                                {errors.reason && <p className="text-sm text-destructive">{errors.reason}</p>}
+                                {errors.reason && (
+                                    <p className="text-sm text-destructive">
+                                        {errors.reason}
+                                    </p>
+                                )}
                             </div>
                             <DialogFooter>
                                 <DialogClose asChild>
-                                    <Button type="button" variant="ghost">Cancel</Button>
+                                    <Button type="button" variant="ghost">
+                                        Cancel
+                                    </Button>
                                 </DialogClose>
                                 <Button
                                     type="submit"
@@ -194,7 +256,10 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
             sellersIndex(),
             {
                 search: (overrides.search ?? search) || undefined,
-                status: (overrides.status !== undefined ? overrides.status : filters.status) || undefined,
+                status:
+                    (overrides.status !== undefined
+                        ? overrides.status
+                        : filters.status) || undefined,
             },
             { preserveScroll: true, replace: true },
         );
@@ -205,7 +270,10 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
     function handleSearch(value: string) {
         setSearch(value);
         clearTimeout(searchTimeout.current);
-        searchTimeout.current = setTimeout(() => applyFilter({ search: value }), 350);
+        searchTimeout.current = setTimeout(
+            () => applyFilter({ search: value }),
+            350,
+        );
     }
 
     return (
@@ -214,8 +282,12 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
 
             <div className="space-y-6 p-6">
                 <div>
-                    <h1 className="text-lg font-semibold text-foreground">Sellers</h1>
-                    <p className="text-sm text-muted-foreground">Manage seller applications and approved stores.</p>
+                    <h1 className="text-lg font-semibold text-foreground">
+                        Sellers
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                        Manage seller applications and approved stores.
+                    </p>
                 </div>
 
                 {/* Search + status filter */}
@@ -234,7 +306,9 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                             <button
                                 key={opt.value}
                                 type="button"
-                                onClick={() => applyFilter({ status: opt.value })}
+                                onClick={() =>
+                                    applyFilter({ status: opt.value })
+                                }
                                 className={[
                                     'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors',
                                     filters.status === opt.value
@@ -250,7 +324,9 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
 
                 {/* Store list */}
                 {stores.data.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No stores match the current filter.</p>
+                    <p className="text-sm text-muted-foreground">
+                        No stores match the current filter.
+                    </p>
                 ) : (
                     <div className="grid gap-3">
                         {stores.data.map((store) => (
@@ -258,12 +334,16 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                                 key={store.id}
                                 className={[
                                     'flex items-start justify-between gap-4 rounded-lg border bg-card p-4',
-                                    store.is_stale ? 'border-amber-200 dark:border-amber-900/60' : 'border-border',
+                                    store.is_stale
+                                        ? 'border-amber-200 dark:border-amber-900/60'
+                                        : 'border-border',
                                 ].join(' ')}
                             >
                                 <div className="min-w-0 space-y-1">
                                     <div className="flex items-center gap-2">
-                                        <p className="font-medium text-foreground">{store.name}</p>
+                                        <p className="font-medium text-foreground">
+                                            {store.name}
+                                        </p>
                                         {store.is_stale && (
                                             <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
                                                 <AlertTriangle className="size-3" />
@@ -271,16 +351,26 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                                             </span>
                                         )}
                                     </div>
-                                    <p className="text-sm text-muted-foreground">{store.address}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        {store.address}
+                                    </p>
                                     {store.description && (
-                                        <p className="text-sm text-muted-foreground">{store.description}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            {store.description}
+                                        </p>
                                     )}
                                     <p className="text-xs text-muted-foreground">
-                                        {store.seller.first_name} {store.seller.last_name} — {store.seller.email}
+                                        {store.seller.first_name}{' '}
+                                        {store.seller.last_name} —{' '}
+                                        {store.seller.email}
                                     </p>
-                                    <p className="text-xs text-muted-foreground">Applied {store.created_at}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                        Applied {store.created_at}
+                                    </p>
                                     {store.rejection_reason && (
-                                        <p className="text-xs text-destructive">Reason: {store.rejection_reason}</p>
+                                        <p className="text-xs text-destructive">
+                                            Reason: {store.rejection_reason}
+                                        </p>
                                     )}
                                 </div>
 
@@ -289,10 +379,19 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
 
                                     {store.status === 'pending' && (
                                         <>
-                                            <Form action={approve.url(store.id)} method="post">
+                                            <Form
+                                                action={approve.url(store.id)}
+                                                method="post"
+                                            >
                                                 {({ processing }) => (
-                                                    <Button type="submit" size="sm" disabled={processing}>
-                                                        {processing && <Spinner />}
+                                                    <Button
+                                                        type="submit"
+                                                        size="sm"
+                                                        disabled={processing}
+                                                    >
+                                                        {processing && (
+                                                            <Spinner />
+                                                        )}
                                                         Approve
                                                     </Button>
                                                 )}
@@ -301,10 +400,15 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                                         </>
                                     )}
 
-                                    {store.status === 'approved' && <SuspendDialog store={store} />}
+                                    {store.status === 'approved' && (
+                                        <SuspendDialog store={store} />
+                                    )}
 
                                     {store.status === 'suspended' && (
-                                        <Form action={unsuspend.url(store.id)} method="post">
+                                        <Form
+                                            action={unsuspend.url(store.id)}
+                                            method="post"
+                                        >
                                             {({ processing }) => (
                                                 <Button
                                                     type="submit"

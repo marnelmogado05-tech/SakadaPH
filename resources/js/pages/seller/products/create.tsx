@@ -8,14 +8,21 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { index as productsIndex, create as productsCreate } from '@/routes/seller/products';
+import {
+    index as productsIndex,
+    create as productsCreate,
+} from '@/routes/seller/products';
 
 type AvailabilityOption = {
     value: string;
     label: string;
 };
 
-export default function ProductsCreate({ availabilityOptions }: { availabilityOptions: AvailabilityOption[] }) {
+export default function ProductsCreate({
+    availabilityOptions,
+}: {
+    availabilityOptions: AvailabilityOption[];
+}) {
     const { data, setData, post, processing, errors } = useForm<{
         name: string;
         description: string;
@@ -106,7 +113,9 @@ export default function ProductsCreate({ availabilityOptions }: { availabilityOp
                                 step="0.01"
                                 className="mt-1 block w-full"
                                 value={data.price}
-                                onChange={(e) => setData('price', e.target.value)}
+                                onChange={(e) =>
+                                    setData('price', e.target.value)
+                                }
                                 placeholder="0.00"
                                 required
                             />
@@ -120,7 +129,9 @@ export default function ProductsCreate({ availabilityOptions }: { availabilityOp
                                 name="unit"
                                 className="mt-1 block w-full"
                                 value={data.unit}
-                                onChange={(e) => setData('unit', e.target.value)}
+                                onChange={(e) =>
+                                    setData('unit', e.target.value)
+                                }
                                 placeholder="e.g. gallon, liter"
                                 required
                             />
@@ -137,7 +148,9 @@ export default function ProductsCreate({ availabilityOptions }: { availabilityOp
                             min="0"
                             className="mt-1 block w-full"
                             value={data.quantity}
-                            onChange={(e) => setData('quantity', e.target.value)}
+                            onChange={(e) =>
+                                setData('quantity', e.target.value)
+                            }
                             required
                         />
                         <InputError message={errors.quantity} />
@@ -148,9 +161,11 @@ export default function ProductsCreate({ availabilityOptions }: { availabilityOp
                         <select
                             id="availability"
                             name="availability"
-                            className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none"
                             value={data.availability}
-                            onChange={(e) => setData('availability', e.target.value)}
+                            onChange={(e) =>
+                                setData('availability', e.target.value)
+                            }
                         >
                             {availabilityOptions.map((opt) => (
                                 <option key={opt.value} value={opt.value}>
@@ -164,7 +179,9 @@ export default function ProductsCreate({ availabilityOptions }: { availabilityOp
                     <div className="grid gap-2">
                         <Label>
                             Product image{' '}
-                            <span className="font-normal text-muted-foreground">(optional)</span>
+                            <span className="font-normal text-muted-foreground">
+                                (optional)
+                            </span>
                         </Label>
 
                         {preview ? (
@@ -177,7 +194,7 @@ export default function ProductsCreate({ availabilityOptions }: { availabilityOp
                                 <button
                                     type="button"
                                     onClick={clearImage}
-                                    className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow"
+                                    className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow"
                                 >
                                     <X className="size-3" />
                                 </button>
@@ -206,14 +223,18 @@ export default function ProductsCreate({ availabilityOptions }: { availabilityOp
                     <div className="grid gap-2">
                         <Label htmlFor="description">
                             Description{' '}
-                            <span className="text-muted-foreground">(optional)</span>
+                            <span className="text-muted-foreground">
+                                (optional)
+                            </span>
                         </Label>
                         <Textarea
                             id="description"
                             name="description"
                             className="mt-1 min-h-24 w-full"
                             value={data.description}
-                            onChange={(e) => setData('description', e.target.value)}
+                            onChange={(e) =>
+                                setData('description', e.target.value)
+                            }
                             placeholder="Describe this product…"
                         />
                         <InputError message={errors.description} />

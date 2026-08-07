@@ -1,5 +1,11 @@
 import { Head, Link } from '@inertiajs/react';
-import { AlertTriangle, Package, TrendingDown, TrendingUp, Users } from 'lucide-react';
+import {
+    AlertTriangle,
+    Package,
+    TrendingDown,
+    TrendingUp,
+    Users,
+} from 'lucide-react';
 import { dashboard } from '@/routes/seller';
 import { index as productsIndex } from '@/routes/seller/products';
 
@@ -29,8 +35,10 @@ type Props = {
 };
 
 const AVAILABILITY_STYLES: Record<string, string> = {
-    in_stock: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400',
-    low_stock: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
+    in_stock:
+        'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400',
+    low_stock:
+        'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
     out_of_stock: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400',
 };
 
@@ -55,7 +63,9 @@ function StatCard({
         <div className="rounded-xl border border-border/60 bg-card p-5">
             <div className="mb-3 flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">{label}</p>
-                <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${iconClass}`}>
+                <div
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg ${iconClass}`}
+                >
                     <Icon className="size-4" />
                 </div>
             </div>
@@ -64,14 +74,20 @@ function StatCard({
     );
 }
 
-export default function SellerDashboard({ store, stats, recent_products }: Props) {
+export default function SellerDashboard({
+    store,
+    stats,
+    recent_products,
+}: Props) {
     return (
         <>
             <Head title="Dashboard" />
 
             <div className="space-y-6 p-6">
                 <div>
-                    <h1 className="text-xl font-semibold text-foreground">{store.name}</h1>
+                    <h1 className="text-xl font-semibold text-foreground">
+                        {store.name}
+                    </h1>
                     <p className="mt-0.5 text-sm text-muted-foreground">
                         Here's an overview of your store.
                     </p>
@@ -107,9 +123,13 @@ export default function SellerDashboard({ store, stats, recent_products }: Props
                 <div className="rounded-xl border border-border/60 bg-card p-5">
                     <div className="mb-1 flex items-center gap-2">
                         <Users className="size-4 text-muted-foreground" />
-                        <p className="text-sm font-medium text-foreground">Store followers</p>
+                        <p className="text-sm font-medium text-foreground">
+                            Store followers
+                        </p>
                     </div>
-                    <p className="text-2xl font-bold text-foreground">{store.followers_count}</p>
+                    <p className="text-2xl font-bold text-foreground">
+                        {store.followers_count}
+                    </p>
                     <p className="mt-1 text-xs text-muted-foreground">
                         Consumers following your store for restock alerts
                     </p>
@@ -117,7 +137,9 @@ export default function SellerDashboard({ store, stats, recent_products }: Props
 
                 <div>
                     <div className="mb-3 flex items-center justify-between">
-                        <h2 className="text-sm font-semibold text-foreground">Recent products</h2>
+                        <h2 className="text-sm font-semibold text-foreground">
+                            Recent products
+                        </h2>
                         <Link
                             href={productsIndex()}
                             className="text-xs font-medium text-primary hover:underline"
@@ -129,18 +151,24 @@ export default function SellerDashboard({ store, stats, recent_products }: Props
                     {recent_products.length === 0 ? (
                         <div className="rounded-xl border border-border/60 py-10 text-center">
                             <Package className="mx-auto mb-2 size-6 text-muted-foreground/40" />
-                            <p className="text-sm text-muted-foreground">No products yet.</p>
+                            <p className="text-sm text-muted-foreground">
+                                No products yet.
+                            </p>
                         </div>
                     ) : (
                         <div className="divide-y divide-border/60 overflow-hidden rounded-xl border border-border/60 bg-card">
                             {recent_products.map((product) => (
-                                <div key={product.id} className="flex items-center justify-between gap-4 px-4 py-3">
+                                <div
+                                    key={product.id}
+                                    className="flex items-center justify-between gap-4 px-4 py-3"
+                                >
                                     <div className="min-w-0">
                                         <p className="truncate text-sm font-medium text-foreground">
                                             {product.name}
                                         </p>
                                         <p className="text-xs text-muted-foreground">
-                                            ₱{product.price.toFixed(2)} / {product.unit}
+                                            ₱{product.price.toFixed(2)} /{' '}
+                                            {product.unit}
                                             {product.last_updated_at && (
                                                 <span className="ml-2 text-muted-foreground/60">
                                                     · {product.last_updated_at}
@@ -150,10 +178,14 @@ export default function SellerDashboard({ store, stats, recent_products }: Props
                                     </div>
                                     <span
                                         className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-                                            AVAILABILITY_STYLES[product.availability] ?? ''
+                                            AVAILABILITY_STYLES[
+                                                product.availability
+                                            ] ?? ''
                                         }`}
                                     >
-                                        {AVAILABILITY_LABELS[product.availability] ?? product.availability}
+                                        {AVAILABILITY_LABELS[
+                                            product.availability
+                                        ] ?? product.availability}
                                     </span>
                                 </div>
                             ))}

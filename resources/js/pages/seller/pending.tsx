@@ -19,17 +19,22 @@ export default function SellerPending() {
                         Application under review
                     </h1>
                     <p className="mb-8 text-sm leading-relaxed text-muted-foreground">
-                        Your store registration has been received and is being reviewed by our team.
-                        We'll notify you by email once a decision has been made. This usually takes
-                        1–2 business days.
+                        Your store registration has been received and is being
+                        reviewed by our team. We'll notify you by email once a
+                        decision has been made. This usually takes 1–2 business
+                        days.
                     </p>
 
                     <div className="mb-6 rounded-lg border border-border bg-secondary/40 px-4 py-3 text-left text-sm text-muted-foreground">
-                        <p className="font-medium text-foreground">What happens next?</p>
+                        <p className="font-medium text-foreground">
+                            What happens next?
+                        </p>
                         <ul className="mt-2 space-y-1 text-sm">
                             <li>• Our team reviews your store details</li>
                             <li>• You receive an email notification</li>
-                            <li>• Once approved, you can access your dashboard</li>
+                            <li>
+                                • Once approved, you can access your dashboard
+                            </li>
                         </ul>
                     </div>
 

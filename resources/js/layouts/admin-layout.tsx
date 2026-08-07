@@ -4,7 +4,10 @@ import { AppShell } from '@/components/app-shell';
 import { AppSidebarHeader } from '@/components/app-sidebar-header';
 import type { AppLayoutProps } from '@/types';
 
-export default function AdminLayout({ children, breadcrumbs = [] }: AppLayoutProps) {
+export default function AdminLayout({
+    children,
+    breadcrumbs = [],
+}: AppLayoutProps) {
     return (
         <AppShell variant="sidebar">
             <AdminSidebar />

@@ -2,7 +2,12 @@ import { Link, usePage } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
 import AppLogoIcon from '@/components/app-logo-icon';
-import { dashboard, login, notifications as notificationsRoute, register } from '@/routes';
+import {
+    dashboard,
+    login,
+    notifications as notificationsRoute,
+    register,
+} from '@/routes';
 
 export default function PublicLayout({ children }: PropsWithChildren) {
     const { auth } = usePage().props;
@@ -31,8 +36,10 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                                     >
                                         <Bell className="size-5" />
                                         {auth.notifications_count > 0 && (
-                                            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
-                                                {auth.notifications_count > 99 ? '99+' : auth.notifications_count}
+                                            <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
+                                                {auth.notifications_count > 99
+                                                    ? '99+'
+                                                    : auth.notifications_count}
                                             </span>
                                         )}
                                     </Link>
@@ -61,7 +68,6 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                             </>
                         )}
                     </nav>
-
                 </div>
             </header>
 

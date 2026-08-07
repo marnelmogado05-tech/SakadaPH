@@ -73,7 +73,9 @@ export default function Dashboard() {
                             </div>
                             {auth.notifications_count > 0 && (
                                 <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-white">
-                                    {auth.notifications_count > 99 ? '99+' : auth.notifications_count}
+                                    {auth.notifications_count > 99
+                                        ? '99+'
+                                        : auth.notifications_count}
                                 </span>
                             )}
                         </div>

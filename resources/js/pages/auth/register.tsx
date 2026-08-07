@@ -6,7 +6,13 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
@@ -17,7 +23,7 @@ type Props = {
 
 export default function Register({ passwordRules }: Props) {
     const [extensionName, setExtensionName] = useState('');
-    const [contactNumber, setContactNumber] = useState("");
+    const [contactNumber, setContactNumber] = useState('');
 
     return (
         <>
@@ -86,9 +92,15 @@ export default function Register({ passwordRules }: Props) {
                             </div>
 
                             <div className="grip gap-2">
-                                <Label htmlFor='extension_name'>Extension Name</Label>
+                                <Label htmlFor="extension_name">
+                                    Extension Name
+                                </Label>
 
-                                <Select value={extensionName} onValueChange={setExtensionName} name="extension_name">
+                                <Select
+                                    value={extensionName}
+                                    onValueChange={setExtensionName}
+                                    name="extension_name"
+                                >
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="e.g. Jr., Sr." />
                                     </SelectTrigger>
@@ -101,7 +113,9 @@ export default function Register({ passwordRules }: Props) {
                                         <SelectItem value="V">V</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <span className="text-sm text-muted-foreground">Optional</span>
+                                <span className="text-sm text-muted-foreground">
+                                    Optional
+                                </span>
 
                                 <InputError
                                     message={errors.extension_name}
@@ -124,7 +138,9 @@ export default function Register({ passwordRules }: Props) {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="contact_number">Contact number</Label>
+                                <Label htmlFor="contact_number">
+                                    Contact number
+                                </Label>
                                 <Input
                                     id="contact_number"
                                     type="tel"
@@ -137,7 +153,8 @@ export default function Register({ passwordRules }: Props) {
                                     inputMode="numeric"
                                     value={contactNumber}
                                     onChange={(e) => {
-                                        const numbersOnly = e.target.value.replace(/\D/g, "");
+                                        const numbersOnly =
+                                            e.target.value.replace(/\D/g, '');
                                         setContactNumber(numbersOnly);
                                     }}
                                 />

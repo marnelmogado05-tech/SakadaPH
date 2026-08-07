@@ -169,7 +169,9 @@ export default function Profile({
                                 )}
 
                             <div className="grid gap-2">
-                                <Label htmlFor="contact_number">Contact number</Label>
+                                <Label htmlFor="contact_number">
+                                    Contact number
+                                </Label>
 
                                 <Input
                                     id="contact_number"

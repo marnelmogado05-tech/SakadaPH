@@ -9,9 +9,12 @@ export default function Banned() {
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
                     <ShieldOff className="size-8 text-destructive" />
                 </div>
-                <h1 className="mb-2 text-xl font-semibold text-foreground">Account suspended</h1>
+                <h1 className="mb-2 text-xl font-semibold text-foreground">
+                    Account suspended
+                </h1>
                 <p className="mb-6 max-w-sm text-sm text-muted-foreground">
-                    Your account has been suspended. If you believe this is a mistake, please contact support.
+                    Your account has been suspended. If you believe this is a
+                    mistake, please contact support.
                 </p>
                 <Link
                     href="/"

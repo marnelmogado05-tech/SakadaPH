@@ -1,6 +1,10 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Bell, BellOff, MapPin, Phone, Truck } from 'lucide-react';
-import { follow as storesFollow, index as storesIndex, unfollow as storesUnfollow } from '@/routes/stores';
+import {
+    follow as storesFollow,
+    index as storesIndex,
+    unfollow as storesUnfollow,
+} from '@/routes/stores';
 
 type Product = {
     id: number;
@@ -30,7 +34,12 @@ type Props = {
 };
 
 function formatPrice(price: string): string {
-    return '₱' + parseFloat(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return (
+        '₱' +
+        parseFloat(price)
+            .toFixed(2)
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    );
 }
 
 function storeTypeLabel(type: string | null): string | null {
@@ -65,7 +74,9 @@ function FollowButton({ store }: { store: StoreDetail }) {
     const { post, processing } = useForm({});
 
     function toggle() {
-        const route = store.is_followed ? storesUnfollow(store.id) : storesFollow(store.id);
+        const route = store.is_followed
+            ? storesUnfollow(store.id)
+            : storesFollow(store.id);
         post(route.url, { preserveScroll: true });
     }
 
@@ -108,7 +119,10 @@ export default function StoresShow({ store, products }: Props) {
                             : `Buy water from ${store.name} in ${store.address}. Check live stock and availability on Sakada PH.`
                     }
                 />
-                <meta property="og:title" content={`${store.name} — Sakada PH`} />
+                <meta
+                    property="og:title"
+                    content={`${store.name} — Sakada PH`}
+                />
                 <meta
                     property="og:description"
                     content={
@@ -216,7 +230,9 @@ export default function StoresShow({ store, products }: Props) {
                                             <p className="text-xs text-muted-foreground">
                                                 {product.quantity} in stock
                                             </p>
-                                            {availabilityBadge(product.availability)}
+                                            {availabilityBadge(
+                                                product.availability,
+                                            )}
                                         </div>
                                     </div>
                                 </div>

@@ -3,7 +3,11 @@ import { Pencil, Plus, Trash2 } from 'lucide-react';
 import ProductController from '@/actions/App/Http/Controllers/Seller/ProductController';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import { index as productsIndex, create as productsCreate, availability as availabilityRoute } from '@/routes/seller/products';
+import {
+    index as productsIndex,
+    create as productsCreate,
+    availability as availabilityRoute,
+} from '@/routes/seller/products';
 
 type AvailabilityOption = {
     value: string;
@@ -26,7 +30,12 @@ type Props = {
 };
 
 function formatPrice(price: string): string {
-    return '₱' + parseFloat(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return (
+        '₱' +
+        parseFloat(price)
+            .toFixed(2)
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    );
 }
 
 function availabilityBadgeClass(availability: string): string {
@@ -41,7 +50,10 @@ function availabilityBadgeClass(availability: string): string {
     return 'bg-secondary text-muted-foreground';
 }
 
-export default function ProductsIndex({ products, availabilityOptions }: Props) {
+export default function ProductsIndex({
+    products,
+    availabilityOptions,
+}: Props) {
     return (
         <>
             <Head title="Products" />
@@ -66,7 +78,8 @@ export default function ProductsIndex({ products, availabilityOptions }: Props) 
                             No products yet
                         </p>
                         <p className="mt-1 mb-4 text-sm text-muted-foreground">
-                            Add your first product to start attracting customers.
+                            Add your first product to start attracting
+                            customers.
                         </p>
                         <Button asChild size="sm">
                             <Link href={productsCreate()}>
@@ -127,27 +140,46 @@ export default function ProductsIndex({ products, availabilityOptions }: Props) 
                                         </td>
                                         <td className="hidden px-4 py-3 sm:table-cell">
                                             <Form
-                                                action={availabilityRoute.url(product.id)}
+                                                action={availabilityRoute.url(
+                                                    product.id,
+                                                )}
                                                 method="patch"
-                                                options={{ preserveScroll: true }}
+                                                options={{
+                                                    preserveScroll: true,
+                                                }}
                                             >
                                                 {({ processing }) => (
                                                     <select
                                                         name="availability"
-                                                        defaultValue={product.availability}
-                                                        onChange={(e) => e.currentTarget.form?.requestSubmit()}
+                                                        defaultValue={
+                                                            product.availability
+                                                        }
+                                                        onChange={(e) =>
+                                                            e.currentTarget.form?.requestSubmit()
+                                                        }
                                                         disabled={processing}
                                                         className={[
                                                             'inline-flex cursor-pointer items-center rounded-full px-2 py-0.5 text-xs font-medium',
-                                                            'border-0 bg-transparent outline-none ring-0',
-                                                            availabilityBadgeClass(product.availability),
+                                                            'border-0 bg-transparent ring-0 outline-none',
+                                                            availabilityBadgeClass(
+                                                                product.availability,
+                                                            ),
                                                         ].join(' ')}
                                                     >
-                                                        {availabilityOptions.map((opt) => (
-                                                            <option key={opt.value} value={opt.value}>
-                                                                {opt.label}
-                                                            </option>
-                                                        ))}
+                                                        {availabilityOptions.map(
+                                                            (opt) => (
+                                                                <option
+                                                                    key={
+                                                                        opt.value
+                                                                    }
+                                                                    value={
+                                                                        opt.value
+                                                                    }
+                                                                >
+                                                                    {opt.label}
+                                                                </option>
+                                                            ),
+                                                        )}
                                                     </select>
                                                 )}
                                             </Form>
@@ -186,7 +218,9 @@ export default function ProductsIndex({ products, availabilityOptions }: Props) 
                                                             variant="ghost"
                                                             size="icon"
                                                             className="size-8 text-muted-foreground hover:text-destructive"
-                                                            disabled={processing}
+                                                            disabled={
+                                                                processing
+                                                            }
                                                         >
                                                             <Trash2 className="size-3.5" />
                                                             <span className="sr-only">

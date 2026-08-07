@@ -28,12 +28,20 @@ type Props = {
 function formatDate(dateStr: string): string {
     const date = new Date(dateStr);
 
-    return date.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleDateString('en-PH', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
 }
 
 function NotificationIcon({ type }: { type: string }) {
     if (type === 'stock_restored') {
-        return <Store className="size-4 text-emerald-600 dark:text-emerald-400" />;
+        return (
+            <Store className="size-4 text-emerald-600 dark:text-emerald-400" />
+        );
     }
 
     if (type === 'seller_approved') {
@@ -54,7 +62,9 @@ export default function Notifications({ notifications }: Props) {
 
             <div className="mx-auto max-w-2xl px-4 py-8">
                 <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold tracking-tight text-foreground">Notifications</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+                        Notifications
+                    </h1>
 
                     {notifications.data.some((n) => n.read_at === null) && (
                         <Link
@@ -72,7 +82,9 @@ export default function Notifications({ notifications }: Props) {
                 {notifications.data.length === 0 ? (
                     <div className="flex flex-col items-center justify-center rounded-xl border border-border/60 py-20 text-center">
                         <Bell className="mb-3 size-8 text-muted-foreground/40" />
-                        <p className="text-sm font-medium text-foreground">No notifications yet</p>
+                        <p className="text-sm font-medium text-foreground">
+                            No notifications yet
+                        </p>
                         <p className="mt-1 text-sm text-muted-foreground">
                             Follow stores to receive stock alerts.
                         </p>
@@ -85,20 +97,27 @@ export default function Notifications({ notifications }: Props) {
                                 className={`flex items-start gap-4 px-5 py-4 ${notification.read_at === null ? 'bg-primary/5' : ''}`}
                             >
                                 <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary">
-                                    <NotificationIcon type={notification.type} />
+                                    <NotificationIcon
+                                        type={notification.type}
+                                    />
                                 </div>
 
                                 <div className="min-w-0 flex-1">
-                                    <p className="text-sm text-foreground">{notification.message}</p>
+                                    <p className="text-sm text-foreground">
+                                        {notification.message}
+                                    </p>
 
-                                    {notification.store_id && notification.store_name && (
-                                        <Link
-                                            href={storesShow(notification.store_id)}
-                                            className="mt-0.5 inline-block text-xs font-medium text-primary hover:underline"
-                                        >
-                                            View {notification.store_name}
-                                        </Link>
-                                    )}
+                                    {notification.store_id &&
+                                        notification.store_name && (
+                                            <Link
+                                                href={storesShow(
+                                                    notification.store_id,
+                                                )}
+                                                className="mt-0.5 inline-block text-xs font-medium text-primary hover:underline"
+                                            >
+                                                View {notification.store_name}
+                                            </Link>
+                                        )}
 
                                     <p className="mt-1 text-xs text-muted-foreground">
                                         {formatDate(notification.created_at)}

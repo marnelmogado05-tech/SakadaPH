@@ -25,7 +25,9 @@ export default function AuthSimpleLayout({
                         <h1 className="text-xl font-semibold tracking-tight text-foreground">
                             {title}
                         </h1>
-                        <p className="text-sm text-muted-foreground">{description}</p>
+                        <p className="text-sm text-muted-foreground">
+                            {description}
+                        </p>
                     </div>
                 </div>
 

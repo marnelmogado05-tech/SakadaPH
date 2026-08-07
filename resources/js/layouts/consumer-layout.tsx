@@ -1,5 +1,12 @@
 import { Link, router, usePage } from '@inertiajs/react';
-import { Bell, LayoutGrid, LogOut, MapPin, Settings, Store } from 'lucide-react';
+import {
+    Bell,
+    LayoutGrid,
+    LogOut,
+    MapPin,
+    Settings,
+    Store,
+} from 'lucide-react';
 import type { PropsWithChildren } from 'react';
 import AppLogoIcon from '@/components/app-logo-icon';
 import {
@@ -10,7 +17,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { dashboard, following, logout, notifications as notificationsRoute } from '@/routes';
+import {
+    dashboard,
+    following,
+    logout,
+    notifications as notificationsRoute,
+} from '@/routes';
 import { edit as profileEdit } from '@/routes/profile';
 import { index as storesIndex } from '@/routes/stores';
 
@@ -31,13 +43,17 @@ function NavItem({
         <Link
             href={href}
             className={`relative flex flex-1 flex-col items-center gap-1 py-2 text-xs transition-colors ${
-                active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                active
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:text-foreground'
             }`}
         >
             <div className="relative">
-                <Icon className={`size-5 ${active ? 'stroke-[2.2px]' : 'stroke-[1.7px]'}`} />
+                <Icon
+                    className={`size-5 ${active ? 'stroke-[2.2px]' : 'stroke-[1.7px]'}`}
+                />
                 {badge !== undefined && badge > 0 && (
-                    <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-white">
+                    <span className="absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-white">
                         {badge > 99 ? '99+' : badge}
                     </span>
                 )}
@@ -64,7 +80,10 @@ export default function ConsumerLayout({ children }: PropsWithChildren) {
         <div className="flex min-h-screen flex-col bg-background">
             <header className="sticky top-0 z-40 border-b border-border/60 bg-background/95 backdrop-blur">
                 <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
-                    <Link href={dashboard().url} className="flex items-center gap-2">
+                    <Link
+                        href={dashboard().url}
+                        className="flex items-center gap-2"
+                    >
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-sm">
                             <AppLogoIcon className="size-6 object-contain" />
                         </div>
@@ -84,12 +103,19 @@ export default function ConsumerLayout({ children }: PropsWithChildren) {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
                             <DropdownMenuLabel className="font-normal">
-                                <p className="text-sm font-semibold text-foreground">{fullName}</p>
-                                <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                                <p className="text-sm font-semibold text-foreground">
+                                    {fullName}
+                                </p>
+                                <p className="truncate text-xs text-muted-foreground">
+                                    {user.email}
+                                </p>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem asChild>
-                                <Link href={profileEdit().url} className="flex items-center gap-2">
+                                <Link
+                                    href={profileEdit().url}
+                                    className="flex items-center gap-2"
+                                >
                                     <Settings className="size-4" />
                                     Settings
                                 </Link>
@@ -109,7 +135,7 @@ export default function ConsumerLayout({ children }: PropsWithChildren) {
 
             <main className="flex-1 pb-20">{children}</main>
 
-            <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border/60 bg-background/95 backdrop-blur">
+            <nav className="fixed right-0 bottom-0 left-0 z-40 border-t border-border/60 bg-background/95 backdrop-blur">
                 <div className="mx-auto flex max-w-2xl items-stretch px-2">
                     <NavItem
                         href={dashboard().url}
@@ -121,7 +147,10 @@ export default function ConsumerLayout({ children }: PropsWithChildren) {
                         href={storesIndex().url}
                         icon={MapPin}
                         label="Browse"
-                        active={currentComponent === 'stores/index' || currentComponent === 'stores/show'}
+                        active={
+                            currentComponent === 'stores/index' ||
+                            currentComponent === 'stores/show'
+                        }
                     />
                     <NavItem
                         href={following().url}
