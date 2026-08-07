@@ -98,7 +98,9 @@ export default function AdminDashboard({ stats }: Props) {
                         label="Pending approvals"
                         value={stats.pending_approvals}
                         icon={Clock}
-                        href={sellersIndex.url({ query: { status: 'pending' } })}
+                        href={sellersIndex.url({
+                            query: { status: 'pending' },
+                        })}
                         highlight
                         description="Seller applications awaiting review"
                     />
@@ -106,7 +108,9 @@ export default function AdminDashboard({ stats }: Props) {
                         label="Approved sellers"
                         value={stats.approved_sellers}
                         icon={CheckCircle}
-                        href={sellersIndex.url({ query: { status: 'approved' } })}
+                        href={sellersIndex.url({
+                            query: { status: 'approved' },
+                        })}
                         description="Active stores on the platform"
                     />
                     <StatCard
@@ -119,7 +123,9 @@ export default function AdminDashboard({ stats }: Props) {
                         label="Stale stores"
                         value={stats.stale_stores}
                         icon={AlertTriangle}
-                        href={sellersIndex.url({ query: { status: 'approved' } })}
+                        href={sellersIndex.url({
+                            query: { status: 'approved' },
+                        })}
                         highlight
                         description="Approved stores not updated in 7+ days"
                     />
