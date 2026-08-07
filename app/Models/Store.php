@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\SellerStatus;
 use App\Enums\StoreType;
+use App\Mail\SellerApproved;
+use App\Mail\SellerRejected;
 use Database\Factories\StoreFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -122,7 +124,7 @@ class Store extends Model
             'rejected_at' => null,
         ]);
 
-        Mail::to($this->user)->send(new \App\Mail\SellerApproved($this));
+        Mail::to($this->user)->send(new SellerApproved($this));
     }
 
     public function reject(User $admin, string $reason): void
@@ -134,7 +136,7 @@ class Store extends Model
             'rejection_reason' => $reason,
         ]);
 
-        Mail::to($this->user)->send(new \App\Mail\SellerRejected($this));
+        Mail::to($this->user)->send(new SellerRejected($this));
     }
 
     public function suspend(User $admin, string $reason): void

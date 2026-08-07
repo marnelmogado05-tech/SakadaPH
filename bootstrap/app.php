@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Middleware\EnsureNotBanned;
+use App\Http\Middleware\EnsureRole;
+use App\Http\Middleware\EnsureSellerApproved;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -21,12 +24,12 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
-            \App\Http\Middleware\EnsureNotBanned::class,
+            EnsureNotBanned::class,
         ]);
 
         $middleware->alias([
-            'role' => \App\Http\Middleware\EnsureRole::class,
-            'seller.approved' => \App\Http\Middleware\EnsureSellerApproved::class,
+            'role' => EnsureRole::class,
+            'seller.approved' => EnsureSellerApproved::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

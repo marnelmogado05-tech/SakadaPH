@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ProductAvailability;
 use App\Enums\StoreType;
 use App\Models\Product;
 use App\Models\Store;

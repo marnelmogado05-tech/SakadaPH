@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -16,7 +17,7 @@ return new class extends Migration
         });
 
         // Migrate existing boolean data before dropping the column
-        \Illuminate\Support\Facades\DB::statement(
+        DB::statement(
             "UPDATE products SET availability = CASE WHEN is_available = 1 THEN 'in_stock' ELSE 'out_of_stock' END"
         );
 
@@ -31,7 +32,7 @@ return new class extends Migration
             $table->boolean('is_available')->default(true)->after('quantity');
         });
 
-        \Illuminate\Support\Facades\DB::statement(
+        DB::statement(
             "UPDATE products SET is_available = CASE WHEN availability = 'out_of_stock' THEN 0 ELSE 1 END"
         );
 
