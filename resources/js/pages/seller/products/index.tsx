@@ -1,8 +1,8 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
+import ProductController from '@/actions/App/Http/Controllers/Seller/ProductController';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import ProductController from '@/actions/App/Http/Controllers/Seller/ProductController';
 import { index as productsIndex, create as productsCreate, availability as availabilityRoute } from '@/routes/seller/products';
 
 type AvailabilityOption = {
@@ -33,9 +33,11 @@ function availabilityBadgeClass(availability: string): string {
     if (availability === 'in_stock') {
         return 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400';
     }
+
     if (availability === 'low_stock') {
         return 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400';
     }
+
     return 'bg-secondary text-muted-foreground';
 }
 

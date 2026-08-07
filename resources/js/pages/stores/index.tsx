@@ -64,19 +64,37 @@ function formatPrice(price: number): string {
 }
 
 function priceRange(min: number | null, max: number | null): string | null {
-    if (min === null) return null;
-    if (min === max) return formatPrice(min);
+    if (min === null) {
+        return null;
+    }
+
+    if (min === max) {
+        return formatPrice(min);
+    }
+
     return `${formatPrice(min)} – ${formatPrice(max!)}`;
 }
 
 function relativeTime(iso: string | null): string | null {
-    if (!iso) return null;
+    if (!iso) {
+        return null;
+    }
+
     const diff = Date.now() - new Date(iso).getTime();
     const minutes = Math.floor(diff / 60000);
-    if (minutes < 60) return `Updated ${minutes}m ago`;
+
+    if (minutes < 60) {
+        return `Updated ${minutes}m ago`;
+    }
+
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `Updated ${hours}h ago`;
+
+    if (hours < 24) {
+        return `Updated ${hours}h ago`;
+    }
+
     const days = Math.floor(hours / 24);
+
     return `Updated ${days}d ago`;
 }
 
@@ -88,6 +106,7 @@ function AvailabilityBadge({ status }: { status: StoreAvailability }) {
         no_products: { label: 'No Products', cls: 'bg-secondary text-muted-foreground' },
     };
     const { label, cls } = map[status];
+
     return (
         <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}>
             {label}
@@ -97,9 +116,17 @@ function AvailabilityBadge({ status }: { status: StoreAvailability }) {
 
 export default function StoresIndex({ stores, filters }: Props) {
     const [search, setSearch] = useState(filters.search);
-    const [locationStatus, setLocationStatus] = useState<'idle' | 'requesting' | 'granted' | 'denied'>(() =>
-        filters.lat && filters.lng ? 'granted' : 'idle',
-    );
+    const [locationStatus, setLocationStatus] = useState<'idle' | 'requesting' | 'granted' | 'denied'>(() => {
+        if (filters.lat && filters.lng) {
+            return 'granted';
+        }
+
+        if (typeof navigator !== 'undefined' && navigator.geolocation) {
+            return 'requesting';
+        }
+
+        return 'idle';
+    });
     const latLng = useRef<{ lat: number; lng: number } | null>(
         filters.lat && filters.lng ? { lat: filters.lat, lng: filters.lng } : null,
     );
@@ -133,10 +160,14 @@ export default function StoresIndex({ stores, filters }: Props) {
     }
 
     useEffect(() => {
-        if (latLng.current) return;
-        if (!navigator.geolocation) return;
+        if (latLng.current) {
+            return;
+        }
 
-        setLocationStatus('requesting');
+        if (!navigator.geolocation) {
+            return;
+        }
+
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 const { latitude, longitude } = pos.coords;
@@ -147,6 +178,7 @@ export default function StoresIndex({ stores, filters }: Props) {
             () => setLocationStatus('denied'),
             { timeout: 8000 },
         );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const hasLocation = locationStatus === 'granted';

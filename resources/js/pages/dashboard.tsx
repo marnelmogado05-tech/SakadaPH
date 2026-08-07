@@ -1,6 +1,5 @@
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { Bell, MapPin, Store } from 'lucide-react';
-import { Link } from '@inertiajs/react';
 import { following, notifications as notificationsRoute } from '@/routes';
 import { index as storesIndex } from '@/routes/stores';
 

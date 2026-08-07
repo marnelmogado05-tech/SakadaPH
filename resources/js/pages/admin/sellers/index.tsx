@@ -1,6 +1,6 @@
 import { Form, Head, Link, router } from '@inertiajs/react';
 import { AlertTriangle, Search } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -76,17 +76,21 @@ function StatusBadge({ status }: { status: Store['status'] }) {
     if (status === 'approved') {
         return <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Approved</Badge>;
     }
+
     if (status === 'rejected') {
         return <Badge className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Rejected</Badge>;
     }
+
     if (status === 'suspended') {
         return <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">Suspended</Badge>;
     }
+
     return <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Pending</Badge>;
 }
 
 function RejectDialog({ store }: { store: Store }) {
     const [reason, setReason] = useState('');
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -132,6 +136,7 @@ function RejectDialog({ store }: { store: Store }) {
 
 function SuspendDialog({ store }: { store: Store }) {
     const [reason, setReason] = useState('');
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -195,11 +200,12 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
         );
     }
 
-    let searchTimeout: ReturnType<typeof setTimeout>;
+    const searchTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+
     function handleSearch(value: string) {
         setSearch(value);
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => applyFilter({ search: value }), 350);
+        clearTimeout(searchTimeout.current);
+        searchTimeout.current = setTimeout(() => applyFilter({ search: value }), 350);
     }
 
     return (

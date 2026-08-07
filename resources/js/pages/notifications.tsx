@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { Bell, CheckCheck, Store } from 'lucide-react';
-import { show as storesShow } from '@/routes/stores';
 import { readAll } from '@/routes/notifications';
+import { show as storesShow } from '@/routes/stores';
 
 type Notification = {
     id: string;
@@ -27,6 +27,7 @@ type Props = {
 
 function formatDate(dateStr: string): string {
     const date = new Date(dateStr);
+
     return date.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
@@ -34,12 +35,15 @@ function NotificationIcon({ type }: { type: string }) {
     if (type === 'stock_restored') {
         return <Store className="size-4 text-emerald-600 dark:text-emerald-400" />;
     }
+
     if (type === 'seller_approved') {
         return <CheckCheck className="size-4 text-primary" />;
     }
+
     if (type === 'seller_rejected') {
         return <Bell className="size-4 text-destructive" />;
     }
+
     return <Bell className="size-4 text-muted-foreground" />;
 }
 

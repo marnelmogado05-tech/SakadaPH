@@ -1,13 +1,13 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, ImagePlus, X } from 'lucide-react';
 import { useRef, useState } from 'react';
+import ProductController from '@/actions/App/Http/Controllers/Seller/ProductController';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import ProductController from '@/actions/App/Http/Controllers/Seller/ProductController';
 import { index as productsIndex } from '@/routes/seller/products';
 
 type AvailabilityOption = {
@@ -53,6 +53,7 @@ export default function ProductsEdit({ product, availabilityOptions }: { product
     function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0] ?? null;
         setData('image', file);
+
         if (file) {
             setPreview(URL.createObjectURL(file));
         }
@@ -61,6 +62,7 @@ export default function ProductsEdit({ product, availabilityOptions }: { product
     function clearImage() {
         setData('image', null);
         setPreview(null);
+
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }

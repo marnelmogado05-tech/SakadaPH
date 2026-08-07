@@ -1,6 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
 import { ShieldOff } from 'lucide-react';
-import AppLogoIcon from '@/components/app-logo-icon';
 import { logout } from '@/routes';
 
 export default function SellerSuspended() {

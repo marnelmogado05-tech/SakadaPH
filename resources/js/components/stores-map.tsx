@@ -46,6 +46,7 @@ function makeStoreIcon(availability: StoreAvailability, highlighted: boolean): L
     const s = highlighted ? 20 : 12;
     const border = highlighted ? 3 : 2;
     const shadow = highlighted ? '0 2px 8px rgba(0,0,0,0.45)' : '0 1px 4px rgba(0,0,0,0.3)';
+
     return L.divIcon({
         className: '',
         html: `<div style="width:${s}px;height:${s}px;background:${color};border-radius:50%;border:${border}px solid white;box-shadow:${shadow}"></div>`,
@@ -74,6 +75,7 @@ function RecenterMap({ lat, lng }: { lat: number; lng: number }) {
         if (prevRef.current.lat === lat && prevRef.current.lng === lng) {
             return;
         }
+
         prevRef.current = { lat, lng };
         map.flyTo([lat, lng], Math.max(map.getZoom(), 13), { duration: 1.5 });
     }, [lat, lng, map]);
@@ -126,6 +128,7 @@ export default function StoresMap({ stores, userLat, userLng, maxDistanceKm, hov
 
             {mappable.map((store) => {
                 const highlighted = store.id === hoveredStoreId;
+
                 return (
                     <Marker
                         key={store.id}

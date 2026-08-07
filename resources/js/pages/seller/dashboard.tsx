@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
-import { AlertTriangle, Package, Star, TrendingDown, TrendingUp, Users } from 'lucide-react';
-import { index as productsIndex, updateAvailability } from '@/routes/seller/products';
+import { AlertTriangle, Package, TrendingDown, TrendingUp, Users } from 'lucide-react';
 import { dashboard } from '@/routes/seller';
+import { index as productsIndex } from '@/routes/seller/products';
 
 type Product = {
     id: number;

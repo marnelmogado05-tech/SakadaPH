@@ -23,9 +23,18 @@ const AVAILABILITY_LABELS: Record<string, { label: string; className: string }> 
 };
 
 function storeTypeLabel(type: string | null): string | null {
-    if (type === 'pickup') {return 'Pickup only';}
-    if (type === 'delivery') {return 'Delivery only';}
-    if (type === 'both') {return 'Pickup & Delivery';}
+    if (type === 'pickup') {
+        return 'Pickup only';
+    }
+
+    if (type === 'delivery') {
+        return 'Delivery only';
+    }
+
+    if (type === 'both') {
+        return 'Pickup & Delivery';
+    }
+
     return null;
 }
 

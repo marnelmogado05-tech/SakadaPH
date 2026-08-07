@@ -1,6 +1,6 @@
 import { Form, Head, Link, router } from '@inertiajs/react';
 import { Search, ShieldBan, ShieldCheck } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -63,6 +63,7 @@ const STATUS_OPTIONS = [
 
 function BanDialog({ user }: { user: User }) {
     const [reason, setReason] = useState('');
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -123,11 +124,12 @@ export default function AdminUsersIndex({ users, filters }: Props) {
         );
     }
 
-    let searchTimeout: ReturnType<typeof setTimeout>;
+    const searchTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+
     function handleSearch(value: string) {
         setSearch(value);
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => applyFilter({ search: value }), 350);
+        clearTimeout(searchTimeout.current);
+        searchTimeout.current = setTimeout(() => applyFilter({ search: value }), 350);
     }
 
     return (

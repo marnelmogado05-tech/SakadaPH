@@ -1,7 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
 import { Clock } from 'lucide-react';
-import AppLogoIcon from '@/components/app-logo-icon';
-import { Button } from '@/components/ui/button';
 import { logout } from '@/routes';
 
 export default function SellerPending() {
