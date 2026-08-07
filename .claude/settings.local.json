@@ -1,10 +1,15 @@
 {
-  "disabledMcpjsonServers": [
-    "laravel-boost"
-  ],
   "permissions": {
     "allow": [
-      "Bash(php artisan *)"
+      "Bash(php artisan *)",
+      "PowerShell(npx eslint resources/js/components/stores-map.tsx resources/js/pages/admin/sellers/index.tsx resources/js/pages/admin/users/index.tsx resources/js/pages/dashboard.tsx resources/js/pages/notifications.tsx resources/js/pages/seller/dashboard.tsx resources/js/pages/seller/pending.tsx \"resources/js/pages/seller/products/create.tsx\" \"resources/js/pages/seller/products/edit.tsx\" \"resources/js/pages/seller/products/index.tsx\" resources/js/pages/seller/suspended.tsx resources/js/pages/stores/following.tsx resources/js/pages/stores/index.tsx resources/js/pages/stores/show.tsx 2>&1)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(npx prettier *)"
     ]
-  }
+  },
+  "disabledMcpjsonServers": [
+    "laravel-boost"
+  ]
 }

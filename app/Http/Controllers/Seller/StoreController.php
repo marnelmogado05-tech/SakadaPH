@@ -27,7 +27,7 @@ class StoreController extends Controller
                 'description' => $store->description,
                 'address' => $store->address,
                 'contact_number' => $store->contact_number,
-                'type' => $store->type?->value ?? StoreType::Pickup->value,
+                'type' => $store->type?->value?->StoreType::Pickup->value,
                 'latitude' => $store->latitude,
                 'longitude' => $store->longitude,
                 'service_radius_km' => $store->service_radius_km,
