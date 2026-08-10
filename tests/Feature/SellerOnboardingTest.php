@@ -2,7 +2,9 @@
 
 use App\Models\Store;
 use App\Models\User;
+use App\Notifications\SellerRegisteredNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 
 uses(RefreshDatabase::class);
 
@@ -37,6 +39,40 @@ it('registers a seller with a pending store', function () {
     expect($store)->not->toBeNull();
     expect($store->name)->toBe("Juan's Water Station");
     expect($store->isPending())->toBeTrue();
+});
+
+it('notifies every admin when a seller registers', function () {
+    Notification::fake();
+
+    $admins = User::factory()->admin()->count(2)->create();
+
+    $this->post('/register/seller', [
+        'first_name' => 'Juan',
+        'last_name' => 'Dela Cruz',
+        'email' => 'juan@example.com',
+        'contact_number' => '09123456789',
+        'password' => 'Password1!',
+        'password_confirmation' => 'Password1!',
+        'store_name' => "Juan's Water Station",
+        'store_address' => '123 Main St, Ilocos Norte',
+    ]);
+
+    Notification::assertSentTo($admins, SellerRegisteredNotification::class);
+});
+
+it('lets an admin view a seller registration notification in-app', function () {
+    $admin = User::factory()->admin()->create();
+    $store = Store::factory()->pending()->create();
+    $admin->notify(new SellerRegisteredNotification($store));
+
+    $this->actingAs($admin)
+        ->get(route('notifications'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('notifications')
+            ->where('notifications.data.0.type', 'seller_registered')
+            ->where('notifications.data.0.url_label', 'Review sellers')
+        );
 });
 
 it('validates required seller registration fields', function () {

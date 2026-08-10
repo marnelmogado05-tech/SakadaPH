@@ -1,5 +1,14 @@
-import { Head, Link } from '@inertiajs/react';
-import { Bell, CheckCheck, Store } from 'lucide-react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import {
+    Bell,
+    CheckCheck,
+    Receipt,
+    Store,
+    Truck,
+    UserPlus,
+    XCircle,
+} from 'lucide-react';
+import { notifications as notificationsRoute } from '@/routes';
 import { readAll } from '@/routes/notifications';
 import { show as storesShow } from '@/routes/stores';
 
@@ -9,6 +18,8 @@ type Notification = {
     message: string;
     store_id: number | null;
     store_name: string | null;
+    url: string | null;
+    url_label: string | null;
     read_at: string | null;
     created_at: string;
 };
@@ -44,34 +55,84 @@ function NotificationIcon({ type }: { type: string }) {
         );
     }
 
-    if (type === 'seller_approved') {
-        return <CheckCheck className="size-4 text-primary" />;
+    if (type === 'seller_approved' || type === 'order_completed') {
+        return (
+            <CheckCheck className="size-4 text-emerald-600 dark:text-emerald-400" />
+        );
+    }
+
+    if (type === 'seller_registered') {
+        return <UserPlus className="size-4 text-primary" />;
+    }
+
+    if (type === 'order_rejected' || type === 'order_cancelled') {
+        return <XCircle className="size-4 text-destructive" />;
     }
 
     if (type === 'seller_rejected') {
         return <Bell className="size-4 text-destructive" />;
     }
 
+    if (type === 'order_ready' || type === 'order_out_for_delivery') {
+        return <Truck className="size-4 text-blue-600 dark:text-blue-400" />;
+    }
+
+    if (type === 'order_placed' || type === 'order_confirmed') {
+        return <Receipt className="size-4 text-primary" />;
+    }
+
     return <Bell className="size-4 text-muted-foreground" />;
 }
 
 export default function Notifications({ notifications }: Props) {
+    const { auth } = usePage().props;
+    const role = auth.user?.role;
+    const isSidebar = role === 'admin' || role === 'seller';
+
+    const emptyHint =
+        role === 'admin'
+            ? 'Seller registrations and platform activity will appear here.'
+            : role === 'seller'
+              ? 'New orders and customer activity will appear here.'
+              : 'Follow stores to receive stock alerts.';
+
     return (
         <>
             <Head title="Notifications" />
 
-            <div className="mx-auto max-w-2xl px-4 py-8">
-                <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-                        Notifications
-                    </h1>
+            <div
+                className={
+                    isSidebar
+                        ? 'space-y-6 p-6'
+                        : 'mx-auto max-w-2xl space-y-6 px-4 py-8'
+                }
+            >
+                <div className="flex items-start justify-between gap-4">
+                    <div>
+                        <h1
+                            className={
+                                isSidebar
+                                    ? 'text-lg font-semibold text-foreground'
+                                    : 'text-2xl font-semibold tracking-tight text-foreground'
+                            }
+                        >
+                            Notifications
+                        </h1>
+                        {isSidebar && (
+                            <p className="text-sm text-muted-foreground">
+                                {role === 'admin'
+                                    ? 'Seller registrations and platform activity.'
+                                    : 'Order and customer activity for your store.'}
+                            </p>
+                        )}
+                    </div>
 
                     {notifications.data.some((n) => n.read_at === null) && (
                         <Link
                             href={readAll()}
                             method="post"
                             as="button"
-                            className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                            className="flex shrink-0 items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                         >
                             <CheckCheck className="size-4" />
                             Mark all read
@@ -86,7 +147,7 @@ export default function Notifications({ notifications }: Props) {
                             No notifications yet
                         </p>
                         <p className="mt-1 text-sm text-muted-foreground">
-                            Follow stores to receive stock alerts.
+                            {emptyHint}
                         </p>
                     </div>
                 ) : (
@@ -107,7 +168,16 @@ export default function Notifications({ notifications }: Props) {
                                         {notification.message}
                                     </p>
 
-                                    {notification.store_id &&
+                                    {notification.url ? (
+                                        <Link
+                                            href={notification.url}
+                                            className="mt-0.5 inline-block text-xs font-medium text-primary hover:underline"
+                                        >
+                                            {notification.url_label ??
+                                                'View order'}
+                                        </Link>
+                                    ) : (
+                                        notification.store_id &&
                                         notification.store_name && (
                                             <Link
                                                 href={storesShow(
@@ -117,7 +187,8 @@ export default function Notifications({ notifications }: Props) {
                                             >
                                                 View {notification.store_name}
                                             </Link>
-                                        )}
+                                        )
+                                    )}
 
                                     <p className="mt-1 text-xs text-muted-foreground">
                                         {formatDate(notification.created_at)}
@@ -156,3 +227,7 @@ export default function Notifications({ notifications }: Props) {
         </>
     );
 }
+
+Notifications.layout = {
+    breadcrumbs: [{ title: 'Notifications', href: notificationsRoute() }],
+};

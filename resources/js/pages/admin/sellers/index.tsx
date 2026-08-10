@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import { dashboard } from '@/routes/admin';
 import {
     index as sellersIndex,
     approve,
@@ -456,8 +455,5 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
 }
 
 AdminSellersIndex.layout = {
-    breadcrumbs: [
-        { title: 'Dashboard', href: dashboard() },
-        { title: 'Sellers', href: sellersIndex() },
-    ],
+    breadcrumbs: [{ title: 'Sellers', href: sellersIndex() }],
 };

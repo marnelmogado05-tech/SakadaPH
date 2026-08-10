@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\OrderStatus;
+use App\Enums\UserRole;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -41,8 +43,24 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
                 'notifications_count' => fn () => $request->user()?->unreadNotifications()->count() ?? 0,
+                'cart_count' => fn () => (int) ($request->user()?->cart?->items()->sum('quantity') ?? 0),
+                'seller_pending_orders_count' => fn () => $this->sellerPendingOrdersCount($request),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
+    }
+
+    /**
+     * Pending order count for the authenticated seller's store (0 otherwise).
+     */
+    private function sellerPendingOrdersCount(Request $request): int
+    {
+        $user = $request->user();
+
+        if ($user?->role !== UserRole::Seller) {
+            return 0;
+        }
+
+        return (int) ($user->store?->orders()->where('status', OrderStatus::Pending)->count() ?? 0);
     }
 }

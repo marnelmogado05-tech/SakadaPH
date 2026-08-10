@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import { dashboard } from '@/routes/admin';
 import { index as usersIndex, ban, unban } from '@/routes/admin/users';
 
 type User = {
@@ -346,8 +345,5 @@ export default function AdminUsersIndex({ users, filters }: Props) {
 }
 
 AdminUsersIndex.layout = {
-    breadcrumbs: [
-        { title: 'Dashboard', href: dashboard() },
-        { title: 'Users', href: usersIndex() },
-    ],
+    breadcrumbs: [{ title: 'Users', href: usersIndex() }],
 };

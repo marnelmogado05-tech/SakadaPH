@@ -91,6 +91,52 @@ it('updates store coordinates', function () {
     expect((float) $store->service_radius_km)->toBe(5.0);
 });
 
+it('updates ordering and payment settings', function () {
+    $seller = User::factory()->seller()->create();
+    $store = Store::factory()->approved()->for($seller)->create();
+
+    $this->actingAs($seller)
+        ->patch('/seller/store', [
+            'name' => $store->name,
+            'address' => $store->address,
+            'type' => 'both',
+            'delivery_fee' => 45.50,
+            'min_order_amount' => 200,
+            'accepts_online_payment' => true,
+            'gcash_number' => '09171234567',
+        ])
+        ->assertRedirect('/seller/store');
+
+    $store->refresh();
+    expect((float) $store->delivery_fee)->toBe(45.50)
+        ->and((float) $store->min_order_amount)->toBe(200.0)
+        ->and($store->accepts_online_payment)->toBeTrue()
+        ->and($store->gcash_number)->toBe('09171234567');
+});
+
+it('clears ordering settings when submitted empty', function () {
+    $seller = User::factory()->seller()->create();
+    $store = Store::factory()->approved()->for($seller)->create([
+        'delivery_fee' => 50,
+        'min_order_amount' => 100,
+    ]);
+
+    $this->actingAs($seller)
+        ->patch('/seller/store', [
+            'name' => $store->name,
+            'address' => $store->address,
+            'type' => 'pickup',
+            'delivery_fee' => '',
+            'min_order_amount' => '',
+        ])
+        ->assertRedirect('/seller/store');
+
+    $store->refresh();
+    expect($store->delivery_fee)->toBeNull()
+        ->and($store->min_order_amount)->toBeNull()
+        ->and($store->accepts_online_payment)->toBeFalse();
+});
+
 it('validates required fields when updating store', function () {
     $seller = User::factory()->seller()->create();
     Store::factory()->approved()->for($seller)->create();

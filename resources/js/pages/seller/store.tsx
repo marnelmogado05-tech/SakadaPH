@@ -1,8 +1,11 @@
 import { Head, useForm } from '@inertiajs/react';
+import { ImagePlus, X } from 'lucide-react';
+import { useRef, useState } from 'react';
 import StoreController from '@/actions/App/Http/Controllers/Seller/StoreController';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -23,12 +26,32 @@ type StoreProps = {
         latitude: number | null;
         longitude: number | null;
         service_radius_km: number | null;
+        delivery_fee: number | null;
+        min_order_amount: number | null;
+        accepts_online_payment: boolean;
+        gcash_number: string | null;
+        gcash_qr_url: string | null;
     };
     storeTypes: StoreType[];
 };
 
 export default function Store({ store, storeTypes }: StoreProps) {
-    const { data, setData, patch, processing, errors } = useForm({
+    const { data, setData, patch, post, transform, processing, errors } =
+        useForm<{
+        name: string;
+        description: string;
+        address: string;
+        contact_number: string;
+        type: string;
+        latitude: string;
+        longitude: string;
+        service_radius_km: string;
+        delivery_fee: string;
+        min_order_amount: string;
+        accepts_online_payment: boolean;
+        gcash_number: string;
+        gcash_qr: File | null;
+    }>({
         name: store.name,
         description: store.description ?? '',
         address: store.address,
@@ -40,10 +63,52 @@ export default function Store({ store, storeTypes }: StoreProps) {
             store.service_radius_km !== null
                 ? String(store.service_radius_km)
                 : '',
+        delivery_fee:
+            store.delivery_fee !== null ? String(store.delivery_fee) : '',
+        min_order_amount:
+            store.min_order_amount !== null
+                ? String(store.min_order_amount)
+                : '',
+        accepts_online_payment: store.accepts_online_payment,
+        gcash_number: store.gcash_number ?? '',
+        gcash_qr: null,
     });
+
+    const qrInputRef = useRef<HTMLInputElement>(null);
+    const [qrPreview, setQrPreview] = useState<string | null>(null);
+
+    function handleQrChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0] ?? null;
+        setData('gcash_qr', file);
+        setQrPreview(file ? URL.createObjectURL(file) : null);
+    }
+
+    function clearQr() {
+        setData('gcash_qr', null);
+        setQrPreview(null);
+
+        if (qrInputRef.current) {
+            qrInputRef.current.value = '';
+        }
+    }
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
+
+        if (data.gcash_qr instanceof File) {
+            // PHP can't parse multipart bodies on PATCH, so a file upload must go out as
+            // POST with method spoofing (`_method: 'patch'`).
+            transform((current) => ({ ...current, _method: 'patch' }));
+            post(StoreController.update.url(), {
+                preserveScroll: true,
+                forceFormData: true,
+            });
+
+            return;
+        }
+
+        // No file — a normal JSON PATCH keeps every field intact.
+        transform((current) => current);
         patch(StoreController.update.url(), { preserveScroll: true });
     }
 
@@ -213,6 +278,171 @@ export default function Store({ store, storeTypes }: StoreProps) {
                                 placeholder="e.g. 5"
                             />
                             <InputError message={errors.service_radius_km} />
+                        </div>
+
+                        <div>
+                            <h2 className="mb-4 text-sm font-medium text-foreground">
+                                Ordering & payment
+                            </h2>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="delivery_fee">
+                                        Delivery fee (₱)
+                                    </Label>
+                                    <Input
+                                        id="delivery_fee"
+                                        name="delivery_fee"
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        className="mt-1 block w-full"
+                                        value={data.delivery_fee}
+                                        onChange={(e) =>
+                                            setData(
+                                                'delivery_fee',
+                                                e.target.value,
+                                            )
+                                        }
+                                        placeholder="0.00"
+                                    />
+                                    <InputError message={errors.delivery_fee} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="min_order_amount">
+                                        Minimum order (₱)
+                                    </Label>
+                                    <Input
+                                        id="min_order_amount"
+                                        name="min_order_amount"
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        className="mt-1 block w-full"
+                                        value={data.min_order_amount}
+                                        onChange={(e) =>
+                                            setData(
+                                                'min_order_amount',
+                                                e.target.value,
+                                            )
+                                        }
+                                        placeholder="0.00"
+                                    />
+                                    <InputError
+                                        message={errors.min_order_amount}
+                                    />
+                                </div>
+                            </div>
+                            <p className="mt-2 text-xs text-muted-foreground">
+                                Delivery fee is charged per delivery order. Leave
+                                blank for free delivery / no minimum.
+                            </p>
+
+                            <label className="mt-4 flex items-start gap-3">
+                                <Checkbox
+                                    checked={data.accepts_online_payment}
+                                    onCheckedChange={(checked) =>
+                                        setData(
+                                            'accepts_online_payment',
+                                            checked === true,
+                                        )
+                                    }
+                                />
+                                <span className="text-sm">
+                                    <span className="font-medium text-foreground">
+                                        Accept GCash payment
+                                    </span>
+                                    <span className="block text-xs text-muted-foreground">
+                                        Customers pay your GCash number and enter
+                                        their reference; you confirm receipt.
+                                        Cash is always available.
+                                    </span>
+                                </span>
+                            </label>
+                            <InputError
+                                className="mt-2"
+                                message={errors.accepts_online_payment}
+                            />
+
+                            {data.accepts_online_payment && (
+                                <div className="mt-4 space-y-4 rounded-lg border border-border bg-secondary/20 p-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="gcash_number">
+                                            GCash number
+                                        </Label>
+                                        <Input
+                                            id="gcash_number"
+                                            name="gcash_number"
+                                            className="block w-full"
+                                            value={data.gcash_number}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'gcash_number',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="09XXXXXXXXX"
+                                        />
+                                        <InputError
+                                            message={errors.gcash_number}
+                                        />
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label>
+                                            GCash QR{' '}
+                                            <span className="font-normal text-muted-foreground">
+                                                (optional)
+                                            </span>
+                                        </Label>
+
+                                        {qrPreview || store.gcash_qr_url ? (
+                                            <div className="relative w-40">
+                                                <img
+                                                    src={
+                                                        qrPreview ??
+                                                        store.gcash_qr_url ??
+                                                        undefined
+                                                    }
+                                                    alt="GCash QR"
+                                                    className="h-40 w-40 rounded-lg border border-border object-cover"
+                                                />
+                                                {qrPreview && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={clearQr}
+                                                        className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow"
+                                                    >
+                                                        <X className="size-3" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    qrInputRef.current?.click()
+                                                }
+                                                className="flex h-40 w-40 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
+                                            >
+                                                <ImagePlus className="size-6" />
+                                                <span className="text-xs">
+                                                    Upload QR
+                                                </span>
+                                            </button>
+                                        )}
+
+                                        <input
+                                            ref={qrInputRef}
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={handleQrChange}
+                                        />
+                                        <InputError message={errors.gcash_qr} />
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex items-center gap-4">

@@ -29,6 +29,11 @@ use Illuminate\Support\Facades\Mail;
  * @property float|null $service_radius_km
  * @property array<string, mixed>|null $operating_hours
  * @property string|null $logo_path
+ * @property float|null $delivery_fee
+ * @property float|null $min_order_amount
+ * @property bool $accepts_online_payment
+ * @property string|null $gcash_number
+ * @property string|null $gcash_qr_path
  * @property string|null $rejection_reason
  * @property Carbon|null $approved_at
  * @property Carbon|null $rejected_at
@@ -40,6 +45,8 @@ use Illuminate\Support\Facades\Mail;
  * @property-read int|null $low_stock_count
  * @property-read int|null $out_of_stock_count
  * @property-read int|null $followers_count
+ * @property-read int|null $reviews_count
+ * @property-read float|null $reviews_avg_rating
  * @property-read string|null $products_max_last_updated_at
  * @property-read float|null $distance_km
  * @property-read string|null $products_min_price
@@ -61,6 +68,11 @@ class Store extends Model
         'latitude',
         'longitude',
         'service_radius_km',
+        'delivery_fee',
+        'min_order_amount',
+        'accepts_online_payment',
+        'gcash_number',
+        'gcash_qr_path',
         'operating_hours',
         'logo_path',
         'rejection_reason',
@@ -77,6 +89,9 @@ class Store extends Model
             'latitude' => 'float',
             'longitude' => 'float',
             'service_radius_km' => 'float',
+            'delivery_fee' => 'decimal:2',
+            'min_order_amount' => 'decimal:2',
+            'accepts_online_payment' => 'boolean',
             'operating_hours' => 'array',
             'approved_at' => 'datetime',
             'rejected_at' => 'datetime',
@@ -105,6 +120,18 @@ class Store extends Model
     public function followers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'store_follows');
+    }
+
+    /** @return HasMany<Order, $this> */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /** @return HasMany<Review, $this> */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 
     public function isPending(): bool

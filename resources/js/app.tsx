@@ -7,6 +7,7 @@ import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
 import ConsumerLayout from '@/layouts/consumer-layout';
 import SellerLayout from '@/layouts/seller-layout';
+import SmartNotificationsLayout from '@/layouts/smart-notifications-layout';
 import SmartSettingsLayout from '@/layouts/smart-settings-layout';
 import SmartStoresLayout from '@/layouts/smart-stores-layout';
 
@@ -21,9 +22,11 @@ createInertiaApp({
             case name === 'seller/pending':
             case name === 'seller/suspended':
                 return null;
-            case name === 'dashboard':
             case name === 'notifications':
+                return SmartNotificationsLayout;
+            case name === 'dashboard':
             case name === 'stores/following':
+            case name.startsWith('consumer/'):
                 return ConsumerLayout;
             case name.startsWith('stores/'):
                 return SmartStoresLayout;

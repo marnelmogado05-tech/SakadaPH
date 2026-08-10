@@ -18,7 +18,7 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                 <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
                     <Link href="/" className="flex items-center gap-2.5">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-sm">
-                            <AppLogoIcon className="size-4 object-contain" />
+                            <AppLogoIcon className="size-8 object-contain" />
                         </div>
                         <span className="text-base font-semibold tracking-tight text-foreground">
                             Sakada PH

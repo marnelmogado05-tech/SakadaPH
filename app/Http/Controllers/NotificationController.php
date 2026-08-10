@@ -22,6 +22,8 @@ class NotificationController extends Controller
                 'message' => $n->data['message'] ?? '',
                 'store_id' => $n->data['store_id'] ?? null,
                 'store_name' => $n->data['store_name'] ?? null,
+                'url' => $n->data['url'] ?? null,
+                'url_label' => $n->data['url_label'] ?? null,
                 'read_at' => $n->read_at?->toDateTimeString(),
                 'created_at' => $n->created_at->toDateTimeString(),
             ]);

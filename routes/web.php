@@ -1,12 +1,18 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\SellerController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Consumer\CartController;
+use App\Http\Controllers\Consumer\CheckoutController;
 use App\Http\Controllers\Consumer\FollowingController;
+use App\Http\Controllers\Consumer\OrderController;
+use App\Http\Controllers\Consumer\ReviewController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Public\StoreController as PublicStoreController;
 use App\Http\Controllers\Seller\DashboardController as SellerDashboardController;
+use App\Http\Controllers\Seller\OrderController as SellerOrderController;
 use App\Http\Controllers\Seller\ProductController;
 use App\Http\Controllers\Seller\StoreController;
 use App\Http\Controllers\SellerRegistrationController;
@@ -30,6 +36,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('following', [FollowingController::class, 'index'])->name('following');
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications');
     Route::post('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+
+    Route::get('cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('cart', [CartController::class, 'store'])->name('cart.store');
+    Route::patch('cart/items/{cartItem}', [CartController::class, 'update'])->name('cart.items.update');
+    Route::delete('cart/items/{cartItem}', [CartController::class, 'destroy'])->name('cart.items.destroy');
+    Route::delete('cart', [CartController::class, 'clear'])->name('cart.clear');
+
+    Route::get('checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+    Route::post('orders/{order}/gcash-reference', [OrderController::class, 'submitGcashReference'])->name('orders.gcash-reference');
+    Route::post('orders/{order}/review', [ReviewController::class, 'store'])->name('orders.review');
 });
 
 Route::middleware('guest')->group(function () {
@@ -47,6 +68,13 @@ Route::middleware(['auth', 'verified', 'role:seller'])->prefix('seller')->name('
         Route::patch('store', [StoreController::class, 'update'])->name('store.update');
         Route::resource('products', ProductController::class)->except(['show']);
         Route::patch('products/{product}/availability', [ProductController::class, 'updateAvailability'])->name('products.availability');
+
+        Route::get('orders', [SellerOrderController::class, 'index'])->name('orders.index');
+        Route::get('orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
+        Route::post('orders/{order}/confirm', [SellerOrderController::class, 'confirm'])->name('orders.confirm');
+        Route::post('orders/{order}/reject', [SellerOrderController::class, 'reject'])->name('orders.reject');
+        Route::post('orders/{order}/advance', [SellerOrderController::class, 'advance'])->name('orders.advance');
+        Route::post('orders/{order}/mark-paid', [SellerOrderController::class, 'markPaid'])->name('orders.mark-paid');
     });
 });
 
@@ -60,6 +88,8 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
     Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
     Route::post('users/{user}/ban', [AdminUserController::class, 'ban'])->name('users.ban');
     Route::post('users/{user}/unban', [AdminUserController::class, 'unban'])->name('users.unban');
+    Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
 });
 
 require __DIR__.'/settings.php';
