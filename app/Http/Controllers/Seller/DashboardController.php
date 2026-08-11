@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Seller;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Enums\ProductAvailability;
 use App\Http\Controllers\Controller;
 use App\Models\Store;
@@ -25,6 +27,8 @@ class DashboardController extends Controller
             'products as out_of_stock_count' => fn ($q) => $q->where('availability', ProductAvailability::OutOfStock),
             'followers',
         ]);
+
+        $reviewCount = $store->reviews()->count();
 
         $recentProducts = $store->products()
             ->orderByDesc('last_updated_at')
@@ -51,6 +55,15 @@ class DashboardController extends Controller
                 'in_stock' => $store->in_stock_count,
                 'low_stock' => $store->low_stock_count,
                 'out_of_stock' => $store->out_of_stock_count,
+            ],
+            'orderStats' => [
+                'pending' => $store->orders()->where('status', OrderStatus::Pending)->count(),
+                'today' => $store->orders()->whereDate('created_at', today())->count(),
+                'revenue' => (float) $store->orders()->where('payment_status', PaymentStatus::Paid)->sum('total'),
+            ],
+            'rating' => [
+                'average' => $reviewCount > 0 ? round((float) $store->reviews()->avg('rating'), 1) : null,
+                'count' => $reviewCount,
             ],
             'recent_products' => $recentProducts,
         ]);

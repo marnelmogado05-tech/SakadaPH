@@ -1,23 +1,36 @@
 import { usePage } from '@inertiajs/react';
-import type { PropsWithChildren } from 'react';
-import AppLayout from '@/layouts/app-layout';
+import AdminLayout from '@/layouts/admin-layout';
 import ConsumerLayout from '@/layouts/consumer-layout';
+import SellerLayout from '@/layouts/seller-layout';
 import SettingsLayout from '@/layouts/settings/layout';
+import type { AppLayoutProps } from '@/types';
 
-export default function SmartSettingsLayout({ children }: PropsWithChildren) {
+export default function SmartSettingsLayout({
+    children,
+    breadcrumbs = [],
+}: AppLayoutProps) {
     const { auth } = usePage().props;
+    const role = auth.user?.role;
 
-    if (auth.user?.role === 'user') {
+    if (role === 'user') {
         return (
             <ConsumerLayout>
-                <SettingsLayout>{children}</SettingsLayout>
+                <SettingsLayout centered>{children}</SettingsLayout>
             </ConsumerLayout>
         );
     }
 
+    if (role === 'seller') {
+        return (
+            <SellerLayout breadcrumbs={breadcrumbs}>
+                <SettingsLayout>{children}</SettingsLayout>
+            </SellerLayout>
+        );
+    }
+
     return (
-        <AppLayout>
+        <AdminLayout breadcrumbs={breadcrumbs}>
             <SettingsLayout>{children}</SettingsLayout>
-        </AppLayout>
+        </AdminLayout>
     );
 }

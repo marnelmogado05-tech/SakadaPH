@@ -14,7 +14,7 @@ export default function AuthSimpleLayout({
                 <div className="mb-8 flex flex-col items-center gap-6">
                     <Link href={home()} className="flex items-center gap-2.5">
                         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shadow-sm">
-                            <AppLogoIcon className="size-[18px] object-contain" />
+                            <AppLogoIcon className="size-8 object-contain" />
                         </div>
                         <span className="text-lg font-semibold tracking-tight text-foreground">
                             Sakada PH

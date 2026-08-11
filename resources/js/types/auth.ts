@@ -18,6 +18,8 @@ export type User = {
 export type Auth = {
     user: User;
     notifications_count: number;
+    cart_count: number;
+    seller_pending_orders_count: number;
 };
 
 /* @chisel-passkeys */

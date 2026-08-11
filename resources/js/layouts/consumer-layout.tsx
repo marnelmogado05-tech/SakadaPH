@@ -1,10 +1,12 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import {
     Bell,
+    Heart,
     LayoutGrid,
     LogOut,
-    MapPin,
+    Receipt,
     Settings,
+    ShoppingCart,
     Store,
 } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
@@ -23,6 +25,8 @@ import {
     logout,
     notifications as notificationsRoute,
 } from '@/routes';
+import { index as cartIndex } from '@/routes/cart';
+import { index as ordersIndex } from '@/routes/orders';
 import { edit as profileEdit } from '@/routes/profile';
 import { index as storesIndex } from '@/routes/stores';
 
@@ -85,51 +89,77 @@ export default function ConsumerLayout({ children }: PropsWithChildren) {
                         className="flex items-center gap-2"
                     >
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-sm">
-                            <AppLogoIcon className="size-6 object-contain" />
+                            <AppLogoIcon className="size-8 object-contain" />
                         </div>
                         <span className="text-base font-semibold tracking-tight text-foreground">
                             Sakada PH
                         </span>
                     </Link>
 
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <button
-                                className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90"
-                                aria-label="User menu"
-                            >
-                                {userInitials}
-                            </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                            <DropdownMenuLabel className="font-normal">
-                                <p className="text-sm font-semibold text-foreground">
-                                    {fullName}
-                                </p>
-                                <p className="truncate text-xs text-muted-foreground">
-                                    {user.email}
-                                </p>
-                            </DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem asChild>
-                                <Link
-                                    href={profileEdit().url}
-                                    className="flex items-center gap-2"
+                    <div className="flex items-center gap-2">
+                        <Link
+                            href={cartIndex().url}
+                            className="relative flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                            aria-label="Cart"
+                        >
+                            <ShoppingCart className="size-5" />
+                            {auth.cart_count > 0 && (
+                                <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-white">
+                                    {auth.cart_count > 99
+                                        ? '99+'
+                                        : auth.cart_count}
+                                </span>
+                            )}
+                        </Link>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90"
+                                    aria-label="User menu"
                                 >
-                                    <Settings className="size-4" />
-                                    Settings
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                                className="flex items-center gap-2 text-destructive focus:text-destructive"
-                                onSelect={() => router.post(logout().url)}
-                            >
-                                <LogOut className="size-4" />
-                                Log out
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                                    {userInitials}
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuLabel className="font-normal">
+                                    <p className="text-sm font-semibold text-foreground">
+                                        {fullName}
+                                    </p>
+                                    <p className="truncate text-xs text-muted-foreground">
+                                        {user.email}
+                                    </p>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                    <Link
+                                        href={ordersIndex().url}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <Receipt className="size-4" />
+                                        My orders
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                    <Link
+                                        href={profileEdit().url}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <Settings className="size-4" />
+                                        Settings
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    className="flex items-center gap-2 text-destructive focus:text-destructive"
+                                    onSelect={() => router.post(logout().url)}
+                                >
+                                    <LogOut className="size-4" />
+                                    Log out
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </div>
             </header>
 
@@ -144,9 +174,15 @@ export default function ConsumerLayout({ children }: PropsWithChildren) {
                         active={currentComponent === 'dashboard'}
                     />
                     <NavItem
+                        href={ordersIndex().url}
+                        icon={Receipt}
+                        label="Orders"
+                        active={currentComponent.startsWith('consumer/orders')}
+                    />
+                    <NavItem
                         href={storesIndex().url}
-                        icon={MapPin}
-                        label="Browse"
+                        icon={Store}
+                        label="Stores"
                         active={
                             currentComponent === 'stores/index' ||
                             currentComponent === 'stores/show'
@@ -154,7 +190,7 @@ export default function ConsumerLayout({ children }: PropsWithChildren) {
                     />
                     <NavItem
                         href={following().url}
-                        icon={Store}
+                        icon={Heart}
                         label="Following"
                         active={currentComponent === 'stores/following'}
                     />

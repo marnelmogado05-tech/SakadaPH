@@ -1,5 +1,25 @@
-import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, Bell, BellOff, MapPin, Phone, Truck } from 'lucide-react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import {
+    ArrowLeft,
+    Bell,
+    BellOff,
+    MapPin,
+    Phone,
+    Plus,
+    Truck,
+} from 'lucide-react';
+import { useState } from 'react';
+import { StarRating } from '@/components/star-rating';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { store as cartStore } from '@/routes/cart';
 import {
     follow as storesFollow,
     index as storesIndex,
@@ -26,12 +46,35 @@ type StoreDetail = {
     type: string | null;
     is_followed: boolean;
     can_follow: boolean;
+    rating_avg: number | null;
+    rating_count: number;
+};
+
+type Review = {
+    id: number;
+    rating: number;
+    comment: string | null;
+    reviewer: string;
+    created_at: string | null;
 };
 
 type Props = {
     store: StoreDetail;
     products: Product[];
+    reviews: Review[];
 };
+
+function formatReviewDate(value: string | null): string {
+    if (!value) {
+        return '';
+    }
+
+    return new Date(value).toLocaleDateString('en-PH', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+    });
+}
 
 function formatPrice(price: string): string {
     return (
@@ -105,8 +148,33 @@ function FollowButton({ store }: { store: StoreDetail }) {
     );
 }
 
-export default function StoresShow({ store, products }: Props) {
+export default function StoresShow({ store, products, reviews }: Props) {
     const typeLabel = storeTypeLabel(store.type);
+    const { auth } = usePage().props;
+    const isConsumer = auth.user?.role === 'user';
+
+    const [pendingProductId, setPendingProductId] = useState<number | null>(
+        null,
+    );
+    const [addingId, setAddingId] = useState<number | null>(null);
+
+    function addToCart(productId: number, force = false) {
+        setAddingId(productId);
+        router.post(
+            cartStore().url,
+            { product_id: productId, quantity: 1, force },
+            {
+                preserveScroll: true,
+                onError: (errors) => {
+                    if (errors.store_conflict) {
+                        setPendingProductId(productId);
+                    }
+                },
+                onSuccess: () => setPendingProductId(null),
+                onFinish: () => setAddingId(null),
+            },
+        );
+    }
 
     return (
         <>
@@ -151,6 +219,22 @@ export default function StoresShow({ store, products }: Props) {
 
                         {store.can_follow && <FollowButton store={store} />}
                     </div>
+
+                    {store.rating_count > 0 && store.rating_avg !== null && (
+                        <div className="mb-3 flex items-center gap-2">
+                            <StarRating
+                                value={Math.round(store.rating_avg)}
+                                size={16}
+                            />
+                            <span className="text-sm font-medium text-foreground">
+                                {store.rating_avg.toFixed(1)}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                                ({store.rating_count} review
+                                {store.rating_count === 1 ? '' : 's'})
+                            </span>
+                        </div>
+                    )}
 
                     <div className="space-y-2">
                         <div className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -234,13 +318,98 @@ export default function StoresShow({ store, products }: Props) {
                                                 product.availability,
                                             )}
                                         </div>
+
+                                        {isConsumer && (
+                                            <Button
+                                                type="button"
+                                                size="sm"
+                                                className="mt-4 w-full"
+                                                disabled={
+                                                    addingId === product.id
+                                                }
+                                                onClick={() =>
+                                                    addToCart(product.id)
+                                                }
+                                            >
+                                                <Plus className="size-4" />
+                                                Add to cart
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
+
+                {reviews.length > 0 && (
+                    <div className="mt-10">
+                        <h2 className="mb-4 text-base font-semibold text-foreground">
+                            Customer reviews
+                        </h2>
+                        <div className="space-y-3">
+                            {reviews.map((review) => (
+                                <div
+                                    key={review.id}
+                                    className="rounded-xl border border-border/60 bg-card p-4"
+                                >
+                                    <div className="flex items-center justify-between gap-2">
+                                        <span className="text-sm font-medium text-foreground">
+                                            {review.reviewer}
+                                        </span>
+                                        <span className="text-xs text-muted-foreground">
+                                            {formatReviewDate(
+                                                review.created_at,
+                                            )}
+                                        </span>
+                                    </div>
+                                    <StarRating
+                                        value={review.rating}
+                                        size={14}
+                                        className="mt-1"
+                                    />
+                                    {review.comment && (
+                                        <p className="mt-2 text-sm text-muted-foreground">
+                                            {review.comment}
+                                        </p>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
+
+            <Dialog
+                open={pendingProductId !== null}
+                onOpenChange={(open) => !open && setPendingProductId(null)}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Start a new cart?</DialogTitle>
+                        <DialogDescription>
+                            Your cart has items from another store. Adding this
+                            product will clear your current cart.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button
+                            variant="ghost"
+                            onClick={() => setPendingProductId(null)}
+                        >
+                            Keep current cart
+                        </Button>
+                        <Button
+                            onClick={() =>
+                                pendingProductId !== null &&
+                                addToCart(pendingProductId, true)
+                            }
+                        >
+                            Clear &amp; add
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     );
 }

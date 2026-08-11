@@ -7,6 +7,7 @@ use App\Enums\SellerStatus;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Review;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -41,7 +42,9 @@ class StoreController extends Controller
             ])
             ->withMin('products', 'price')
             ->withMax('products', 'price')
-            ->withMax('products', 'last_updated_at');
+            ->withMax('products', 'last_updated_at')
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating');
 
         $hasDistance = $lat !== null && $lng !== null && DB::getDriverName() === 'mysql';
 
@@ -82,6 +85,8 @@ class StoreController extends Controller
                 'price_min' => $store->products_min_price !== null ? (float) $store->products_min_price : null,
                 'price_max' => $store->products_max_price !== null ? (float) $store->products_max_price : null,
                 'last_updated_at' => $store->products_max_last_updated_at,
+                'rating_avg' => $store->reviews_avg_rating !== null ? round((float) $store->reviews_avg_rating, 1) : null,
+                'rating_count' => $store->reviews_count,
             ]);
 
         return Inertia::render('stores/index', [
@@ -122,6 +127,22 @@ class StoreController extends Controller
                     : null,
             ]);
 
+        $ratingCount = $store->reviews()->count();
+        $ratingAvg = $ratingCount > 0 ? round((float) $store->reviews()->avg('rating'), 1) : null;
+
+        $reviews = $store->reviews()
+            ->with('user:id,first_name,last_name')
+            ->latest()
+            ->limit(20)
+            ->get()
+            ->map(fn (Review $review) => [
+                'id' => $review->id,
+                'rating' => $review->rating,
+                'comment' => $review->comment,
+                'reviewer' => trim($review->user->first_name.' '.mb_substr($review->user->last_name, 0, 1).'.'),
+                'created_at' => $review->created_at?->toIso8601String(),
+            ]);
+
         return Inertia::render('stores/show', [
             'store' => [
                 'id' => $store->id,
@@ -132,8 +153,11 @@ class StoreController extends Controller
                 'type' => $store->type?->value,
                 'is_followed' => $isFollowed,
                 'can_follow' => $isConsumer,
+                'rating_avg' => $ratingAvg,
+                'rating_count' => $ratingCount,
             ],
             'products' => $products,
+            'reviews' => $reviews,
         ]);
     }
 
