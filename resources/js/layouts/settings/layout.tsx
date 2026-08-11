@@ -28,11 +28,18 @@ const sidebarNavItems: NavItem[] = [
     },
 ];
 
-export default function SettingsLayout({ children }: PropsWithChildren) {
+export default function SettingsLayout({
+    children,
+    centered = false,
+}: PropsWithChildren<{ centered?: boolean }>) {
     const { isCurrentOrParentUrl } = useCurrentUrl();
 
     return (
-        <div className="px-4 py-6">
+        <div
+            className={cn('px-4 py-6', {
+                'md:mx-auto md:max-w-2xl': centered,
+            })}
+        >
             <Heading
                 title="Settings"
                 description="Manage your profile and account settings"

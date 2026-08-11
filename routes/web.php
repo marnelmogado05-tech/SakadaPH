@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\SellerController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Consumer\CartController;
 use App\Http\Controllers\Consumer\CheckoutController;
+use App\Http\Controllers\Consumer\DashboardController;
 use App\Http\Controllers\Consumer\FollowingController;
 use App\Http\Controllers\Consumer\OrderController;
 use App\Http\Controllers\Consumer\ReviewController;
@@ -30,7 +31,9 @@ Route::prefix('stores')->name('stores.')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::middleware('role:user')->group(function () {
+        Route::get('dashboard', DashboardController::class)->name('dashboard');
+    });
     Route::post('stores/{store}/follow', [StoreFollowController::class, 'follow'])->name('stores.follow');
     Route::post('stores/{store}/unfollow', [StoreFollowController::class, 'unfollow'])->name('stores.unfollow');
     Route::get('following', [FollowingController::class, 'index'])->name('following');

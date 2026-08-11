@@ -53,6 +53,19 @@ it('allows consumers to access the consumer dashboard', function () {
     $this->actingAs($user)->get('/dashboard')->assertOk();
 });
 
+it('forbids sellers from the consumer dashboard', function () {
+    $seller = User::factory()->seller()->create();
+    Store::factory()->approved()->for($seller)->create();
+
+    $this->actingAs($seller)->get('/dashboard')->assertForbidden();
+});
+
+it('forbids admins from the consumer dashboard', function () {
+    $admin = User::factory()->admin()->create();
+
+    $this->actingAs($admin)->get('/dashboard')->assertForbidden();
+});
+
 it('redirects admin to admin dashboard after login', function () {
     $admin = User::factory()->admin()->create();
 
