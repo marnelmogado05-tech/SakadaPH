@@ -121,3 +121,11 @@ it('reflects the review in the seller order detail', function () {
         ->get(route('seller.orders.show', $order))
         ->assertInertia(fn ($page) => $page->where('order.review.rating', 2));
 });
+
+it('derives user_id and store_id from the order when the factory is used bare', function () {
+    $review = Review::factory()->create();
+
+    $order = Order::find($review->order_id);
+    expect($review->user_id)->toBe($order->user_id)
+        ->and($review->store_id)->toBe($order->store_id);
+});

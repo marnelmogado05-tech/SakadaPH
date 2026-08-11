@@ -15,8 +15,8 @@ class ReviewFactory extends Factory
     {
         return [
             'order_id' => Order::factory()->completed(),
-            'user_id' => fn (array $attributes) => Order::find($attributes['order_id'])->user_id,
-            'store_id' => fn (array $attributes) => Order::find($attributes['order_id'])->store_id,
+            'user_id' => fn (array $attributes) => Order::query()->whereKey($attributes['order_id'])->value('user_id'),
+            'store_id' => fn (array $attributes) => Order::query()->whereKey($attributes['order_id'])->value('store_id'),
             'rating' => fake()->numberBetween(1, 5),
             'comment' => fake()->optional()->sentence(),
         ];
