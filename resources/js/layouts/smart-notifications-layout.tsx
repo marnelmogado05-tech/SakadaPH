@@ -16,7 +16,9 @@ export default function SmartNotificationsLayout({
     const role = auth.user?.role;
 
     if (role === 'seller') {
-        return <SellerLayout breadcrumbs={breadcrumbs}>{children}</SellerLayout>;
+        return (
+            <SellerLayout breadcrumbs={breadcrumbs}>{children}</SellerLayout>
+        );
     }
 
     if (role === 'admin') {

@@ -30,13 +30,17 @@ type Props = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-    pending_payment: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
+    pending_payment:
+        'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
     pending: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
     confirmed: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
     preparing: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    ready_for_pickup: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    out_for_delivery: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    completed: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400',
+    ready_for_pickup:
+        'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
+    out_for_delivery:
+        'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
+    completed:
+        'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400',
     cancelled: 'bg-secondary text-muted-foreground',
     rejected: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400',
 };
@@ -93,7 +97,9 @@ export default function OrdersIndex({ orders }: Props) {
                                         <p className="text-xs text-muted-foreground">
                                             {order.reference} ·{' '}
                                             {order.items_count} item
-                                            {order.items_count === 1 ? '' : 's'}{' '}
+                                            {order.items_count === 1
+                                                ? ''
+                                                : 's'}{' '}
                                             · {formatDate(order.created_at)}
                                         </p>
                                     </div>

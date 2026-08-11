@@ -132,7 +132,9 @@ function GcashCard({ order }: { order: Order }) {
 
             {gcash.number && (
                 <div className="mb-3 rounded-lg border border-border bg-card p-3 text-sm">
-                    <span className="text-muted-foreground">GCash number: </span>
+                    <span className="text-muted-foreground">
+                        GCash number:{' '}
+                    </span>
                     <span className="font-semibold text-foreground">
                         {gcash.number}
                     </span>
@@ -248,10 +250,7 @@ function ReviewCard({ order }: { order: Order }) {
                     {order.review ? 'Update review' : 'Submit review'}
                 </Button>
                 {order.review && (
-                    <Button
-                        variant="ghost"
-                        onClick={() => setEditing(false)}
-                    >
+                    <Button variant="ghost" onClick={() => setEditing(false)}>
                         Cancel
                     </Button>
                 )}

@@ -178,7 +178,9 @@ export default function CheckoutIndex({
                             </h2>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="delivery_address">Address</Label>
+                                <Label htmlFor="delivery_address">
+                                    Address
+                                </Label>
                                 <Textarea
                                     id="delivery_address"
                                     value={data.delivery_address}
@@ -262,7 +264,9 @@ export default function CheckoutIndex({
                             Contact & notes
                         </h2>
                         <div className="grid gap-2">
-                            <Label htmlFor="contact_number">Contact number</Label>
+                            <Label htmlFor="contact_number">
+                                Contact number
+                            </Label>
                             <Input
                                 id="contact_number"
                                 value={data.contact_number}
@@ -284,7 +288,9 @@ export default function CheckoutIndex({
                             <Textarea
                                 id="notes"
                                 value={data.notes}
-                                onChange={(e) => setData('notes', e.target.value)}
+                                onChange={(e) =>
+                                    setData('notes', e.target.value)
+                                }
                                 placeholder="Any instructions for the seller…"
                                 className="min-h-16"
                             />

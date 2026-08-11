@@ -1,7 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
 import { Receipt } from 'lucide-react';
 import Heading from '@/components/heading';
-import { index as ordersIndex, show as orderShow } from '@/routes/seller/orders';
+import {
+    index as ordersIndex,
+    show as orderShow,
+} from '@/routes/seller/orders';
 
 type PaginationLink = {
     url: string | null;
@@ -38,13 +41,17 @@ type Props = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-    pending_payment: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
+    pending_payment:
+        'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
     pending: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
     confirmed: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
     preparing: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    ready_for_pickup: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    out_for_delivery: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    completed: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400',
+    ready_for_pickup:
+        'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
+    out_for_delivery:
+        'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
+    completed:
+        'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400',
     cancelled: 'bg-secondary text-muted-foreground',
     rejected: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400',
 };
@@ -79,11 +86,7 @@ function FilterTab({
 }) {
     return (
         <Link
-            href={
-                status
-                    ? ordersIndex({ query: { status } })
-                    : ordersIndex()
-            }
+            href={status ? ordersIndex({ query: { status } }) : ordersIndex()}
             className={[
                 'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
                 active
@@ -174,8 +177,9 @@ export default function SellerOrdersIndex({
                                     <p className="truncate text-xs text-muted-foreground">
                                         {order.customer_name} ·{' '}
                                         {order.items_count} item
-                                        {order.items_count === 1 ? '' : 's'} ·{' '}
-                                        {order.fulfillment_type} ·{' '}
+                                        {order.items_count === 1
+                                            ? ''
+                                            : 's'} · {order.fulfillment_type} ·{' '}
                                         {formatDate(order.created_at)}
                                     </p>
                                 </div>

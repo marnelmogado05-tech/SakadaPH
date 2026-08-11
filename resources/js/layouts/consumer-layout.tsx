@@ -105,58 +105,60 @@ export default function ConsumerLayout({ children }: PropsWithChildren) {
                             <ShoppingCart className="size-5" />
                             {auth.cart_count > 0 && (
                                 <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-white">
-                                    {auth.cart_count > 99 ? '99+' : auth.cart_count}
+                                    {auth.cart_count > 99
+                                        ? '99+'
+                                        : auth.cart_count}
                                 </span>
                             )}
                         </Link>
 
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <button
-                                className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90"
-                                aria-label="User menu"
-                            >
-                                {userInitials}
-                            </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                            <DropdownMenuLabel className="font-normal">
-                                <p className="text-sm font-semibold text-foreground">
-                                    {fullName}
-                                </p>
-                                <p className="truncate text-xs text-muted-foreground">
-                                    {user.email}
-                                </p>
-                            </DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem asChild>
-                                <Link
-                                    href={ordersIndex().url}
-                                    className="flex items-center gap-2"
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90"
+                                    aria-label="User menu"
                                 >
-                                    <Receipt className="size-4" />
-                                    My orders
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                                <Link
-                                    href={profileEdit().url}
-                                    className="flex items-center gap-2"
+                                    {userInitials}
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuLabel className="font-normal">
+                                    <p className="text-sm font-semibold text-foreground">
+                                        {fullName}
+                                    </p>
+                                    <p className="truncate text-xs text-muted-foreground">
+                                        {user.email}
+                                    </p>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem asChild>
+                                    <Link
+                                        href={ordersIndex().url}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <Receipt className="size-4" />
+                                        My orders
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                    <Link
+                                        href={profileEdit().url}
+                                        className="flex items-center gap-2"
+                                    >
+                                        <Settings className="size-4" />
+                                        Settings
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    className="flex items-center gap-2 text-destructive focus:text-destructive"
+                                    onSelect={() => router.post(logout().url)}
                                 >
-                                    <Settings className="size-4" />
-                                    Settings
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                                className="flex items-center gap-2 text-destructive focus:text-destructive"
-                                onSelect={() => router.post(logout().url)}
-                            >
-                                <LogOut className="size-4" />
-                                Log out
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                                    <LogOut className="size-4" />
+                                    Log out
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
             </header>

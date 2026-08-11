@@ -2,7 +2,10 @@ import { Head, Link, router } from '@inertiajs/react';
 import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { clear as cartClear } from '@/routes/cart';
-import { destroy as cartItemDestroy, update as cartItemUpdate } from '@/routes/cart/items';
+import {
+    destroy as cartItemDestroy,
+    update as cartItemUpdate,
+} from '@/routes/cart/items';
 import { show as checkoutShow } from '@/routes/checkout';
 import { index as storesIndex } from '@/routes/stores';
 
@@ -108,11 +111,14 @@ export default function CartIndex({ store, items, subtotal }: Props) {
                                             {item.name}
                                         </p>
                                         <p className="text-xs text-muted-foreground">
-                                            {formatPrice(item.price)} / {item.unit}
+                                            {formatPrice(item.price)} /{' '}
+                                            {item.unit}
                                         </p>
-                                        {item.availability === 'out_of_stock' && (
+                                        {item.availability ===
+                                            'out_of_stock' && (
                                             <p className="mt-1 text-xs font-medium text-destructive">
-                                                Out of stock — remove to checkout
+                                                Out of stock — remove to
+                                                checkout
                                             </p>
                                         )}
 
@@ -177,16 +183,18 @@ export default function CartIndex({ store, items, subtotal }: Props) {
                                 </span>
                             </div>
 
-                            {belowMinimum && store?.min_order_amount != null && (
-                                <p className="mt-2 text-xs text-amber-600 dark:text-amber-500">
-                                    Minimum order is{' '}
-                                    {formatPrice(store.min_order_amount)}. Add{' '}
-                                    {formatPrice(
-                                        store.min_order_amount - subtotal,
-                                    )}{' '}
-                                    more to checkout.
-                                </p>
-                            )}
+                            {belowMinimum &&
+                                store?.min_order_amount != null && (
+                                    <p className="mt-2 text-xs text-amber-600 dark:text-amber-500">
+                                        Minimum order is{' '}
+                                        {formatPrice(store.min_order_amount)}.
+                                        Add{' '}
+                                        {formatPrice(
+                                            store.min_order_amount - subtotal,
+                                        )}{' '}
+                                        more to checkout.
+                                    </p>
+                                )}
 
                             <Button
                                 asChild={canCheckout}

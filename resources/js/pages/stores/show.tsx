@@ -222,7 +222,10 @@ export default function StoresShow({ store, products, reviews }: Props) {
 
                     {store.rating_count > 0 && store.rating_avg !== null && (
                         <div className="mb-3 flex items-center gap-2">
-                            <StarRating value={Math.round(store.rating_avg)} size={16} />
+                            <StarRating
+                                value={Math.round(store.rating_avg)}
+                                size={16}
+                            />
                             <span className="text-sm font-medium text-foreground">
                                 {store.rating_avg.toFixed(1)}
                             </span>
@@ -321,7 +324,9 @@ export default function StoresShow({ store, products, reviews }: Props) {
                                                 type="button"
                                                 size="sm"
                                                 className="mt-4 w-full"
-                                                disabled={addingId === product.id}
+                                                disabled={
+                                                    addingId === product.id
+                                                }
                                                 onClick={() =>
                                                     addToCart(product.id)
                                                 }
@@ -353,7 +358,9 @@ export default function StoresShow({ store, products, reviews }: Props) {
                                             {review.reviewer}
                                         </span>
                                         <span className="text-xs text-muted-foreground">
-                                            {formatReviewDate(review.created_at)}
+                                            {formatReviewDate(
+                                                review.created_at,
+                                            )}
                                         </span>
                                     </div>
                                     <StarRating

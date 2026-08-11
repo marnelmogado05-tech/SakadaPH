@@ -38,41 +38,41 @@ type StoreProps = {
 export default function Store({ store, storeTypes }: StoreProps) {
     const { data, setData, patch, post, transform, processing, errors } =
         useForm<{
-        name: string;
-        description: string;
-        address: string;
-        contact_number: string;
-        type: string;
-        latitude: string;
-        longitude: string;
-        service_radius_km: string;
-        delivery_fee: string;
-        min_order_amount: string;
-        accepts_online_payment: boolean;
-        gcash_number: string;
-        gcash_qr: File | null;
-    }>({
-        name: store.name,
-        description: store.description ?? '',
-        address: store.address,
-        contact_number: store.contact_number ?? '',
-        type: store.type,
-        latitude: store.latitude !== null ? String(store.latitude) : '',
-        longitude: store.longitude !== null ? String(store.longitude) : '',
-        service_radius_km:
-            store.service_radius_km !== null
-                ? String(store.service_radius_km)
-                : '',
-        delivery_fee:
-            store.delivery_fee !== null ? String(store.delivery_fee) : '',
-        min_order_amount:
-            store.min_order_amount !== null
-                ? String(store.min_order_amount)
-                : '',
-        accepts_online_payment: store.accepts_online_payment,
-        gcash_number: store.gcash_number ?? '',
-        gcash_qr: null,
-    });
+            name: string;
+            description: string;
+            address: string;
+            contact_number: string;
+            type: string;
+            latitude: string;
+            longitude: string;
+            service_radius_km: string;
+            delivery_fee: string;
+            min_order_amount: string;
+            accepts_online_payment: boolean;
+            gcash_number: string;
+            gcash_qr: File | null;
+        }>({
+            name: store.name,
+            description: store.description ?? '',
+            address: store.address,
+            contact_number: store.contact_number ?? '',
+            type: store.type,
+            latitude: store.latitude !== null ? String(store.latitude) : '',
+            longitude: store.longitude !== null ? String(store.longitude) : '',
+            service_radius_km:
+                store.service_radius_km !== null
+                    ? String(store.service_radius_km)
+                    : '',
+            delivery_fee:
+                store.delivery_fee !== null ? String(store.delivery_fee) : '',
+            min_order_amount:
+                store.min_order_amount !== null
+                    ? String(store.min_order_amount)
+                    : '',
+            accepts_online_payment: store.accepts_online_payment,
+            gcash_number: store.gcash_number ?? '',
+            gcash_qr: null,
+        });
 
     const qrInputRef = useRef<HTMLInputElement>(null);
     const [qrPreview, setQrPreview] = useState<string | null>(null);
@@ -334,8 +334,8 @@ export default function Store({ store, storeTypes }: StoreProps) {
                                 </div>
                             </div>
                             <p className="mt-2 text-xs text-muted-foreground">
-                                Delivery fee is charged per delivery order. Leave
-                                blank for free delivery / no minimum.
+                                Delivery fee is charged per delivery order.
+                                Leave blank for free delivery / no minimum.
                             </p>
 
                             <label className="mt-4 flex items-start gap-3">
@@ -353,9 +353,9 @@ export default function Store({ store, storeTypes }: StoreProps) {
                                         Accept GCash payment
                                     </span>
                                     <span className="block text-xs text-muted-foreground">
-                                        Customers pay your GCash number and enter
-                                        their reference; you confirm receipt.
-                                        Cash is always available.
+                                        Customers pay your GCash number and
+                                        enter their reference; you confirm
+                                        receipt. Cash is always available.
                                     </span>
                                 </span>
                             </label>
