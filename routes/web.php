@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\SellerController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Consumer\CartController;
 use App\Http\Controllers\Consumer\CheckoutController;
 use App\Http\Controllers\Consumer\DashboardController;
@@ -59,6 +60,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware('guest')->group(function () {
     Route::get('register/seller', [SellerRegistrationController::class, 'create'])->name('seller.register');
     Route::post('register/seller', [SellerRegistrationController::class, 'store'])->name('seller.register.store');
+
+    Route::middleware('throttle:social-login')->group(function () {
+        Route::get('auth/{provider}/redirect', [SocialiteController::class, 'redirect'])
+            ->where('provider', 'google')
+            ->name('auth.redirect');
+        Route::get('auth/{provider}/callback', [SocialiteController::class, 'callback'])
+            ->where('provider', 'google')
+            ->name('auth.callback');
+    });
 });
 
 Route::middleware(['auth', 'verified', 'role:seller'])->prefix('seller')->name('seller.')->group(function () {

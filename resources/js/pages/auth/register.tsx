@@ -1,5 +1,6 @@
 import { Form, Head } from '@inertiajs/react';
 import { useState } from 'react';
+import GoogleIcon from '@/components/google-icon';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -13,8 +14,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
+import { redirect as socialiteRedirect } from '@/routes/auth';
 import { store } from '@/routes/register';
 
 type Props = {
@@ -213,6 +216,21 @@ export default function Register({ passwordRules }: Props) {
                     </>
                 )}
             </Form>
+
+            <div className="flex items-center gap-3 py-2">
+                <Separator className="flex-1" />
+                <span className="text-xs text-muted-foreground">
+                    Or continue with
+                </span>
+                <Separator className="flex-1" />
+            </div>
+
+            <Button variant="outline" className="w-full" asChild>
+                <a href={socialiteRedirect.url('google')}>
+                    <GoogleIcon className="size-4" />
+                    Continue with Google
+                </a>
+            </Button>
         </>
     );
 }

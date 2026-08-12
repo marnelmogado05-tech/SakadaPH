@@ -13,6 +13,7 @@
         "infer-conventions",
         "fortify-development",
         "laravel-best-practices",
+        "socialite-development",
         "wayfinder-development",
         "pest-testing",
         "inertia-react-development",

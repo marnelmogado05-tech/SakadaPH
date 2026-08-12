@@ -98,5 +98,9 @@ class FortifyServiceProvider extends ServiceProvider
                 ($request->input('credential.id') ?: $request->session()->getId()).'|'.$request->ip(),
             );
         });
+
+        RateLimiter::for('social-login', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
     }
 }

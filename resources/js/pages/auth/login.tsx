@@ -1,4 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
+import GoogleIcon from '@/components/google-icon';
 import InputError from '@/components/input-error';
 import PasskeyVerify from '@/components/passkey-verify';
 import PasswordInput from '@/components/password-input';
@@ -7,8 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { register } from '@/routes';
+import { redirect as socialiteRedirect } from '@/routes/auth';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 
@@ -102,6 +105,21 @@ export default function Login({ status, canResetPassword }: Props) {
                     </>
                 )}
             </Form>
+
+            <div className="flex items-center gap-3 py-2">
+                <Separator className="flex-1" />
+                <span className="text-xs text-muted-foreground">
+                    Or continue with
+                </span>
+                <Separator className="flex-1" />
+            </div>
+
+            <Button variant="outline" className="w-full" asChild>
+                <a href={socialiteRedirect.url('google')}>
+                    <GoogleIcon className="size-4" />
+                    Continue with Google
+                </a>
+            </Button>
 
             {status && (
                 <div className="mb-4 text-center text-sm font-medium text-green-600">
