@@ -25,8 +25,8 @@ export default function Terms() {
                         </h2>
                         <p>
                             By creating an account or using Sakada PH ("the
-                            Platform"), you agree to these Terms of Service.
-                            If you do not agree, do not use the Platform.
+                            Platform"), you agree to these Terms of Service. If
+                            you do not agree, do not use the Platform.
                         </p>
                     </section>
 
@@ -35,12 +35,12 @@ export default function Terms() {
                             2. What Sakada PH is
                         </h2>
                         <p>
-                            Sakada PH is a marketplace that connects buyers
-                            with independent water suppliers ("Sellers").
-                            Sakada PH does not itself sell, deliver, or
-                            guarantee the quality of water products. Each
-                            Seller is responsible for their own products,
-                            pricing, stock accuracy, and fulfillment.
+                            Sakada PH is a marketplace that connects buyers with
+                            independent water suppliers ("Sellers"). Sakada PH
+                            does not itself sell, deliver, or guarantee the
+                            quality of water products. Each Seller is
+                            responsible for their own products, pricing, stock
+                            accuracy, and fulfillment.
                         </p>
                     </section>
 
@@ -51,8 +51,8 @@ export default function Terms() {
                         <p>
                             You must provide accurate information when
                             registering and are responsible for keeping your
-                            account credentials secure. You are responsible
-                            for all activity under your account.
+                            account credentials secure. You are responsible for
+                            all activity under your account.
                         </p>
                     </section>
 
@@ -61,14 +61,14 @@ export default function Terms() {
                             4. Orders and payment
                         </h2>
                         <p>
-                            Orders are placed directly with a Seller through
-                            the Platform. Supported payment methods include
-                            GCash and cash on delivery/pickup, depending on
-                            what the Seller accepts. For GCash payments, you
-                            are responsible for submitting an accurate
-                            reference number; Sakada PH is not a party to the
-                            payment transaction itself and does not process
-                            or hold funds.
+                            Orders are placed directly with a Seller through the
+                            Platform. Supported payment methods include GCash
+                            and cash on delivery/pickup, depending on what the
+                            Seller accepts. For GCash payments, you are
+                            responsible for submitting an accurate reference
+                            number; Sakada PH is not a party to the payment
+                            transaction itself and does not process or hold
+                            funds.
                         </p>
                     </section>
 
@@ -91,9 +91,9 @@ export default function Terms() {
                         </h2>
                         <p>
                             You may not use the Platform to submit false
-                            information, misrepresent stock or pricing,
-                            harass other users, or attempt to circumvent
-                            Platform safeguards.
+                            information, misrepresent stock or pricing, harass
+                            other users, or attempt to circumvent Platform
+                            safeguards.
                         </p>
                     </section>
 
@@ -103,10 +103,9 @@ export default function Terms() {
                         </h2>
                         <p>
                             Sakada PH provides the Platform "as is" and is not
-                            liable for disputes, losses, or damages arising
-                            from transactions between buyers and Sellers,
-                            including product quality, delivery delays, or
-                            payment issues.
+                            liable for disputes, losses, or damages arising from
+                            transactions between buyers and Sellers, including
+                            product quality, delivery delays, or payment issues.
                         </p>
                     </section>
 
@@ -126,9 +125,8 @@ export default function Terms() {
                             9. Changes to these terms
                         </h2>
                         <p>
-                            We may update these Terms from time to time. We
-                            will update the "Last updated" date above when we
-                            do.
+                            We may update these Terms from time to time. We will
+                            update the "Last updated" date above when we do.
                         </p>
                     </section>
 
@@ -137,8 +135,8 @@ export default function Terms() {
                             10. Governing law
                         </h2>
                         <p>
-                            These Terms are governed by the laws of the
-                            Republic of the Philippines.
+                            These Terms are governed by the laws of the Republic
+                            of the Philippines.
                         </p>
                     </section>
 

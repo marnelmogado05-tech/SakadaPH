@@ -35,9 +35,9 @@ export default function Welcome() {
                     </h1>
 
                     <p className="mb-8 text-base leading-relaxed text-muted-foreground sm:text-lg">
-                        Sakada connects you with trusted local water
-                        suppliers. No more wasted trips — see who has stock
-                        available right now.
+                        Sakada connects you with trusted local water suppliers.
+                        No more wasted trips — see who has stock available right
+                        now.
                     </p>
 
                     <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">

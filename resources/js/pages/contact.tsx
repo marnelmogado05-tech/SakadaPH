@@ -16,8 +16,8 @@ export default function Contact() {
                     Contact us
                 </h1>
                 <p className="mb-12 text-base leading-relaxed text-muted-foreground">
-                    Questions, feedback, or issues with an order? Reach out
-                    and we'll get back to you.
+                    Questions, feedback, or issues with an order? Reach out and
+                    we'll get back to you.
                 </p>
 
                 <div className="space-y-6">

@@ -28,8 +28,7 @@ const orderingSteps = [
 const sellingSteps = [
     {
         title: 'Register your business',
-        description:
-            'Sign up as a seller and provide your store details.',
+        description: 'Sign up as a seller and provide your store details.',
     },
     {
         title: 'Get approved',
@@ -89,8 +88,8 @@ export default function HowToUse() {
                     How to use Sakada PH
                 </h1>
                 <p className="mb-12 text-base leading-relaxed text-muted-foreground">
-                    Whether you're looking to order water or sell it, here's
-                    how to get started.
+                    Whether you're looking to order water or sell it, here's how
+                    to get started.
                 </p>
 
                 <div className="space-y-14">

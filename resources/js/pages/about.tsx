@@ -17,8 +17,8 @@ export default function About() {
                     About Sakada PH
                 </h1>
                 <p className="mb-12 text-base leading-relaxed text-muted-foreground">
-                    Sakada PH is a marketplace that connects Filipino
-                    households with trusted local water suppliers.
+                    Sakada PH is a marketplace that connects Filipino households
+                    with trusted local water suppliers.
                 </p>
 
                 <div className="space-y-10">
@@ -28,11 +28,10 @@ export default function About() {
                         </h2>
                         <p className="leading-relaxed text-muted-foreground">
                             Finding a water refilling station or supplier with
-                            stock on hand often means calling around or making
-                            a wasted trip. Sakada PH shows you which
-                            suppliers near you actually have stock right now,
-                            so you can order with confidence instead of
-                            guessing.
+                            stock on hand often means calling around or making a
+                            wasted trip. Sakada PH shows you which suppliers
+                            near you actually have stock right now, so you can
+                            order with confidence instead of guessing.
                         </p>
                     </section>
 
@@ -42,8 +41,8 @@ export default function About() {
                         </h2>
                         <p className="leading-relaxed text-muted-foreground">
                             Browse nearby water suppliers on a map, compare
-                            prices and live availability, and place an order
-                            for delivery or pickup. Suppliers manage their own
+                            prices and live availability, and place an order for
+                            delivery or pickup. Suppliers manage their own
                             store, products, and orders directly on the
                             platform.
                         </p>
@@ -55,10 +54,9 @@ export default function About() {
                         </h2>
                         <p className="leading-relaxed text-muted-foreground">
                             If you run a water refilling station or delivery
-                            business, listing on Sakada PH puts you in front
-                            of customers actively searching for water near
-                            them — no separate app or ordering system to
-                            maintain.
+                            business, listing on Sakada PH puts you in front of
+                            customers actively searching for water near them —
+                            no separate app or ordering system to maintain.
                         </p>
                     </section>
                 </div>
