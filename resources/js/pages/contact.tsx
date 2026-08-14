@@ -30,7 +30,7 @@ export default function Contact() {
                                 Email
                             </p>
                             <a
-                                href="mailto:support@sakada.ph"
+                                href="mailto:marnelmogado05@gmail.com"
                                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                             >
                                 support@sakada.ph
