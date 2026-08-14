@@ -24,6 +24,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
 Route::inertia('banned', 'banned')->name('banned');
+Route::inertia('about', 'about')->name('about');
+Route::inertia('contact', 'contact')->name('contact');
+Route::inertia('how-to-use', 'how-to-use')->name('how-to-use');
+Route::inertia('terms', 'terms')->name('terms');
+Route::inertia('privacy', 'privacy')->name('privacy');
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
 
 Route::prefix('stores')->name('stores.')->group(function () {

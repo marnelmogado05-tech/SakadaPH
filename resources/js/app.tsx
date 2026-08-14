@@ -6,6 +6,7 @@ import AdminLayout from '@/layouts/admin-layout';
 import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
 import ConsumerLayout from '@/layouts/consumer-layout';
+import PublicLayout from '@/layouts/public-layout';
 import SellerLayout from '@/layouts/seller-layout';
 import SmartNotificationsLayout from '@/layouts/smart-notifications-layout';
 import SmartSettingsLayout from '@/layouts/smart-settings-layout';
@@ -17,11 +18,17 @@ createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
-            case name === 'welcome':
             case name === 'banned':
             case name === 'seller/pending':
             case name === 'seller/suspended':
                 return null;
+            case name === 'welcome':
+            case name === 'about':
+            case name === 'contact':
+            case name === 'how-to-use':
+            case name === 'terms':
+            case name === 'privacy':
+                return PublicLayout;
             case name === 'notifications':
                 return SmartNotificationsLayout;
             case name === 'dashboard':

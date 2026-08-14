@@ -3,10 +3,15 @@ import { Bell } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
 import AppLogoIcon from '@/components/app-logo-icon';
 import {
+    about,
+    contact,
     dashboard,
+    howToUse,
     login,
     notifications as notificationsRoute,
+    privacy,
     register,
+    terms,
 } from '@/routes';
 
 export default function PublicLayout({ children }: PropsWithChildren) {
@@ -71,10 +76,42 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                 </div>
             </header>
 
-            <main className="flex-1">{children}</main>
+            <main className="flex flex-1 flex-col">{children}</main>
 
             <footer className="border-t border-border/60">
-                <div className="mx-auto max-w-5xl px-6 py-5">
+                <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 px-6 py-6">
+                    <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+                        <Link
+                            href={about()}
+                            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                            About
+                        </Link>
+                        <Link
+                            href={contact()}
+                            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                            Contact
+                        </Link>
+                        <Link
+                            href={howToUse()}
+                            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                            How to Use
+                        </Link>
+                        <Link
+                            href={terms()}
+                            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                            Terms of Service
+                        </Link>
+                        <Link
+                            href={privacy()}
+                            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                            Privacy Policy
+                        </Link>
+                    </nav>
                     <p className="text-center text-sm text-muted-foreground">
                         &copy; 2026 Sakada PH. All rights reserved.
                     </p>
