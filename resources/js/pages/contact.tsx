@@ -33,7 +33,7 @@ export default function Contact() {
                                 href="mailto:marnelmogado05@gmail.com"
                                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                             >
-                                support@sakada.ph
+                                marnelmogado05@gmail.com
                             </a>
                         </div>
                     </div>
