@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
 import AppLogoIcon from '@/components/app-logo-icon';
+import { AppearanceToggle } from '@/components/appearance-toggle';
 import {
     about,
     contact,
@@ -20,17 +21,21 @@ export default function PublicLayout({ children }: PropsWithChildren) {
     return (
         <div className="flex min-h-screen flex-col bg-background">
             <header className="border-b border-border/60">
-                <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-                    <Link href="/" className="flex items-center gap-2.5">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-sm">
+                <div className="mx-auto flex max-w-5xl items-center justify-between px-3 py-3 sm:px-6 sm:py-4">
+                    <Link
+                        href="/"
+                        className="flex items-center gap-2 sm:gap-2.5"
+                    >
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary shadow-sm">
                             <AppLogoIcon className="size-8 object-contain" />
                         </div>
-                        <span className="text-base font-semibold tracking-tight text-foreground">
+                        <span className="text-base font-semibold tracking-tight whitespace-nowrap text-foreground">
                             Sakada PH
                         </span>
                     </Link>
 
-                    <nav className="flex items-center gap-3">
+                    <nav className="flex items-center gap-1.5 sm:gap-3">
+                        <AppearanceToggle />
                         {auth.user ? (
                             <>
                                 {auth.user.role === 'user' && (
@@ -51,7 +56,7 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                                 )}
                                 <Link
                                     href={dashboard()}
-                                    className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90"
+                                    className="rounded-lg bg-primary px-3 py-2 text-sm font-medium whitespace-nowrap text-white shadow-sm transition-opacity hover:opacity-90 sm:px-4"
                                 >
                                     Dashboard
                                 </Link>
@@ -60,13 +65,13 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                             <>
                                 <Link
                                     href={login()}
-                                    className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                    className="text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
                                 >
                                     Log in
                                 </Link>
                                 <Link
                                     href={register()}
-                                    className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90"
+                                    className="rounded-lg bg-primary px-3 py-2 text-sm font-medium whitespace-nowrap text-white shadow-sm transition-opacity hover:opacity-90 sm:px-4"
                                 >
                                     Get started
                                 </Link>
