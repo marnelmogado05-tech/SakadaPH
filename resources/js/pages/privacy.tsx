@@ -152,10 +152,10 @@ export default function Privacy() {
                             For questions or requests regarding your personal
                             data, contact us at{' '}
                             <a
-                                href="mailto:support@sakada.ph"
+                                href="mailto:marnelmogado05@gmail.com"
                                 className="text-foreground underline underline-offset-2"
                             >
-                                support@sakada.ph
+                                marnelmogado05@gmail.com
                             </a>
                             .
                         </p>
