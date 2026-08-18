@@ -14,6 +14,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { login } from '@/routes';
 import { store } from '@/routes/seller/register';
 
@@ -25,6 +26,7 @@ export default function RegisterSeller({ passwordRules }: Props) {
     const [extensionName, setExtensionName] = useState('');
     const [contactNumber, setContactNumber] = useState('');
     const [storeContactNumber, setStoreContactNumber] = useState('');
+    const isMobile = useIsMobile();
 
     return (
         <>
@@ -52,7 +54,7 @@ export default function RegisterSeller({ passwordRules }: Props) {
                                     name="first_name"
                                     type="text"
                                     required
-                                    autoFocus
+                                    autoFocus={!isMobile}
                                     autoComplete="given-name"
                                     placeholder="e.g. Juan"
                                 />

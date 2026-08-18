@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { login } from '@/routes';
 import { redirect as socialiteRedirect } from '@/routes/auth';
 import { store } from '@/routes/register';
@@ -27,6 +28,7 @@ type Props = {
 export default function Register({ passwordRules }: Props) {
     const [extensionName, setExtensionName] = useState('');
     const [contactNumber, setContactNumber] = useState('');
+    const isMobile = useIsMobile();
 
     return (
         <>
@@ -47,7 +49,7 @@ export default function Register({ passwordRules }: Props) {
                                     id="first_name"
                                     type="text"
                                     required
-                                    autoFocus
+                                    autoFocus={!isMobile}
                                     tabIndex={1}
                                     autoComplete="first_name"
                                     name="first_name"
@@ -64,7 +66,6 @@ export default function Register({ passwordRules }: Props) {
                                 <Input
                                     id="middle_name"
                                     type="text"
-                                    autoFocus
                                     tabIndex={1}
                                     autoComplete="middle_name"
                                     name="middle_name"
@@ -82,7 +83,6 @@ export default function Register({ passwordRules }: Props) {
                                     id="last_name"
                                     type="text"
                                     required
-                                    autoFocus
                                     tabIndex={1}
                                     autoComplete="last_name"
                                     name="last_name"
