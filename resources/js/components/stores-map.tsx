@@ -9,10 +9,9 @@ import {
     TileLayer,
     useMap,
 } from 'react-leaflet';
+import StockLevel from '@/components/stock-level';
+import type { StockState } from '@/components/stock-level';
 import { show as storesShow } from '@/routes/stores';
-
-type StoreAvailability =
-    'in_stock' | 'low_stock' | 'out_of_stock' | 'no_products';
 
 export type MapStore = {
     id: number;
@@ -20,7 +19,7 @@ export type MapStore = {
     address: string;
     type: string | null;
     distance_km: number | null;
-    store_availability: StoreAvailability;
+    store_availability: StockState;
     latitude: number | null;
     longitude: number | null;
 };
@@ -33,11 +32,16 @@ type Props = {
     hoveredStoreId: number | null;
 };
 
-const AVAILABILITY_COLORS: Record<StoreAvailability, string> = {
-    in_stock: '#16a34a',
-    low_stock: '#d97706',
-    out_of_stock: '#dc2626',
-    no_products: '#9ca3af',
+/**
+ * Leaflet builds markers from raw HTML strings, so they can't take Tailwind
+ * classes — but CSS custom properties still inherit into those nodes, which
+ * keeps the markers on the same tokens as the list and theme-reactive for free.
+ */
+const AVAILABILITY_COLORS: Record<StockState, string> = {
+    in_stock: 'var(--stock-full)',
+    low_stock: 'var(--stock-low)',
+    out_of_stock: 'var(--stock-empty)',
+    no_products: 'var(--stock-none)',
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -50,7 +54,7 @@ const TYPE_LABELS: Record<string, string> = {
 const PH_CENTER: [number, number] = [12.8797, 121.774];
 
 function makeStoreIcon(
-    availability: StoreAvailability,
+    availability: StockState,
     highlighted: boolean,
 ): L.DivIcon {
     const color = AVAILABILITY_COLORS[availability];
@@ -62,7 +66,7 @@ function makeStoreIcon(
 
     return L.divIcon({
         className: '',
-        html: `<div style="width:${s}px;height:${s}px;background:${color};border-radius:50%;border:${border}px solid white;box-shadow:${shadow}"></div>`,
+        html: `<div style="width:${s}px;height:${s}px;background:${color};border-radius:50%;border:${border}px solid var(--card);box-shadow:${shadow}"></div>`,
         iconSize: [s, s],
         iconAnchor: [s / 2, s / 2],
         popupAnchor: [0, -(s / 2 + 4)],
@@ -72,7 +76,7 @@ function makeStoreIcon(
 function makeUserIcon(): L.DivIcon {
     return L.divIcon({
         className: '',
-        html: `<div style="width:14px;height:14px;background:#2563eb;border-radius:50%;border:3px solid white;box-shadow:0 2px 6px rgba(37,99,235,0.6)"></div>`,
+        html: `<div style="width:14px;height:14px;background:var(--primary);border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 4px color-mix(in oklab, var(--primary) 30%, transparent)"></div>`,
         iconSize: [14, 14],
         iconAnchor: [7, 7],
     });
@@ -138,8 +142,10 @@ export default function StoresMap({
                             center={[userLat!, userLng!]}
                             radius={maxDistanceKm * 1000}
                             pathOptions={{
-                                color: '#2563eb',
-                                fillColor: '#2563eb',
+                                // Leaflet writes stroke/fill as SVG presentation
+                                // attributes, which don't accept var() — so the
+                                // colour comes from a CSS rule on this class.
+                                className: 'stores-map-radius',
                                 fillOpacity: 0.06,
                                 weight: 1.5,
                                 dashArray: '4 4',
@@ -179,7 +185,7 @@ export default function StoresMap({
                                     <p
                                         style={{
                                             fontSize: '11px',
-                                            color: '#6b7280',
+                                            color: 'var(--muted-foreground)',
                                             marginBottom: '2px',
                                         }}
                                     >
@@ -190,19 +196,29 @@ export default function StoresMap({
                                     <p
                                         style={{
                                             fontSize: '11px',
-                                            color: '#6b7280',
+                                            color: 'var(--muted-foreground)',
                                             marginBottom: '6px',
                                         }}
                                     >
-                                        {store.distance_km} km away
+                                        <span className="font-display font-semibold tabular-nums">
+                                            {store.distance_km} km
+                                        </span>{' '}
+                                        away
                                     </p>
                                 )}
+
+                                <div style={{ marginBottom: '8px' }}>
+                                    <StockLevel
+                                        state={store.store_availability}
+                                        size="sm"
+                                    />
+                                </div>
                                 <a
                                     href={storesShow.url(store.id)}
                                     style={{
                                         fontSize: '12px',
                                         fontWeight: 500,
-                                        color: '#2563eb',
+                                        color: 'var(--primary)',
                                         textDecoration: 'none',
                                     }}
                                 >

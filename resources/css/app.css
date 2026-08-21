@@ -2,8 +2,6 @@
 
 @import 'tw-animate-css';
 
-@import 'leaflet/dist/leaflet.css';
-
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
@@ -11,9 +9,14 @@
 
 @theme {
     --font-sans:
-        -apple-system, BlinkMacSystemFont, 'Inter', ui-sans-serif, system-ui,
-        sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+
+    /* Condensed grotesque for prices, distances and headings — the numerals
+       are the content in this product, so they get the characterful face. */
+    --font-display:
+        'Archivo Narrow', 'Arial Narrow', ui-sans-serif, system-ui, sans-serif;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -53,6 +56,17 @@
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
 
+    /* Stock availability — the product's one semantic axis. Mirrors the
+       ProductAvailability enum plus a "no products listed" case. */
+    --color-stock-full: var(--stock-full);
+    --color-stock-full-wash: var(--stock-full-wash);
+    --color-stock-low: var(--stock-low);
+    --color-stock-low-wash: var(--stock-low-wash);
+    --color-stock-empty: var(--stock-empty);
+    --color-stock-empty-wash: var(--stock-empty-wash);
+    --color-stock-none: var(--stock-none);
+    --color-stock-none-wash: var(--stock-none-wash);
+
     --color-sidebar: var(--sidebar);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar-primary: var(--sidebar-primary);
@@ -63,75 +77,97 @@
     --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/*
+ * Sakada palette — drawn from the blue polycarbonate five-gallon jug the trade
+ * runs on. Primary is water seen through that plastic at depth; neutrals carry
+ * a cool mineral bias so they hold up on a phone screen in direct sunlight.
+ * Hex equivalents are noted per line for reference.
+ */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.546 0.245 264);
-    --primary-foreground: oklch(1 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.546 0.245 264);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.546 0.245 264);
-    --sidebar-primary-foreground: oklch(1 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.546 0.245 264);
+    --background: oklch(0.9578 0.0045 179.73); /* #EEF2F1 */
+    --foreground: oklch(0.2241 0.0265 208.21); /* #0B1F22 */
+    --card: oklch(1 0 0); /* #FFFFFF */
+    --card-foreground: oklch(0.2241 0.0265 208.21); /* #0B1F22 */
+    --popover: oklch(1 0 0); /* #FFFFFF */
+    --popover-foreground: oklch(0.2241 0.0265 208.21); /* #0B1F22 */
+    --primary: oklch(0.4926 0.0808 205.15); /* #0E6E77 */
+    --primary-foreground: oklch(1 0 0); /* #FFFFFF */
+    --secondary: oklch(0.9342 0.0079 177.31); /* #E4EBE9 */
+    --secondary-foreground: oklch(0.2241 0.0265 208.21); /* #0B1F22 */
+    --muted: oklch(0.9342 0.0079 177.31); /* #E4EBE9 */
+    --muted-foreground: oklch(0.5018 0.0219 188.25); /* #566866 */
+    --accent: oklch(0.9266 0.0149 196.9); /* #DCEAEA */
+    --accent-foreground: oklch(0.3981 0.0644 203.96); /* #0A5157 */
+    --destructive: oklch(0.5135 0.141 26.95); /* #A93F38 */
+    --destructive-foreground: oklch(0.5135 0.141 26.95); /* #A93F38 */
+    --border: oklch(0.8914 0.0125 177.98); /* #D3DEDB */
+    --input: oklch(0.8914 0.0125 177.98); /* #D3DEDB */
+    --ring: oklch(0.4926 0.0808 205.15); /* #0E6E77 */
+    --stock-full: oklch(0.5171 0.0989 169.74); /* #0F7A5F */
+    --stock-full-wash: oklch(0.9525 0.0187 171.49); /* #E4F4EE */
+    --stock-low: oklch(0.528 0.1409 65.36); /* #A05500 */
+    --stock-low-wash: oklch(0.9418 0.0312 79.93); /* #F7EAD5 */
+    --stock-empty: oklch(0.5135 0.141 26.95); /* #A93F38 */
+    --stock-empty-wash: oklch(0.9223 0.0222 24.45); /* #F4E0DE */
+    --stock-none: oklch(0.514 0.0141 184.89); /* #5F6A68 */
+    --stock-none-wash: oklch(0.9337 0.0045 179.73); /* #E6EAE9 */
+    --chart-1: oklch(0.4926 0.0808 205.15); /* #0E6E77 */
+    --chart-2: oklch(0.5171 0.0989 169.74); /* #0F7A5F */
+    --chart-3: oklch(0.528 0.1409 65.36); /* #A05500 */
+    --chart-4: oklch(0.3981 0.0644 203.96); /* #0A5157 */
+    --chart-5: oklch(0.514 0.0141 184.89); /* #5F6A68 */
+    --radius: 0.375rem;
+    --sidebar: oklch(0.941 0.0069 174.37); /* #E7EDEB */
+    --sidebar-foreground: oklch(0.2241 0.0265 208.21); /* #0B1F22 */
+    --sidebar-primary: oklch(0.4926 0.0808 205.15); /* #0E6E77 */
+    --sidebar-primary-foreground: oklch(1 0 0); /* #FFFFFF */
+    --sidebar-accent: oklch(0.9266 0.0149 196.9); /* #DCEAEA */
+    --sidebar-accent-foreground: oklch(0.3981 0.0644 203.96); /* #0A5157 */
+    --sidebar-border: oklch(0.8914 0.0125 177.98); /* #D3DEDB */
+    --sidebar-ring: oklch(0.4926 0.0808 205.15); /* #0E6E77 */
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.623 0.214 260);
-    --primary-foreground: oklch(1 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.623 0.214 260);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.623 0.214 260);
-    --sidebar-primary-foreground: oklch(1 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.269 0 0);
-    --sidebar-ring: oklch(0.623 0.214 260);
+    --background: oklch(0.188 0.0177 182.67); /* #0A1614 */
+    --foreground: oklch(0.9455 0.0089 179.6); /* #E7EFED */
+    --card: oklch(0.2285 0.0221 185.74); /* #10201E */
+    --card-foreground: oklch(0.9455 0.0089 179.6); /* #E7EFED */
+    --popover: oklch(0.2285 0.0221 185.74); /* #10201E */
+    --popover-foreground: oklch(0.9455 0.0089 179.6); /* #E7EFED */
+    --primary: oklch(0.7024 0.1012 200.07); /* #3FB2B8 */
+    --primary-foreground: oklch(0.2222 0.0337 191.7); /* #04201F */
+    --secondary: oklch(0.2743 0.0277 184.23); /* #172C29 */
+    --secondary-foreground: oklch(0.9455 0.0089 179.6); /* #E7EFED */
+    --muted: oklch(0.2743 0.0277 184.23); /* #172C29 */
+    --muted-foreground: oklch(0.7116 0.0231 182.27); /* #93A7A3 */
+    --accent: oklch(0.2891 0.0369 189.66); /* #12312F */
+    --accent-foreground: oklch(0.8147 0.0819 198.61); /* #7FD3D6 */
+    --destructive: oklch(0.693 0.1268 26.17); /* #E07B72 */
+    --destructive-foreground: oklch(0.693 0.1268 26.17); /* #E07B72 */
+    --border: oklch(0.3157 0.031 182.54); /* #1F3733 */
+    --input: oklch(0.3157 0.031 182.54); /* #1F3733 */
+    --ring: oklch(0.7024 0.1012 200.07); /* #3FB2B8 */
+    --stock-full: oklch(0.7092 0.1215 165.53); /* #46B98F */
+    --stock-full-wash: oklch(0.2831 0.0393 179.14); /* #10302A */
+    --stock-low: oklch(0.7548 0.1303 74.25); /* #E0A245 */
+    --stock-low-wash: oklch(0.2831 0.0423 85.72); /* #33280F */
+    --stock-empty: oklch(0.693 0.1268 26.17); /* #E07B72 */
+    --stock-empty-wash: oklch(0.2517 0.0403 25.2); /* #331A18 */
+    --stock-none: oklch(0.6414 0.0211 184.57); /* #7F918E */
+    --stock-none-wash: oklch(0.2621 0.0217 186.27); /* #182826 */
+    --chart-1: oklch(0.7024 0.1012 200.07); /* #3FB2B8 */
+    --chart-2: oklch(0.7092 0.1215 165.53); /* #46B98F */
+    --chart-3: oklch(0.7548 0.1303 74.25); /* #E0A245 */
+    --chart-4: oklch(0.8147 0.0819 198.61); /* #7FD3D6 */
+    --chart-5: oklch(0.6414 0.0211 184.57); /* #7F918E */
+    --sidebar: oklch(0.2085 0.02 184.41); /* #0D1B19 */
+    --sidebar-foreground: oklch(0.9455 0.0089 179.6); /* #E7EFED */
+    --sidebar-primary: oklch(0.7024 0.1012 200.07); /* #3FB2B8 */
+    --sidebar-primary-foreground: oklch(0.2222 0.0337 191.7); /* #04201F */
+    --sidebar-accent: oklch(0.2891 0.0369 189.66); /* #12312F */
+    --sidebar-accent-foreground: oklch(0.8147 0.0819 198.61); /* #7FD3D6 */
+    --sidebar-border: oklch(0.3157 0.031 182.54); /* #1F3733 */
+    --sidebar-ring: oklch(0.7024 0.1012 200.07); /* #3FB2B8 */
 }
 
 @layer base {
@@ -142,10 +178,38 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    h1,
+    h2,
+    h3 {
+        font-family: var(--font-display);
+        letter-spacing: -0.005em;
+    }
+
+    /*
+     * Browsers already draw a focus ring, but it uses the OS accent colour,
+     * which sits outside our palette and varies by platform. This pins it to
+     * the brand token instead. shadcn components set `outline-none` and draw
+     * their own ring; utilities beat this base rule, so they keep theirs.
+     */
+    :focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+    }
 }
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
     animation: none;
     mix-blend-mode: normal;
+}
+
+/*
+ * Leaflet renders vector overlays as SVG presentation attributes, which do not
+ * accept var(). Styling the class from CSS keeps the service-radius circle on
+ * the brand token and theme-reactive.
+ */
+.stores-map-radius {
+    stroke: var(--primary);
+    fill: var(--primary);
 }

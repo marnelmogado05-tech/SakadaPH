@@ -82,7 +82,7 @@ export default function CartIndex({ store, items, subtotal }: Props) {
                     <div className="rounded-xl border border-border/60 py-16 text-center">
                         <ShoppingCart className="mx-auto mb-3 size-8 text-muted-foreground" />
                         <p className="mb-4 text-sm text-muted-foreground">
-                            Your cart is empty.
+                            Add water from a nearby supplier to start an order.
                         </p>
                         <Button asChild>
                             <Link href={storesIndex()}>Browse suppliers</Link>
@@ -100,6 +100,8 @@ export default function CartIndex({ store, items, subtotal }: Props) {
                                         <img
                                             src={item.image_url}
                                             alt={item.name}
+                                            loading="lazy"
+                                            decoding="async"
                                             className="size-14 shrink-0 rounded-lg object-cover"
                                         />
                                     ) : (

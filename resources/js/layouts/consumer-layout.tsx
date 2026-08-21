@@ -99,7 +99,7 @@ export default function ConsumerLayout({ children }: PropsWithChildren) {
                     <div className="flex items-center gap-2">
                         <Link
                             href={cartIndex().url}
-                            className="relative flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                            className="relative flex size-11 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                             aria-label="Cart"
                         >
                             <ShoppingCart className="size-5" />
@@ -115,7 +115,7 @@ export default function ConsumerLayout({ children }: PropsWithChildren) {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <button
-                                    className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90"
+                                    className="flex size-11 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground shadow-sm transition-opacity hover:opacity-90"
                                     aria-label="User menu"
                                 >
                                     {userInitials}

@@ -65,7 +65,7 @@ class UserController extends Controller
             'ban_reason' => $validated['reason'],
         ]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => "User \"{$user->first_name} {$user->last_name}\" has been banned."]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => "Banned {$user->first_name} {$user->last_name}."]);
 
         return back();
     }
@@ -77,7 +77,7 @@ class UserController extends Controller
             'ban_reason' => null,
         ]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => "User \"{$user->first_name} {$user->last_name}\" has been unbanned."]);
+        Inertia::flash('toast', ['type' => 'success', 'message' => "Unbanned {$user->first_name} {$user->last_name}."]);
 
         return back();
     }

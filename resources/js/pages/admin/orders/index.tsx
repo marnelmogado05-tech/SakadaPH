@@ -169,6 +169,12 @@ export default function AdminOrdersIndex({
                         <p className="text-sm text-muted-foreground">
                             No orders match these filters.
                         </p>
+                        <Link
+                            href={ordersIndex()}
+                            className="mt-4 inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                        >
+                            Clear filters
+                        </Link>
                     </div>
                 ) : (
                     <div className="overflow-hidden rounded-xl border border-border/60 bg-card">

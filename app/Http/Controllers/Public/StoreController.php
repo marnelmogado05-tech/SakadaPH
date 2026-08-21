@@ -42,9 +42,7 @@ class StoreController extends Controller
             ])
             ->withMin('products', 'price')
             ->withMax('products', 'price')
-            ->withMax('products', 'last_updated_at')
-            ->withCount('reviews')
-            ->withAvg('reviews', 'rating');
+            ->withMax('products', 'last_updated_at');
 
         $hasDistance = $lat !== null && $lng !== null && DB::getDriverName() === 'mysql';
 
@@ -81,12 +79,10 @@ class StoreController extends Controller
                 'distance_km' => ($hasDistance && $store->distance_km !== null)
                     ? round((float) $store->distance_km, 1)
                     : null,
-                'store_availability' => $this->storeAvailability($store),
+                'store_availability' => $store->stockState(),
                 'price_min' => $store->products_min_price !== null ? (float) $store->products_min_price : null,
                 'price_max' => $store->products_max_price !== null ? (float) $store->products_max_price : null,
                 'last_updated_at' => $store->products_max_last_updated_at,
-                'rating_avg' => $store->reviews_avg_rating !== null ? round((float) $store->reviews_avg_rating, 1) : null,
-                'rating_count' => $store->reviews_count,
             ]);
 
         return Inertia::render('stores/index', [
@@ -130,19 +126,6 @@ class StoreController extends Controller
         $ratingCount = $store->reviews()->count();
         $ratingAvg = $ratingCount > 0 ? round((float) $store->reviews()->avg('rating'), 1) : null;
 
-        $reviews = $store->reviews()
-            ->with('user:id,first_name,last_name')
-            ->latest()
-            ->limit(20)
-            ->get()
-            ->map(fn (Review $review) => [
-                'id' => $review->id,
-                'rating' => $review->rating,
-                'comment' => $review->comment,
-                'reviewer' => trim($review->user->first_name.' '.mb_substr($review->user->last_name, 0, 1).'.'),
-                'created_at' => $review->created_at?->toIso8601String(),
-            ]);
-
         return Inertia::render('stores/show', [
             'store' => [
                 'id' => $store->id,
@@ -157,22 +140,31 @@ class StoreController extends Controller
                 'rating_count' => $ratingCount,
             ],
             'products' => $products,
-            'reviews' => $reviews,
+            // Reviews sit below the fold — let the store details and product
+            // list paint first, then stream these in.
+            'reviews' => Inertia::defer(fn () => $this->recentReviews($store)),
         ]);
     }
 
-    private function storeAvailability(Store $store): string
+    /**
+     * The store's most recent reviews, shaped for the public profile.
+     *
+     * @return array<int, array{id: int, rating: int, comment: string|null, reviewer: string, created_at: string|null}>
+     */
+    private function recentReviews(Store $store): array
     {
-        if ($store->products_count === 0) {
-            return 'no_products';
-        }
-        if ($store->in_stock_count > 0) {
-            return 'in_stock';
-        }
-        if ($store->low_stock_count > 0) {
-            return 'low_stock';
-        }
-
-        return 'out_of_stock';
+        return $store->reviews()
+            ->with('user:id,first_name,last_name')
+            ->latest()
+            ->limit(20)
+            ->get()
+            ->map(fn (Review $review) => [
+                'id' => $review->id,
+                'rating' => $review->rating,
+                'comment' => $review->comment,
+                'reviewer' => trim($review->user->first_name.' '.mb_substr($review->user->last_name, 0, 1).'.'),
+                'created_at' => $review->created_at?->toIso8601String(),
+            ])
+            ->all();
     }
 }
