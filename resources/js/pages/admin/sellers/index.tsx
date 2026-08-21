@@ -2,7 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { AlertTriangle, Search } from 'lucide-react';
 import { useRef, useState } from 'react';
 import ConfirmDialog from '@/components/confirm-dialog';
-import { Badge } from '@/components/ui/badge';
+import StatusBadge from '@/components/status-badge';
 import { Input } from '@/components/ui/input';
 import {
     index as sellersIndex,
@@ -64,38 +64,6 @@ const STATUS_OPTIONS = [
     { value: 'rejected', label: 'Rejected' },
     { value: 'suspended', label: 'Suspended' },
 ];
-
-function StatusBadge({ status }: { status: Store['status'] }) {
-    if (status === 'approved') {
-        return (
-            <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                Approved
-            </Badge>
-        );
-    }
-
-    if (status === 'rejected') {
-        return (
-            <Badge className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                Rejected
-            </Badge>
-        );
-    }
-
-    if (status === 'suspended') {
-        return (
-            <Badge className="bg-attention-wash text-attention">
-                Suspended
-            </Badge>
-        );
-    }
-
-    return (
-        <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-            Pending
-        </Badge>
-    );
-}
 
 export default function AdminSellersIndex({ stores, filters }: Props) {
     const [search, setSearch] = useState(filters.search);
@@ -224,7 +192,7 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                                 </div>
 
                                 <div className="flex w-full shrink-0 flex-wrap items-center gap-2 sm:w-auto">
-                                    <StatusBadge status={store.status} />
+                                    <StatusBadge standing={store.status} />
 
                                     {store.status === 'pending' && (
                                         <>

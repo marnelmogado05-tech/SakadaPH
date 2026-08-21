@@ -67,6 +67,16 @@
     --color-order-stop: var(--order-stop);
 
     /* Something is waiting on a human — pending orders, seller approvals. */
+    /* Account and listing standing — pending / approved / rejected / suspended
+       for stores, active / banned for users. Its own set: it shares screens
+       with stock and with the order lifecycle, and must not borrow either.
+       Pending and suspended reuse --attention, which already means "waiting on
+       a person". */
+    --color-status-active: var(--status-active);
+    --color-status-active-wash: var(--status-active-wash);
+    --color-status-blocked: var(--status-blocked);
+    --color-status-blocked-wash: var(--status-blocked-wash);
+
     --color-attention: var(--attention);
     --color-on-attention: var(--on-attention);
     --color-attention-wash: var(--attention-wash);
@@ -123,6 +133,10 @@
     --order-move: oklch(0.4926 0.0808 205.15); /* #0E6E77 */
     --order-done: oklch(0.5051 0.0989 169.74); /* #06765C */
     --order-stop: oklch(0.5135 0.141 26.95); /* #A93F38 */
+    --status-active: oklch(0.5041 0.098 170.27); /* #06765C */
+    --status-active-wash: oklch(0.9536 0.0186 171.51); /* #E4F4EE */
+    --status-blocked: oklch(0.5135 0.141 26.95); /* #A93F38 */
+    --status-blocked-wash: oklch(0.9223 0.0222 24.45); /* #F4E0DE */
     --attention: oklch(0.528 0.1409 65.36); /* #A05500 */
     --attention-wash: oklch(0.9418 0.0312 79.93); /* #F7EAD5 */
     --on-attention: oklch(1 0 0); /* #FFFFFF */
@@ -175,6 +189,10 @@
     --order-move: oklch(0.7024 0.1012 200.07); /* #3FB2B8 */
     --order-done: oklch(0.7092 0.1215 165.53); /* #46B98F */
     --order-stop: oklch(0.693 0.1268 26.17); /* #E07B72 */
+    --status-active: oklch(0.7092 0.1215 165.53); /* #46B98F */
+    --status-active-wash: oklch(0.2831 0.0393 179.14); /* #10302A */
+    --status-blocked: oklch(0.693 0.1268 26.17); /* #E07B72 */
+    --status-blocked-wash: oklch(0.2517 0.0403 25.2); /* #331A18 */
     --attention: oklch(0.7548 0.1303 74.25); /* #E0A245 */
     --attention-wash: oklch(0.2831 0.0423 85.72); /* #33280F */
     --on-attention: oklch(0.2389 0.0515 70.86); /* #2E1A00 */

@@ -23,11 +23,9 @@ import { cn } from '@/lib/utils';
  */
 type Tone = 'destructive' | 'caution' | 'constructive';
 
-type Props = {
+type Base = {
     /** POST endpoint the confirmation submits to. */
     action: string;
-    triggerLabel: string;
-    triggerIcon?: React.ElementType;
     title: ReactNode;
     /** What will actually happen — not "are you sure". */
     description: ReactNode;
@@ -40,7 +38,30 @@ type Props = {
     reason?: { placeholder: string; label?: string };
     /** Disambiguates the field id when several dialogs share a page. */
     id: string | number;
+    /** Runs after the action succeeds — close a controlled dialog here. */
+    onSuccess?: () => void;
 };
+
+/**
+ * Either the dialog renders its own trigger button, or the parent drives it —
+ * the latter for rows whose action is reached some other way. The union keeps
+ * the two from being mixed.
+ */
+type Props = Base &
+    (
+        | {
+              triggerLabel: string;
+              triggerIcon?: React.ElementType;
+              open?: never;
+              onOpenChange?: never;
+          }
+        | {
+              triggerLabel?: never;
+              triggerIcon?: never;
+              open: boolean;
+              onOpenChange: (open: boolean) => void;
+          }
+    );
 
 const TONE: Record<
     Tone,
@@ -83,16 +104,24 @@ export default function ConfirmDialog({
     tone,
     reason,
     id,
+    onSuccess,
+    open: controlledOpen,
+    onOpenChange,
 }: Props) {
-    const [open, setOpen] = useState(false);
+    const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
     const [reasonText, setReasonText] = useState('');
     const fieldId = `confirm-reason-${id}`;
+    const isControlled = controlledOpen !== undefined;
 
     return (
         <Dialog
-            open={open}
+            open={isControlled ? controlledOpen : uncontrolledOpen}
             onOpenChange={(next) => {
-                setOpen(next);
+                if (isControlled) {
+                    onOpenChange?.(next);
+                } else {
+                    setUncontrolledOpen(next);
+                }
 
                 // Start clean next time. Reopening after a cancelled ban should
                 // not present the reason that was abandoned.
@@ -101,22 +130,35 @@ export default function ConfirmDialog({
                 }
             }}
         >
-            <DialogTrigger asChild>
-                <Button
-                    variant={TONE[tone].triggerVariant}
-                    size="sm"
-                    className={TONE[tone].trigger}
-                >
-                    {TriggerIcon && <TriggerIcon className="mr-1.5 size-3.5" />}
-                    {triggerLabel}
-                </Button>
-            </DialogTrigger>
+            {triggerLabel && (
+                <DialogTrigger asChild>
+                    <Button
+                        variant={TONE[tone].triggerVariant}
+                        size="sm"
+                        className={TONE[tone].trigger}
+                    >
+                        {TriggerIcon && (
+                            <TriggerIcon className="mr-1.5 size-3.5" />
+                        )}
+                        {triggerLabel}
+                    </Button>
+                </DialogTrigger>
+            )}
 
             <DialogContent>
                 <DialogTitle>{title}</DialogTitle>
                 <DialogDescription>{description}</DialogDescription>
 
-                <Form action={action} method="post" className="space-y-4">
+                <Form
+                    action={action}
+                    method="post"
+                    className="space-y-4"
+                    options={{ preserveScroll: true }}
+                    onSuccess={() => {
+                        setReasonText('');
+                        onSuccess?.();
+                    }}
+                >
                     {({ processing, errors }) => (
                         <>
                             {reason && (

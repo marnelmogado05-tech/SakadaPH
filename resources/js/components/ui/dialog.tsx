@@ -85,7 +85,9 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="dialog-footer"
       className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        // Dialog actions are commit points, so they are held to the 44px touch
+        // floor rather than the default control height.
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end [&>button]:min-h-11",
         className
       )}
       {...props}

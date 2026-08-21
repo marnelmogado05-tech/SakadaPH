@@ -1,22 +1,11 @@
-import { Form, Head, Link, useForm } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
 import { Receipt } from 'lucide-react';
 import { useState } from 'react';
+import ConfirmDialog from '@/components/confirm-dialog';
 import Heading from '@/components/heading';
-import InputError from '@/components/input-error';
 import OrderStatus from '@/components/order-status';
 import type { OrderState } from '@/components/order-status';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
     advance as advanceOrder,
     confirm as confirmOrder,
@@ -185,94 +174,6 @@ function OrderActions({
     return null;
 }
 
-/**
- * Rejection needs a reason and is terminal, so it confirms rather than firing
- * from the row. Posting with preserveScroll keeps the queue where the seller
- * left it.
- */
-function RejectDialog({
-    order,
-    onClose,
-}: {
-    order: OrderRow | null;
-    onClose: () => void;
-}) {
-    const { data, setData, post, processing, errors, reset, clearErrors } =
-        useForm<{ reason: string }>({ reason: '' });
-
-    function submit(e: React.FormEvent) {
-        e.preventDefault();
-
-        if (!order) {
-            return;
-        }
-
-        post(rejectOrder.url(order.id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                reset();
-                clearErrors();
-                onClose();
-            },
-        });
-    }
-
-    return (
-        <Dialog
-            open={order !== null}
-            onOpenChange={(open) => {
-                if (!open) {
-                    reset();
-                    clearErrors();
-                    onClose();
-                }
-            }}
-        >
-            <DialogContent>
-                <form onSubmit={submit}>
-                    <DialogHeader>
-                        <DialogTitle>
-                            Reject order {order?.reference}?
-                        </DialogTitle>
-                        <DialogDescription>
-                            {order?.customer_name} will be told why. This cannot
-                            be undone.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="py-4">
-                        <Label htmlFor="reject-reason">Reason</Label>
-                        <Textarea
-                            id="reject-reason"
-                            value={data.reason}
-                            onChange={(e) => setData('reason', e.target.value)}
-                            placeholder="Out of stock until Thursday"
-                            className="mt-1.5"
-                            autoFocus
-                        />
-                        <InputError message={errors.reason} className="mt-1" />
-                    </div>
-
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button type="button" variant="outline">
-                                Keep order
-                            </Button>
-                        </DialogClose>
-                        <Button
-                            type="submit"
-                            variant="destructive"
-                            disabled={processing}
-                        >
-                            {processing ? 'Rejecting…' : 'Reject order'}
-                        </Button>
-                    </DialogFooter>
-                </form>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
 export default function SellerOrdersIndex({
     orders,
     filters,
@@ -375,10 +276,26 @@ export default function SellerOrdersIndex({
                     </div>
                 )}
 
-                <RejectDialog
-                    order={rejecting}
-                    onClose={() => setRejecting(null)}
-                />
+                {rejecting && (
+                    <ConfirmDialog
+                        open
+                        onOpenChange={(next) => {
+                            if (!next) {
+                                setRejecting(null);
+                            }
+                        }}
+                        onSuccess={() => setRejecting(null)}
+                        id={`reject-order-${rejecting.id}`}
+                        action={rejectOrder.url(rejecting.id)}
+                        title={`Reject order ${rejecting.reference}?`}
+                        description={`${rejecting.customer_name} is told why, and the order cannot be reopened.`}
+                        confirmLabel="Reject order"
+                        tone="destructive"
+                        reason={{
+                            placeholder: 'e.g. Out of stock until Thursday',
+                        }}
+                    />
+                )}
 
                 {orders.last_page > 1 && (
                     <div className="mt-6 flex items-center gap-1">
