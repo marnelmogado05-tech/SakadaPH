@@ -84,11 +84,23 @@ export default function ConfirmDialog({
     reason,
     id,
 }: Props) {
+    const [open, setOpen] = useState(false);
     const [reasonText, setReasonText] = useState('');
     const fieldId = `confirm-reason-${id}`;
 
     return (
-        <Dialog>
+        <Dialog
+            open={open}
+            onOpenChange={(next) => {
+                setOpen(next);
+
+                // Start clean next time. Reopening after a cancelled ban should
+                // not present the reason that was abandoned.
+                if (!next) {
+                    setReasonText('');
+                }
+            }}
+        >
             <DialogTrigger asChild>
                 <Button
                     variant={TONE[tone].triggerVariant}
