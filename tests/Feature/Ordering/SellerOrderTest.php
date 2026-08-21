@@ -169,3 +169,61 @@ it('forbids a consumer from the seller order routes', function () {
         ->get(route('seller.orders.index'))
         ->assertForbidden();
 });
+
+it('tells the queue which actions each order allows', function () {
+    [$user, $store] = seller();
+    Order::factory()->for($store)->create([
+        'status' => OrderStatus::Pending,
+        'reference' => 'SKD-PENDING',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('seller.orders.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('orders.data.0.reference', 'SKD-PENDING')
+            ->where('orders.data.0.can_confirm', true)
+            ->where('orders.data.0.can_reject', true)
+        );
+});
+
+it('offers the next fulfilment step from the queue without opening the order', function () {
+    [$user, $store] = seller();
+    Order::factory()->for($store)->confirmed()->create([
+        'fulfillment_type' => FulfillmentType::Delivery,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('seller.orders.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('orders.data.0.can_confirm', false)
+            ->where('orders.data.0.next_status_label', 'Preparing')
+        );
+});
+
+it('offers no further step once an order is terminal', function () {
+    [$user, $store] = seller();
+    Order::factory()->for($store)->completed()->create();
+
+    $this->actingAs($user)
+        ->get(route('seller.orders.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('orders.data.0.can_confirm', false)
+            ->where('orders.data.0.can_reject', false)
+            ->where('orders.data.0.next_status_label', null)
+        );
+});
+
+it('confirms straight from the queue and comes back to it', function () {
+    [$user, $store] = seller();
+    $order = Order::factory()->for($store)->create(['status' => OrderStatus::Pending]);
+
+    $this->actingAs($user)
+        ->from(route('seller.orders.index'))
+        ->post(route('seller.orders.confirm', $order))
+        ->assertRedirect(route('seller.orders.index'));
+
+    expect($order->fresh()->status)->toBe(OrderStatus::Confirmed);
+});
