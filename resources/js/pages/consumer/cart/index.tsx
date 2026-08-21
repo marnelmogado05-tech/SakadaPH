@@ -187,7 +187,7 @@ export default function CartIndex({ store, items, subtotal }: Props) {
 
                             {belowMinimum &&
                                 store?.min_order_amount != null && (
-                                    <p className="mt-2 text-xs text-amber-600 dark:text-amber-500">
+                                    <p className="mt-2 text-xs text-attention">
                                         Minimum order is{' '}
                                         {formatPrice(store.min_order_amount)}.
                                         Add{' '}

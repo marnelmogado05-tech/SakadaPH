@@ -121,7 +121,7 @@ function GcashCard({ order }: { order: Order }) {
     }
 
     return (
-        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/60 p-4 dark:border-amber-900/60 dark:bg-amber-950/20">
+        <div className="mb-6 rounded-xl border border-attention/40 bg-attention-wash p-4">
             <h2 className="mb-1 text-sm font-semibold text-foreground">
                 Pay with GCash
             </h2>
