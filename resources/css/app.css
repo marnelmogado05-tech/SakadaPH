@@ -64,7 +64,9 @@
        needs a person carries chroma. */
     --color-order-wait: var(--order-wait);
     --color-order-move: var(--order-move);
+    --color-order-move-wash: var(--order-move-wash);
     --color-order-done: var(--order-done);
+    --color-order-done-wash: var(--order-done-wash);
     --color-order-stop: var(--order-stop);
 
     /* Something is waiting on a human — pending orders, seller approvals. */
@@ -73,6 +75,12 @@
        with stock and with the order lifecycle, and must not borrow either.
        Pending and suspended reuse --attention, which already means "waiting on
        a person". */
+    /* Transient confirmation that an action worked — "Saved", "Link sent".
+       Separate from --status-active, which is a record's standing: these sit on
+       the page ground rather than on a wash, so they answer to a different
+       contrast requirement. */
+    --color-success: var(--success);
+
     --color-status-active: var(--status-active);
     --color-status-active-wash: var(--status-active-wash);
     --color-status-blocked: var(--status-blocked);
@@ -133,8 +141,11 @@
     --ring: oklch(0.4926 0.0808 205.15); /* #0E6E77 */
     --order-wait: oklch(0.528 0.1409 65.36); /* #A05500 */
     --order-move: oklch(0.4926 0.0808 205.15); /* #0E6E77 */
+    --order-move-wash: oklch(0.9266 0.0149 196.9); /* #DCEAEA */
     --order-done: oklch(0.5051 0.0989 169.74); /* #06765C */
+    --order-done-wash: oklch(0.9536 0.0186 171.51); /* #E4F4EE */
     --order-stop: oklch(0.5135 0.141 26.95); /* #A93F38 */
+    --success: oklch(0.5041 0.098 170.27); /* #06765C */
     --status-active: oklch(0.5041 0.098 170.27); /* #06765C */
     --status-active-wash: oklch(0.9536 0.0186 171.51); /* #E4F4EE */
     --status-blocked: oklch(0.5135 0.141 26.95); /* #A93F38 */
@@ -190,8 +201,11 @@
     --ring: oklch(0.7024 0.1012 200.07); /* #3FB2B8 */
     --order-wait: oklch(0.7548 0.1303 74.25); /* #E0A245 */
     --order-move: oklch(0.7024 0.1012 200.07); /* #3FB2B8 */
+    --order-move-wash: oklch(0.2891 0.0369 189.66); /* #12312F */
     --order-done: oklch(0.7092 0.1215 165.53); /* #46B98F */
+    --order-done-wash: oklch(0.2831 0.0393 179.14); /* #10302A */
     --order-stop: oklch(0.693 0.1268 26.17); /* #E07B72 */
+    --success: oklch(0.7092 0.1215 165.53); /* #46B98F */
     --status-active: oklch(0.7092 0.1215 165.53); /* #46B98F */
     --status-active-wash: oklch(0.2831 0.0393 179.14); /* #10302A */
     --status-blocked: oklch(0.693 0.1268 26.17); /* #E07B72 */

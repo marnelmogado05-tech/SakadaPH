@@ -99,25 +99,25 @@ export default function Dashboard({ stats, recent_orders }: Props) {
                         label="Total orders"
                         value={stats.total_orders}
                         icon={Receipt}
-                        iconClass="bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400"
+                        iconClass="bg-secondary text-muted-foreground"
                     />
                     <StatCard
                         label="Active orders"
                         value={stats.active_orders}
                         icon={ClipboardList}
-                        iconClass="bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400"
+                        iconClass="bg-order-move-wash text-order-move"
                     />
                     <StatCard
                         label="Completed"
                         value={stats.completed_orders}
                         icon={CheckCheck}
-                        iconClass="bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400"
+                        iconClass="bg-order-done-wash text-order-done"
                     />
                     <StatCard
                         label="Total spent"
                         value={formatPrice(stats.total_spent)}
                         icon={Wallet}
-                        iconClass="bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-400"
+                        iconClass="bg-accent text-accent-foreground"
                     />
                 </div>
 

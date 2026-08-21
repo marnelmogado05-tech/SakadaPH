@@ -50,15 +50,15 @@ function formatDate(dateStr: string): string {
 
 function NotificationIcon({ type }: { type: string }) {
     if (type === 'stock_restored') {
-        return (
-            <Store className="size-4 text-emerald-600 dark:text-emerald-400" />
-        );
+        return <Store className="size-4 text-stock-full" />;
     }
 
-    if (type === 'seller_approved' || type === 'order_completed') {
-        return (
-            <CheckCheck className="size-4 text-emerald-600 dark:text-emerald-400" />
-        );
+    if (type === 'seller_approved') {
+        return <CheckCheck className="size-4 text-status-active" />;
+    }
+
+    if (type === 'order_completed') {
+        return <CheckCheck className="size-4 text-order-done" />;
     }
 
     if (type === 'seller_registered') {
@@ -74,7 +74,7 @@ function NotificationIcon({ type }: { type: string }) {
     }
 
     if (type === 'order_ready' || type === 'order_out_for_delivery') {
-        return <Truck className="size-4 text-blue-600 dark:text-blue-400" />;
+        return <Truck className="size-4 text-order-move" />;
     }
 
     if (type === 'order_placed' || type === 'order_confirmed') {
