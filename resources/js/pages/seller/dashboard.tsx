@@ -29,7 +29,13 @@ type Product = {
     last_updated_at: string | null;
 };
 
+type Attention = {
+    pending_orders: number;
+    out_of_stock: number;
+};
+
 type Props = {
+    attention: Attention;
     store: {
         name: string;
         status: string;
@@ -86,12 +92,67 @@ function StatCard({
     );
 }
 
+/**
+ * The seller opens this screen to find out what needs doing. Renders nothing
+ * when the queue is clear and everything is in stock.
+ */
+function NeedsYou({ attention }: { attention: Attention }) {
+    const { pending_orders: pending, out_of_stock: outOfStock } = attention;
+
+    if (pending === 0 && outOfStock === 0) {
+        return null;
+    }
+
+    return (
+        <section className="rounded-xl border border-attention/40 bg-attention-wash p-5">
+            <h2 className="font-display text-sm font-bold tracking-wide text-attention uppercase">
+                Needs you
+            </h2>
+
+            <div className="mt-3 space-y-2">
+                {pending > 0 && (
+                    <Link
+                        href={ordersIndex.url({ query: { status: 'pending' } })}
+                        className="flex min-h-11 items-center gap-3 text-sm text-foreground hover:underline"
+                    >
+                        <ClipboardList className="size-4 shrink-0 text-attention" />
+                        <span>
+                            <span className="font-display font-bold tabular-nums">
+                                {pending}
+                            </span>{' '}
+                            order{pending === 1 ? '' : 's'} waiting for you to
+                            confirm
+                        </span>
+                    </Link>
+                )}
+
+                {outOfStock > 0 && (
+                    <Link
+                        href={productsIndex()}
+                        className="flex min-h-11 items-center gap-3 text-sm text-foreground hover:underline"
+                    >
+                        <AlertTriangle className="size-4 shrink-0 text-attention" />
+                        <span>
+                            <span className="font-display font-bold tabular-nums">
+                                {outOfStock}
+                            </span>{' '}
+                            product{outOfStock === 1 ? '' : 's'} marked out of
+                            stock
+                        </span>
+                    </Link>
+                )}
+            </div>
+        </section>
+    );
+}
+
 export default function SellerDashboard({
     store,
     stats,
     orderStats,
     rating,
     recent_products,
+    attention,
 }: Props) {
     return (
         <>
@@ -106,6 +167,8 @@ export default function SellerDashboard({
                         Here's an overview of your store.
                     </p>
                 </div>
+
+                <NeedsYou attention={attention} />
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <StatCard
