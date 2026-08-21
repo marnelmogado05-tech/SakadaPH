@@ -1,5 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { Bell, MapPin, Truck } from 'lucide-react';
+import StockLevel from '@/components/stock-level';
+import type { StockState } from '@/components/stock-level';
 import { index as storesIndex, show as storesShow } from '@/routes/stores';
 
 type FollowedStore = {
@@ -7,36 +9,12 @@ type FollowedStore = {
     name: string;
     address: string;
     type: string | null;
-    store_availability: string;
+    store_availability: StockState;
     last_updated_at: string | null;
 };
 
 type Props = {
     stores: FollowedStore[];
-};
-
-const AVAILABILITY_LABELS: Record<
-    string,
-    { label: string; className: string }
-> = {
-    in_stock: {
-        label: 'In stock',
-        className:
-            'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400',
-    },
-    low_stock: {
-        label: 'Low stock',
-        className:
-            'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
-    },
-    out_of_stock: {
-        label: 'Out of stock',
-        className: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400',
-    },
-    no_products: {
-        label: 'No products',
-        className: 'bg-secondary text-muted-foreground',
-    },
 };
 
 function storeTypeLabel(type: string | null): string | null {
@@ -89,9 +67,6 @@ export default function StoresFollowing({ stores }: Props) {
                 ) : (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {stores.map((store) => {
-                            const avail =
-                                AVAILABILITY_LABELS[store.store_availability] ??
-                                AVAILABILITY_LABELS.no_products;
                             const typeLabel = storeTypeLabel(store.type);
 
                             return (
@@ -104,11 +79,11 @@ export default function StoresFollowing({ stores }: Props) {
                                         <h2 className="text-sm font-semibold text-foreground group-hover:text-primary">
                                             {store.name}
                                         </h2>
-                                        <span
-                                            className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${avail.className}`}
-                                        >
-                                            {avail.label}
-                                        </span>
+                                        <StockLevel
+                                            state={store.store_availability}
+                                            size="md"
+                                            className="shrink-0"
+                                        />
                                     </div>
 
                                     <div className="space-y-1.5">

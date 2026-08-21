@@ -12,6 +12,7 @@ use App\Http\Controllers\Consumer\FollowingController;
 use App\Http\Controllers\Consumer\OrderController;
 use App\Http\Controllers\Consumer\ReviewController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\StoreController as PublicStoreController;
 use App\Http\Controllers\Seller\DashboardController as SellerDashboardController;
 use App\Http\Controllers\Seller\OrderController as SellerOrderController;
@@ -22,7 +23,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StoreFollowController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', HomeController::class)->name('home');
 Route::inertia('banned', 'banned')->name('banned');
 Route::inertia('about', 'about')->name('about');
 Route::inertia('contact', 'contact')->name('contact');

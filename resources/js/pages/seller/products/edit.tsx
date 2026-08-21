@@ -204,7 +204,7 @@ export default function ProductsEdit({
                                 <button
                                     type="button"
                                     onClick={clearImage}
-                                    className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-white shadow"
+                                    className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-on-destructive shadow"
                                 >
                                     <X className="size-3" />
                                 </button>

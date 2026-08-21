@@ -1,4 +1,11 @@
-import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import {
+    Deferred,
+    Head,
+    Link,
+    router,
+    useForm,
+    usePage,
+} from '@inertiajs/react';
 import {
     ArrowLeft,
     Bell,
@@ -10,6 +17,8 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { StarRating } from '@/components/star-rating';
+import StockLevel from '@/components/stock-level';
+import type { StockState } from '@/components/stock-level';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -19,6 +28,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 import { store as cartStore } from '@/routes/cart';
 import {
     follow as storesFollow,
@@ -33,7 +43,7 @@ type Product = {
     price: string;
     unit: string;
     quantity: number;
-    availability: string;
+    availability: StockState;
     image_url: string | null;
 };
 
@@ -61,7 +71,7 @@ type Review = {
 type Props = {
     store: StoreDetail;
     products: Product[];
-    reviews: Review[];
+    reviews?: Review[];
 };
 
 function formatReviewDate(value: string | null): string {
@@ -101,18 +111,6 @@ function storeTypeLabel(type: string | null): string | null {
     return null;
 }
 
-function availabilityBadge(availability: string) {
-    if (availability === 'low_stock') {
-        return (
-            <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-400">
-                Low stock
-            </span>
-        );
-    }
-
-    return null;
-}
-
 function FollowButton({ store }: { store: StoreDetail }) {
     const { post, processing } = useForm({});
 
@@ -145,6 +143,28 @@ function FollowButton({ store }: { store: StoreDetail }) {
                 </>
             )}
         </button>
+    );
+}
+
+function ReviewsSkeleton() {
+    return (
+        <div className="space-y-3" aria-busy="true" aria-live="polite">
+            <span className="sr-only">Loading reviews</span>
+            {[0, 1, 2].map((i) => (
+                <div
+                    key={i}
+                    className="rounded-xl border border-border/60 bg-card p-4"
+                >
+                    <div className="flex items-center justify-between gap-2">
+                        <Skeleton className="h-4 w-28" />
+                        <Skeleton className="h-3 w-16" />
+                    </div>
+                    <Skeleton className="mt-2 h-3.5 w-24" />
+                    <Skeleton className="mt-3 h-3.5 w-full" />
+                    <Skeleton className="mt-1.5 h-3.5 w-2/3" />
+                </div>
+            ))}
+        </div>
     );
 }
 
@@ -284,6 +304,8 @@ export default function StoresShow({ store, products, reviews }: Props) {
                                         <img
                                             src={product.image_url}
                                             alt={product.name}
+                                            loading="lazy"
+                                            decoding="async"
                                             className="h-40 w-full object-cover"
                                         />
                                     ) : (
@@ -295,7 +317,7 @@ export default function StoresShow({ store, products, reviews }: Props) {
                                             <h3 className="text-sm font-medium text-foreground">
                                                 {product.name}
                                             </h3>
-                                            <span className="shrink-0 text-sm font-semibold text-primary">
+                                            <span className="shrink-0 font-display text-base font-bold text-primary tabular-nums">
                                                 {formatPrice(product.price)}
                                             </span>
                                         </div>
@@ -312,11 +334,16 @@ export default function StoresShow({ store, products, reviews }: Props) {
 
                                         <div className="flex items-center justify-between">
                                             <p className="text-xs text-muted-foreground">
-                                                {product.quantity} in stock
+                                                <span className="tabular-nums">
+                                                    {product.quantity}
+                                                </span>{' '}
+                                                in stock
                                             </p>
-                                            {availabilityBadge(
-                                                product.availability,
-                                            )}
+                                            <StockLevel
+                                                state={product.availability}
+                                                size="sm"
+                                                className="shrink-0"
+                                            />
                                         </div>
 
                                         {isConsumer && (
@@ -342,40 +369,42 @@ export default function StoresShow({ store, products, reviews }: Props) {
                     )}
                 </div>
 
-                {reviews.length > 0 && (
+                {store.rating_count > 0 && (
                     <div className="mt-10">
                         <h2 className="mb-4 text-base font-semibold text-foreground">
                             Customer reviews
                         </h2>
-                        <div className="space-y-3">
-                            {reviews.map((review) => (
-                                <div
-                                    key={review.id}
-                                    className="rounded-xl border border-border/60 bg-card p-4"
-                                >
-                                    <div className="flex items-center justify-between gap-2">
-                                        <span className="text-sm font-medium text-foreground">
-                                            {review.reviewer}
-                                        </span>
-                                        <span className="text-xs text-muted-foreground">
-                                            {formatReviewDate(
-                                                review.created_at,
-                                            )}
-                                        </span>
+                        <Deferred data="reviews" fallback={<ReviewsSkeleton />}>
+                            <div className="space-y-3">
+                                {(reviews ?? []).map((review) => (
+                                    <div
+                                        key={review.id}
+                                        className="rounded-xl border border-border/60 bg-card p-4"
+                                    >
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="text-sm font-medium text-foreground">
+                                                {review.reviewer}
+                                            </span>
+                                            <span className="text-xs text-muted-foreground">
+                                                {formatReviewDate(
+                                                    review.created_at,
+                                                )}
+                                            </span>
+                                        </div>
+                                        <StarRating
+                                            value={review.rating}
+                                            size={14}
+                                            className="mt-1"
+                                        />
+                                        {review.comment && (
+                                            <p className="mt-2 text-sm text-muted-foreground">
+                                                {review.comment}
+                                            </p>
+                                        )}
                                     </div>
-                                    <StarRating
-                                        value={review.rating}
-                                        size={14}
-                                        className="mt-1"
-                                    />
-                                    {review.comment && (
-                                        <p className="mt-2 text-sm text-muted-foreground">
-                                            {review.comment}
-                                        </p>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        </Deferred>
                     </div>
                 )}
             </div>

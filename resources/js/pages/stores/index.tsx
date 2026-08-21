@@ -9,13 +9,13 @@ import {
     Search,
     Truck,
 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import StockLevel from '@/components/stock-level';
+import type { StockState } from '@/components/stock-level';
 import StoresMap from '@/components/stores-map';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import { index as storesIndex, show as storesShow } from '@/routes/stores';
-
-type StoreAvailability =
-    'in_stock' | 'low_stock' | 'out_of_stock' | 'no_products';
 
 type Store = {
     id: number;
@@ -27,7 +27,7 @@ type Store = {
     longitude: number | null;
     products_count: number;
     distance_km: number | null;
-    store_availability: StoreAvailability;
+    store_availability: StockState;
     price_min: number | null;
     price_max: number | null;
     last_updated_at: string | null;
@@ -108,33 +108,32 @@ function relativeTime(iso: string | null): string | null {
     return `Updated ${days}d ago`;
 }
 
-function AvailabilityBadge({ status }: { status: StoreAvailability }) {
-    const map: Record<StoreAvailability, { label: string; cls: string }> = {
-        in_stock: {
-            label: 'In Stock',
-            cls: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400',
-        },
-        low_stock: {
-            label: 'Low Stock',
-            cls: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
-        },
-        out_of_stock: {
-            label: 'Out of Stock',
-            cls: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400',
-        },
-        no_products: {
-            label: 'No Products',
-            cls: 'bg-secondary text-muted-foreground',
-        },
-    };
-    const { label, cls } = map[status];
-
+function StoreCardsSkeleton({ count }: { count: number }) {
     return (
-        <span
-            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}
+        <div
+            className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1"
+            aria-busy="true"
+            aria-live="polite"
         >
-            {label}
-        </span>
+            <span className="sr-only">Updating results</span>
+            {Array.from({ length: count }, (_, i) => (
+                <div
+                    key={i}
+                    className="flex flex-col rounded-xl border border-border/60 bg-card p-4"
+                >
+                    <div className="mb-2 flex items-start justify-between gap-2">
+                        <Skeleton className="h-4 w-40" />
+                        <Skeleton className="h-6 w-24" />
+                    </div>
+                    <Skeleton className="mb-1.5 h-3 w-3/4" />
+                    <Skeleton className="mb-2 h-3 w-24" />
+                    <div className="mt-auto flex items-center justify-between pt-1">
+                        <Skeleton className="h-3 w-20" />
+                        <Skeleton className="h-3 w-16" />
+                    </div>
+                </div>
+            ))}
+        </div>
     );
 }
 
@@ -142,17 +141,8 @@ export default function StoresIndex({ stores, filters }: Props) {
     const [search, setSearch] = useState(filters.search);
     const [locationStatus, setLocationStatus] = useState<
         'idle' | 'requesting' | 'granted' | 'denied'
-    >(() => {
-        if (filters.lat && filters.lng) {
-            return 'granted';
-        }
-
-        if (typeof navigator !== 'undefined' && navigator.geolocation) {
-            return 'requesting';
-        }
-
-        return 'idle';
-    });
+    >(filters.lat && filters.lng ? 'granted' : 'idle');
+    const [loading, setLoading] = useState(false);
     const latLng = useRef<{ lat: number; lng: number } | null>(
         filters.lat && filters.lng
             ? { lat: filters.lat, lng: filters.lng }
@@ -187,6 +177,8 @@ export default function StoresIndex({ stores, filters }: Props) {
                     preserveScroll: true,
                     replace: true,
                     only: ['stores', 'filters'],
+                    onStart: () => setLoading(true),
+                    onFinish: () => setLoading(false),
                 },
             );
         },
@@ -203,15 +195,14 @@ export default function StoresIndex({ stores, filters }: Props) {
         );
     }
 
-    useEffect(() => {
-        if (latLng.current) {
-            return;
-        }
-
+    function requestLocation() {
         if (!navigator.geolocation) {
+            setLocationStatus('denied');
+
             return;
         }
 
+        setLocationStatus('requesting');
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 const { latitude, longitude } = pos.coords;
@@ -222,10 +213,25 @@ export default function StoresIndex({ stores, filters }: Props) {
             () => setLocationStatus('denied'),
             { timeout: 8000 },
         );
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }
 
     const hasLocation = locationStatus === 'granted';
+    const hasActiveFilters = Boolean(
+        filters.search ||
+        filters.type ||
+        filters.in_stock_only ||
+        filters.max_distance,
+    );
+
+    function clearFilters() {
+        setSearch('');
+        applyFilters({
+            search: '',
+            type: '',
+            in_stock_only: false,
+            max_distance: null,
+        });
+    }
 
     const mapPanel = (
         <div className="h-[450px] overflow-hidden rounded-xl border border-border/60 lg:h-[calc(100vh-200px)]">
@@ -270,22 +276,31 @@ export default function StoresIndex({ stores, filters }: Props) {
                     </p>
                 </div>
 
-                {/* Location status banners */}
-                {locationStatus === 'denied' && (
-                    <div className="mb-4 flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm dark:border-amber-900 dark:bg-amber-950/30">
-                        <Navigation className="size-4 shrink-0 text-amber-600 dark:text-amber-500" />
-                        <p className="text-amber-800 dark:text-amber-400">
-                            Allow location access in your browser to see nearby
-                            stores sorted by distance.
+                {/* Location prompt — asked for only once the user can see
+                    what it buys them, never on mount. */}
+                {locationStatus !== 'granted' && (
+                    <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-accent/40 px-4 py-3 text-sm">
+                        <Navigation className="size-4 shrink-0 text-accent-foreground" />
+                        <p className="text-foreground">
+                            {locationStatus === 'denied'
+                                ? 'Location is blocked, so stores are listed alphabetically. Allow it in your browser to sort by distance.'
+                                : 'Sort these stores by how close they are to you.'}
                         </p>
-                    </div>
-                )}
-                {locationStatus === 'requesting' && (
-                    <div className="mb-4 flex items-center gap-3 rounded-lg border border-border bg-secondary/40 px-4 py-3 text-sm">
-                        <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
-                        <p className="text-muted-foreground">
-                            Detecting your location…
-                        </p>
+                        {locationStatus !== 'denied' && (
+                            <button
+                                type="button"
+                                onClick={requestLocation}
+                                disabled={locationStatus === 'requesting'}
+                                className="ml-auto inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+                            >
+                                {locationStatus === 'requesting' && (
+                                    <Loader2 className="size-4 animate-spin" />
+                                )}
+                                {locationStatus === 'requesting'
+                                    ? 'Finding you…'
+                                    : 'Sort by distance'}
+                            </button>
+                        )}
                     </div>
                 )}
 
@@ -309,7 +324,7 @@ export default function StoresIndex({ stores, filters }: Props) {
                                     type="button"
                                     onClick={() => applyFilters({ type: t })}
                                     className={[
-                                        'inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                                        'inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-medium transition-colors',
                                         filters.type === t
                                             ? 'border-primary bg-primary text-primary-foreground'
                                             : 'border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground',
@@ -320,10 +335,10 @@ export default function StoresIndex({ stores, filters }: Props) {
                             ),
                         )}
 
-                        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground">
+                        <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground">
                             <input
                                 type="checkbox"
-                                className="accent-primary"
+                                className="size-4 accent-primary"
                                 checked={filters.in_stock_only}
                                 onChange={(e) =>
                                     applyFilters({
@@ -336,7 +351,7 @@ export default function StoresIndex({ stores, filters }: Props) {
 
                         {hasLocation && (
                             <div className="flex items-center gap-1.5">
-                                <span className="text-xs text-muted-foreground">
+                                <span className="text-sm text-muted-foreground">
                                     Within:
                                 </span>
                                 {DISTANCE_PRESETS.map((d) => (
@@ -352,7 +367,7 @@ export default function StoresIndex({ stores, filters }: Props) {
                                             })
                                         }
                                         className={[
-                                            'inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium transition-colors',
+                                            'inline-flex min-h-11 items-center rounded-full border px-3.5 text-sm font-medium transition-colors',
                                             filters.max_distance === d
                                                 ? 'border-primary bg-primary text-primary-foreground'
                                                 : 'border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground',
@@ -407,17 +422,30 @@ export default function StoresIndex({ stores, filters }: Props) {
                 >
                     {/* List column */}
                     <div className="min-w-0 flex-1">
-                        {stores.data.length === 0 ? (
+                        {loading ? (
+                            <StoreCardsSkeleton
+                                count={Math.max(stores.data.length, 3)}
+                            />
+                        ) : stores.data.length === 0 ? (
                             <div className="flex flex-col items-center justify-center rounded-xl border border-border/60 py-20 text-center">
                                 <Package className="mb-3 size-8 text-muted-foreground/50" />
                                 <p className="text-sm font-medium text-foreground">
-                                    No suppliers found
+                                    No suppliers match this search
                                 </p>
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    {filters.search
-                                        ? 'Try a different search term.'
-                                        : 'Try adjusting the filters.'}
+                                <p className="mt-1 max-w-xs text-sm text-muted-foreground">
+                                    {hasActiveFilters
+                                        ? 'Clear the filters to see every approved supplier.'
+                                        : 'No approved suppliers are listed in this area yet.'}
                                 </p>
+                                {hasActiveFilters && (
+                                    <button
+                                        type="button"
+                                        onClick={clearFilters}
+                                        className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                                    >
+                                        Clear filters
+                                    </button>
+                                )}
                             </div>
                         ) : (
                             <>
@@ -439,10 +467,12 @@ export default function StoresIndex({ stores, filters }: Props) {
                                                 <h2 className="text-sm leading-snug font-semibold text-foreground group-hover:text-primary">
                                                     {store.name}
                                                 </h2>
-                                                <AvailabilityBadge
-                                                    status={
+                                                <StockLevel
+                                                    state={
                                                         store.store_availability
                                                     }
+                                                    size="md"
+                                                    className="shrink-0"
                                                 />
                                             </div>
 
@@ -453,7 +483,7 @@ export default function StoresIndex({ stores, filters }: Props) {
                                                     {store.address}
                                                 </span>
                                                 {store.distance_km !== null && (
-                                                    <span className="ml-auto shrink-0 font-medium text-foreground">
+                                                    <span className="ml-auto shrink-0 font-display font-semibold tracking-wide text-foreground tabular-nums">
                                                         {store.distance_km} km
                                                     </span>
                                                 )}
@@ -493,7 +523,7 @@ export default function StoresIndex({ stores, filters }: Props) {
                                                         store.price_min,
                                                         store.price_max,
                                                     ) && (
-                                                        <span className="font-medium text-foreground">
+                                                        <span className="font-display text-sm font-bold text-foreground tabular-nums">
                                                             {priceRange(
                                                                 store.price_min,
                                                                 store.price_max,

@@ -134,6 +134,32 @@ class Store extends Model
         return $this->hasMany(Review::class);
     }
 
+    /**
+     * Store-level stock state, derived from its products' availability.
+     *
+     * Mirrors the four states the `StockLevel` component renders. Requires the
+     * `products_count`, `in_stock_count` and `low_stock_count` aggregates to be
+     * loaded on the query.
+     *
+     * @return 'in_stock'|'low_stock'|'out_of_stock'|'no_products'
+     */
+    public function stockState(): string
+    {
+        if ($this->products_count === 0) {
+            return 'no_products';
+        }
+
+        if ($this->in_stock_count > 0) {
+            return 'in_stock';
+        }
+
+        if ($this->low_stock_count > 0) {
+            return 'low_stock';
+        }
+
+        return 'out_of_stock';
+    }
+
     public function isPending(): bool
     {
         return $this->status === SellerStatus::Pending;

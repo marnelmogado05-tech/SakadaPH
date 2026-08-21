@@ -41,7 +41,7 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                                 {auth.user.role === 'user' && (
                                     <Link
                                         href={notificationsRoute()}
-                                        className="relative rounded-lg p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                                        className="relative flex size-11 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                                         aria-label="Notifications"
                                     >
                                         <Bell className="size-5" />
@@ -56,7 +56,7 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                                 )}
                                 <Link
                                     href={dashboard()}
-                                    className="rounded-lg bg-primary px-3 py-2 text-sm font-medium whitespace-nowrap text-white shadow-sm transition-opacity hover:opacity-90 sm:px-4"
+                                    className="inline-flex min-h-11 items-center rounded-lg bg-primary px-3 text-sm font-medium whitespace-nowrap text-primary-foreground shadow-sm transition-opacity hover:opacity-90 sm:px-4"
                                 >
                                     Dashboard
                                 </Link>
@@ -65,13 +65,13 @@ export default function PublicLayout({ children }: PropsWithChildren) {
                             <>
                                 <Link
                                     href={login()}
-                                    className="text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
+                                    className="inline-flex min-h-11 items-center px-2 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
                                 >
                                     Log in
                                 </Link>
                                 <Link
                                     href={register()}
-                                    className="rounded-lg bg-primary px-3 py-2 text-sm font-medium whitespace-nowrap text-white shadow-sm transition-opacity hover:opacity-90 sm:px-4"
+                                    className="inline-flex min-h-11 items-center rounded-lg bg-primary px-3 text-sm font-medium whitespace-nowrap text-primary-foreground shadow-sm transition-opacity hover:opacity-90 sm:px-4"
                                 >
                                     Get started
                                 </Link>

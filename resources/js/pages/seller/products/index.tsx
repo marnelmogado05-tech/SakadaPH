@@ -2,6 +2,8 @@ import { Form, Head, Link } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import ProductController from '@/actions/App/Http/Controllers/Seller/ProductController';
 import Heading from '@/components/heading';
+import StockLevel from '@/components/stock-level';
+import type { StockState } from '@/components/stock-level';
 import { Button } from '@/components/ui/button';
 import {
     index as productsIndex,
@@ -20,7 +22,7 @@ type Product = {
     price: string;
     unit: string;
     quantity: number;
-    availability: string;
+    availability: StockState;
     image_url: string | null;
 };
 
@@ -38,16 +40,20 @@ function formatPrice(price: string): string {
     );
 }
 
-function availabilityBadgeClass(availability: string): string {
+function availabilityBadgeClass(availability: StockState): string {
     if (availability === 'in_stock') {
-        return 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400';
+        return 'bg-stock-full-wash text-stock-full';
     }
 
     if (availability === 'low_stock') {
-        return 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400';
+        return 'bg-stock-low-wash text-stock-low';
     }
 
-    return 'bg-secondary text-muted-foreground';
+    if (availability === 'out_of_stock') {
+        return 'bg-stock-empty-wash text-stock-empty';
+    }
+
+    return 'bg-stock-none-wash text-stock-none';
 }
 
 export default function ProductsIndex({
@@ -117,6 +123,8 @@ export default function ProductsIndex({
                                                     <img
                                                         src={product.image_url}
                                                         alt={product.name}
+                                                        loading="lazy"
+                                                        decoding="async"
                                                         className="size-9 shrink-0 rounded-md border border-border object-cover"
                                                     />
                                                 ) : (
@@ -132,10 +140,10 @@ export default function ProductsIndex({
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-3 text-foreground">
+                                        <td className="px-4 py-3 font-display font-bold text-foreground tabular-nums">
                                             {formatPrice(product.price)}
                                         </td>
-                                        <td className="hidden px-4 py-3 text-muted-foreground sm:table-cell">
+                                        <td className="hidden px-4 py-3 text-muted-foreground tabular-nums sm:table-cell">
                                             {product.quantity}
                                         </td>
                                         <td className="hidden px-4 py-3 sm:table-cell">
@@ -149,38 +157,51 @@ export default function ProductsIndex({
                                                 }}
                                             >
                                                 {({ processing }) => (
-                                                    <select
-                                                        name="availability"
-                                                        defaultValue={
-                                                            product.availability
-                                                        }
-                                                        onChange={(e) =>
-                                                            e.currentTarget.form?.requestSubmit()
-                                                        }
-                                                        disabled={processing}
-                                                        className={[
-                                                            'inline-flex cursor-pointer items-center rounded-full px-2 py-0.5 text-xs font-medium',
-                                                            'border-0 bg-transparent ring-0 outline-none',
-                                                            availabilityBadgeClass(
-                                                                product.availability,
-                                                            ),
-                                                        ].join(' ')}
-                                                    >
-                                                        {availabilityOptions.map(
-                                                            (opt) => (
-                                                                <option
-                                                                    key={
-                                                                        opt.value
-                                                                    }
-                                                                    value={
-                                                                        opt.value
-                                                                    }
-                                                                >
-                                                                    {opt.label}
-                                                                </option>
-                                                            ),
-                                                        )}
-                                                    </select>
+                                                    <span className="inline-flex items-center gap-1.5">
+                                                        <StockLevel
+                                                            state={
+                                                                product.availability
+                                                            }
+                                                            size="sm"
+                                                            showLabel={false}
+                                                        />
+                                                        <select
+                                                            name="availability"
+                                                            defaultValue={
+                                                                product.availability
+                                                            }
+                                                            onChange={(e) =>
+                                                                e.currentTarget.form?.requestSubmit()
+                                                            }
+                                                            disabled={
+                                                                processing
+                                                            }
+                                                            className={[
+                                                                'inline-flex cursor-pointer items-center rounded-full px-2 py-0.5 text-xs font-medium',
+                                                                'border-0 bg-transparent ring-0 outline-none',
+                                                                availabilityBadgeClass(
+                                                                    product.availability,
+                                                                ),
+                                                            ].join(' ')}
+                                                        >
+                                                            {availabilityOptions.map(
+                                                                (opt) => (
+                                                                    <option
+                                                                        key={
+                                                                            opt.value
+                                                                        }
+                                                                        value={
+                                                                            opt.value
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            opt.label
+                                                                        }
+                                                                    </option>
+                                                                ),
+                                                            )}
+                                                        </select>
+                                                    </span>
                                                 )}
                                             </Form>
                                         </td>

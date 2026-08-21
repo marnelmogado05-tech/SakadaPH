@@ -12,8 +12,15 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.tsx'],
             refresh: true,
             fonts: [
+                // latin-ext carries the peso sign (U+20B1); without it every
+                // price falls back to a system face.
                 bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
+                    weights: [400, 500, 600, 700],
+                    subsets: ['latin', 'latin-ext'],
+                }),
+                bunny('Archivo Narrow', {
+                    weights: [600, 700],
+                    subsets: ['latin', 'latin-ext'],
                 }),
             ],
         }),

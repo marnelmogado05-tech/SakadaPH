@@ -5,6 +5,7 @@ use App\Models\Order;
 use App\Models\Review;
 use App\Models\Store;
 use App\Models\User;
+use Inertia\Inertia;
 
 it('lets a consumer review their completed order', function () {
     $user = User::factory()->create();
@@ -35,6 +36,19 @@ it('updates the existing review instead of creating a second one', function () {
     expect(Review::count())->toBe(1)
         ->and(Review::first()->rating)->toBe(5)
         ->and(Review::first()->comment)->toBe('Even better second time');
+});
+
+it('confirms the review with wording that matches the button pressed', function () {
+    $user = User::factory()->create();
+    $order = Order::factory()->completed()->for($user)->create();
+
+    $this->actingAs($user)
+        ->post(route('orders.review', $order), ['rating' => 4])
+        ->assertSessionHas('inertia.flash_data', fn ($flash) => $flash['toast']['message'] === 'Review submitted.');
+
+    $this->actingAs($user)
+        ->post(route('orders.review', $order), ['rating' => 5])
+        ->assertSessionHas('inertia.flash_data', fn ($flash) => $flash['toast']['message'] === 'Review updated.');
 });
 
 it('blocks reviewing an order that is not completed', function () {
@@ -96,14 +110,26 @@ it('shows the store rating and reviews on its public profile', function () {
         'comment' => 'Highly recommend',
     ]);
 
+    // The rating summary is above the fold and loads with the page; the review
+    // list itself is deferred, so it arrives on a follow-up partial request.
     $this->get(route('stores.show', $store))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->where('store.rating_count', 1)
             ->where('store.rating_avg', 5)
-            ->has('reviews', 1)
-            ->where('reviews.0.comment', 'Highly recommend')
+            ->missing('reviews')
         );
+
+    $this->get(route('stores.show', $store), [
+        'X-Inertia' => 'true',
+        'X-Inertia-Partial-Component' => 'stores/show',
+        'X-Inertia-Partial-Data' => 'reviews',
+        'X-Inertia-Version' => Inertia::getVersion(),
+    ])
+        ->assertOk()
+        ->assertJsonCount(1, 'props.reviews')
+        ->assertJsonPath('props.reviews.0.comment', 'Highly recommend')
+        ->assertJsonPath('props.reviews.0.rating', 5);
 });
 
 it('reflects the review in the seller order detail', function () {

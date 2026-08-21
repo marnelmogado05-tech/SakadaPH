@@ -86,7 +86,7 @@ export function AppearanceToggle() {
                         type="button"
                         aria-label={current.label}
                         onClick={handleCycleClick}
-                        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:hidden"
+                        className="flex size-11 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:hidden"
                     >
                         <current.icon className="size-4" />
                     </button>

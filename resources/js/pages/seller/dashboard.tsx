@@ -11,14 +11,19 @@ import {
     Wallet,
 } from 'lucide-react';
 import { StarRating } from '@/components/star-rating';
+import StockLevel from '@/components/stock-level';
+import type { StockState } from '@/components/stock-level';
 import { dashboard } from '@/routes/seller';
 import { index as ordersIndex } from '@/routes/seller/orders';
-import { index as productsIndex } from '@/routes/seller/products';
+import {
+    create as productsCreate,
+    index as productsIndex,
+} from '@/routes/seller/products';
 
 type Product = {
     id: number;
     name: string;
-    availability: string;
+    availability: StockState;
     price: number;
     unit: string;
     last_updated_at: string | null;
@@ -52,20 +57,6 @@ type Props = {
 function formatPrice(value: number): string {
     return '₱' + value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
-
-const AVAILABILITY_STYLES: Record<string, string> = {
-    in_stock:
-        'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400',
-    low_stock:
-        'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
-    out_of_stock: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400',
-};
-
-const AVAILABILITY_LABELS: Record<string, string> = {
-    in_stock: 'In stock',
-    low_stock: 'Low stock',
-    out_of_stock: 'Out of stock',
-};
 
 function StatCard({
     label,
@@ -119,25 +110,25 @@ export default function SellerDashboard({
                         label="Total products"
                         value={stats.total_products}
                         icon={Package}
-                        iconClass="bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400"
+                        iconClass="bg-accent text-accent-foreground"
                     />
                     <StatCard
                         label="In stock"
                         value={stats.in_stock}
                         icon={TrendingUp}
-                        iconClass="bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400"
+                        iconClass="bg-stock-full-wash text-stock-full"
                     />
                     <StatCard
                         label="Low stock"
                         value={stats.low_stock}
                         icon={AlertTriangle}
-                        iconClass="bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400"
+                        iconClass="bg-stock-low-wash text-stock-low"
                     />
                     <StatCard
                         label="Out of stock"
                         value={stats.out_of_stock}
                         icon={TrendingDown}
-                        iconClass="bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400"
+                        iconClass="bg-stock-empty-wash text-stock-empty"
                     />
                 </div>
 
@@ -158,24 +149,24 @@ export default function SellerDashboard({
                             label="Pending orders"
                             value={orderStats.pending}
                             icon={ClipboardList}
-                            iconClass="bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400"
+                            iconClass="bg-stock-low-wash text-stock-low"
                         />
                         <StatCard
                             label="Orders today"
                             value={orderStats.today}
                             icon={CalendarDays}
-                            iconClass="bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400"
+                            iconClass="bg-accent text-accent-foreground"
                         />
                         <div className="rounded-xl border border-border/60 bg-card p-5">
                             <div className="mb-3 flex items-center justify-between">
                                 <p className="text-sm text-muted-foreground">
                                     Revenue (paid)
                                 </p>
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-accent-foreground">
                                     <Wallet className="size-4" />
                                 </div>
                             </div>
-                            <p className="text-2xl font-bold text-foreground">
+                            <p className="font-display text-2xl font-bold text-foreground tabular-nums">
                                 {formatPrice(orderStats.revenue)}
                             </p>
                         </div>
@@ -251,8 +242,15 @@ export default function SellerDashboard({
                         <div className="rounded-xl border border-border/60 py-10 text-center">
                             <Package className="mx-auto mb-2 size-6 text-muted-foreground/40" />
                             <p className="text-sm text-muted-foreground">
-                                No products yet.
+                                Add a product and shoppers can start finding
+                                your store.
                             </p>
+                            <Link
+                                href={productsCreate()}
+                                className="mt-3 inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                            >
+                                Add your first product
+                            </Link>
                         </div>
                     ) : (
                         <div className="divide-y divide-border/60 overflow-hidden rounded-xl border border-border/60 bg-card">
@@ -275,17 +273,11 @@ export default function SellerDashboard({
                                             )}
                                         </p>
                                     </div>
-                                    <span
-                                        className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-                                            AVAILABILITY_STYLES[
-                                                product.availability
-                                            ] ?? ''
-                                        }`}
-                                    >
-                                        {AVAILABILITY_LABELS[
-                                            product.availability
-                                        ] ?? product.availability}
-                                    </span>
+                                    <StockLevel
+                                        state={product.availability}
+                                        size="sm"
+                                        className="shrink-0"
+                                    />
                                 </div>
                             ))}
                         </div>

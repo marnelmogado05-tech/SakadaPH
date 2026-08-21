@@ -29,6 +29,7 @@ class ReviewController extends Controller
         }
 
         $validated = $request->validated();
+        $wasExisting = $order->review()->exists();
 
         $order->review()->updateOrCreate(
             ['order_id' => $order->id],
@@ -40,7 +41,7 @@ class ReviewController extends Controller
             ],
         );
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Thanks for your feedback!']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => $wasExisting ? 'Review updated.' : 'Review submitted.']);
 
         return back();
     }
