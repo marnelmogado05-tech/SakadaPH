@@ -79,7 +79,9 @@ function StatCard({
                     <Icon className="size-4" />
                 </div>
             </div>
-            <p className="text-2xl font-bold text-foreground">{value}</p>
+            <p className="font-display text-2xl font-bold text-foreground tabular-nums">
+                {value}
+            </p>
         </div>
     );
 }
@@ -181,7 +183,7 @@ export default function SellerDashboard({
                                 Store followers
                             </p>
                         </div>
-                        <p className="text-2xl font-bold text-foreground">
+                        <p className="font-display text-2xl font-bold text-foreground tabular-nums">
                             {store.followers_count}
                         </p>
                         <p className="mt-1 text-xs text-muted-foreground">
@@ -199,7 +201,7 @@ export default function SellerDashboard({
                         {rating.average !== null ? (
                             <>
                                 <div className="flex items-center gap-2">
-                                    <p className="text-2xl font-bold text-foreground">
+                                    <p className="font-display text-2xl font-bold text-foreground tabular-nums">
                                         {rating.average.toFixed(1)}
                                     </p>
                                     <StarRating
@@ -214,7 +216,7 @@ export default function SellerDashboard({
                             </>
                         ) : (
                             <>
-                                <p className="text-2xl font-bold text-muted-foreground">
+                                <p className="font-display text-2xl font-bold text-muted-foreground tabular-nums">
                                     —
                                 </p>
                                 <p className="mt-1 text-xs text-muted-foreground">

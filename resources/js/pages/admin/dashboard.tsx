@@ -57,7 +57,7 @@ function StatCard({
                 'flex items-start gap-4 rounded-xl border p-5 transition-shadow',
                 href ? 'cursor-pointer hover:shadow-md' : '',
                 highlight && value > 0
-                    ? 'border-amber-200 bg-amber-50 dark:border-amber-900/60 dark:bg-amber-950/20'
+                    ? 'border-attention/40 bg-attention-wash'
                     : 'border-border bg-card',
             ].join(' ')}
         >
@@ -65,7 +65,7 @@ function StatCard({
                 className={[
                     'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
                     highlight && value > 0
-                        ? 'bg-amber-100 dark:bg-amber-900/40'
+                        ? 'bg-attention-wash'
                         : 'bg-secondary',
                 ].join(' ')}
             >
@@ -73,13 +73,13 @@ function StatCard({
                     className={[
                         'size-5',
                         highlight && value > 0
-                            ? 'text-amber-600 dark:text-amber-400'
+                            ? 'text-attention'
                             : 'text-muted-foreground',
                     ].join(' ')}
                 />
             </div>
             <div>
-                <p className="text-2xl font-semibold text-foreground tabular-nums">
+                <p className="font-display text-2xl font-bold text-foreground tabular-nums">
                     {value}
                 </p>
                 <p className="text-sm font-medium text-foreground">{label}</p>
@@ -178,7 +178,7 @@ export default function AdminDashboard({ stats, orderStats }: Props) {
                                 <Wallet className="size-5 text-muted-foreground" />
                             </div>
                             <div>
-                                <p className="text-2xl font-semibold text-foreground tabular-nums">
+                                <p className="font-display text-2xl font-bold text-foreground tabular-nums">
                                     {formatPrice(orderStats.gmv)}
                                 </p>
                                 <p className="text-sm font-medium text-foreground">
@@ -230,7 +230,7 @@ export default function AdminDashboard({ stats, orderStats }: Props) {
                     </p>
                     <div className="flex items-center gap-4">
                         <div>
-                            <p className="text-xl font-semibold text-green-700 tabular-nums dark:text-green-400">
+                            <p className="font-display text-xl font-bold text-stock-full tabular-nums">
                                 {stats.in_stock_stores}
                             </p>
                             <p className="text-xs text-muted-foreground">
@@ -239,7 +239,7 @@ export default function AdminDashboard({ stats, orderStats }: Props) {
                         </div>
                         <div className="h-8 w-px bg-border" />
                         <div>
-                            <p className="text-xl font-semibold text-red-600 tabular-nums dark:text-red-400">
+                            <p className="font-display text-xl font-bold text-stock-empty tabular-nums">
                                 {Math.max(
                                     0,
                                     stats.approved_sellers -

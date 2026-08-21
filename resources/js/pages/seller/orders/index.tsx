@@ -1,6 +1,8 @@
 import { Head, Link } from '@inertiajs/react';
 import { Receipt } from 'lucide-react';
 import Heading from '@/components/heading';
+import OrderStatus from '@/components/order-status';
+import type { OrderState } from '@/components/order-status';
 import {
     index as ordersIndex,
     show as orderShow,
@@ -16,7 +18,7 @@ type OrderRow = {
     id: number;
     reference: string;
     customer_name: string;
-    status: string;
+    status: OrderState;
     status_label: string;
     fulfillment_type: string;
     payment_status: string;
@@ -38,22 +40,6 @@ type Props = {
         confirmed: number;
         preparing: number;
     };
-};
-
-const STATUS_STYLES: Record<string, string> = {
-    pending_payment:
-        'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
-    pending: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
-    confirmed: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    preparing: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    ready_for_pickup:
-        'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    out_for_delivery:
-        'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    completed:
-        'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400',
-    cancelled: 'bg-secondary text-muted-foreground',
-    rejected: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400',
 };
 
 function formatPrice(value: number): string {
@@ -184,14 +170,10 @@ export default function SellerOrdersIndex({
                                     </p>
                                 </div>
                                 <div className="flex shrink-0 flex-col items-end gap-1">
-                                    <span
-                                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                                            STATUS_STYLES[order.status] ??
-                                            'bg-secondary text-muted-foreground'
-                                        }`}
-                                    >
-                                        {order.status_label}
-                                    </span>
+                                    <OrderStatus
+                                        state={order.status}
+                                        label={order.status_label}
+                                    />
                                     <span className="text-sm font-semibold text-foreground">
                                         {formatPrice(order.total)}
                                     </span>
