@@ -230,23 +230,15 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
 
                                     {store.status === 'pending' && (
                                         <>
-                                            <Form
+                                            <ConfirmDialog
+                                                id={`approve-${store.id}`}
                                                 action={approve.url(store.id)}
-                                                method="post"
-                                            >
-                                                {({ processing }) => (
-                                                    <Button
-                                                        type="submit"
-                                                        size="sm"
-                                                        disabled={processing}
-                                                    >
-                                                        {processing && (
-                                                            <Spinner />
-                                                        )}
-                                                        Approve
-                                                    </Button>
-                                                )}
-                                            </Form>
+                                                triggerLabel="Approve"
+                                                title={`Approve "${store.name}"`}
+                                                description="The store becomes visible to customers and can start taking orders straight away. The seller is emailed that they have been approved."
+                                                confirmLabel="Approve store"
+                                                tone="constructive"
+                                            />
                                             <ConfirmDialog
                                                 id={`reject-${store.id}`}
                                                 action={reject.url(store.id)}

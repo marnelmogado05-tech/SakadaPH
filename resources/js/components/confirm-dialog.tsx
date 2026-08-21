@@ -18,9 +18,10 @@ import { cn } from '@/lib/utils';
 
 /**
  * `destructive` for actions that take something away and cannot be undone
- * quietly; `caution` for serious but reversible ones.
+ * quietly; `caution` for serious but reversible ones; `constructive` for
+ * actions that grant something — still consequential, but not a warning.
  */
-type Tone = 'destructive' | 'caution';
+type Tone = 'destructive' | 'caution' | 'constructive';
 
 type Props = {
     /** POST endpoint the confirmation submits to. */
@@ -41,14 +42,30 @@ type Props = {
     id: string | number;
 };
 
-const TRIGGER_TONE: Record<Tone, string> = {
-    destructive: 'text-destructive hover:text-destructive',
-    caution: 'text-attention hover:text-attention',
-};
-
-const CONFIRM_TONE: Record<Tone, string> = {
-    destructive: 'bg-destructive text-on-destructive hover:bg-destructive/90',
-    caution: 'bg-attention text-on-attention hover:bg-attention/90',
+const TONE: Record<
+    Tone,
+    {
+        triggerVariant: 'default' | 'outline';
+        trigger: string;
+        confirm: string;
+    }
+> = {
+    destructive: {
+        triggerVariant: 'outline',
+        trigger: 'text-destructive hover:text-destructive',
+        confirm: 'bg-destructive text-on-destructive hover:bg-destructive/90',
+    },
+    caution: {
+        triggerVariant: 'outline',
+        trigger: 'text-attention hover:text-attention',
+        confirm: 'bg-attention text-on-attention hover:bg-attention/90',
+    },
+    // Granting something leads with the primary action rather than a warning.
+    constructive: {
+        triggerVariant: 'default',
+        trigger: '',
+        confirm: '',
+    },
 };
 
 /**
@@ -74,9 +91,9 @@ export default function ConfirmDialog({
         <Dialog>
             <DialogTrigger asChild>
                 <Button
-                    variant="outline"
+                    variant={TONE[tone].triggerVariant}
                     size="sm"
-                    className={TRIGGER_TONE[tone]}
+                    className={TONE[tone].trigger}
                 >
                     {TriggerIcon && <TriggerIcon className="mr-1.5 size-3.5" />}
                     {triggerLabel}
@@ -127,7 +144,7 @@ export default function ConfirmDialog({
                                         (reason !== undefined &&
                                             !reasonText.trim())
                                     }
-                                    className={cn(CONFIRM_TONE[tone])}
+                                    className={cn(TONE[tone].confirm)}
                                 >
                                     {processing && <Spinner />}
                                     {confirmLabel}
