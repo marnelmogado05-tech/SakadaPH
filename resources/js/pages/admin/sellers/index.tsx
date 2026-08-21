@@ -152,7 +152,7 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                                 className={[
                                     'flex flex-col items-start justify-between gap-4 rounded-lg border bg-card p-4 sm:flex-row',
                                     store.is_stale
-                                        ? 'border-amber-200 dark:border-amber-900/60'
+                                        ? 'border-attention/40'
                                         : 'border-border',
                                 ].join(' ')}
                             >
@@ -162,7 +162,7 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                                             {store.name}
                                         </p>
                                         {store.is_stale && (
-                                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">
+                                            <span className="inline-flex items-center gap-1 rounded-full bg-attention-wash px-2 py-0.5 text-xs font-medium text-attention">
                                                 <AlertTriangle className="size-3" />
                                                 Stale
                                             </span>

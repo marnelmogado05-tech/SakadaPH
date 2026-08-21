@@ -45,6 +45,7 @@
 
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
+    --color-destructive-wash: var(--destructive-wash);
     --color-on-destructive: var(--on-destructive);
 
     --color-border: var(--border);
@@ -126,6 +127,7 @@
     --destructive: oklch(0.5135 0.141 26.95); /* #A93F38 */
     --destructive-foreground: oklch(0.5135 0.141 26.95); /* #A93F38 */
     --on-destructive: oklch(1 0 0); /* #FFFFFF */
+    --destructive-wash: oklch(0.9223 0.0222 24.45); /* #F4E0DE */
     --border: oklch(0.8914 0.0125 177.98); /* #D3DEDB */
     --input: oklch(0.8914 0.0125 177.98); /* #D3DEDB */
     --ring: oklch(0.4926 0.0808 205.15); /* #0E6E77 */
@@ -182,6 +184,7 @@
     --destructive: oklch(0.693 0.1268 26.17); /* #E07B72 */
     --destructive-foreground: oklch(0.693 0.1268 26.17); /* #E07B72 */
     --on-destructive: oklch(0.202 0.0523 26.53); /* #2A0B09 */
+    --destructive-wash: oklch(0.2517 0.0403 25.2); /* #331A18 */
     --border: oklch(0.3157 0.031 182.54); /* #1F3733 */
     --input: oklch(0.3157 0.031 182.54); /* #1F3733 */
     --ring: oklch(0.7024 0.1012 200.07); /* #3FB2B8 */
