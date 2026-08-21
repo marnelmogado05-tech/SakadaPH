@@ -194,7 +194,7 @@ export default function ProductsCreate({
                                 <button
                                     type="button"
                                     onClick={clearImage}
-                                    className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow"
+                                    className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-white shadow"
                                 >
                                     <X className="size-3" />
                                 </button>
