@@ -131,7 +131,7 @@ class SellerController extends Controller
 
         /** @var User $user */
         $user = $request->user();
-        $store->approve($user);
+        $store->reinstate($user);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "Store \"{$store->name}\" reinstated."]);
 

@@ -212,4 +212,21 @@ class Store extends Model
             'rejection_reason' => $reason,
         ]);
     }
+
+    /**
+     * Lift a suspension.
+     *
+     * Deliberately not {@see approve()}, which emails the seller that they have
+     * been approved — the wrong thing to tell someone who was approved long ago
+     * and is simply being let back in. It also leaves `approved_at` alone:
+     * reinstating is not re-approving. Silent, like {@see suspend()}.
+     */
+    public function reinstate(User $admin): void
+    {
+        $this->update([
+            'status' => SellerStatus::Approved,
+            'approved_by' => $admin->id,
+            'rejection_reason' => null,
+        ]);
+    }
 }
