@@ -300,7 +300,7 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                             className="pl-9"
                         />
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex flex-wrap items-center gap-1">
                         {STATUS_OPTIONS.map((opt) => (
                             <button
                                 key={opt.value}
@@ -332,7 +332,7 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                             <div
                                 key={store.id}
                                 className={[
-                                    'flex items-start justify-between gap-4 rounded-lg border bg-card p-4',
+                                    'flex flex-col items-start justify-between gap-4 rounded-lg border bg-card p-4 sm:flex-row',
                                     store.is_stale
                                         ? 'border-amber-200 dark:border-amber-900/60'
                                         : 'border-border',
@@ -373,7 +373,7 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                                     )}
                                 </div>
 
-                                <div className="flex shrink-0 items-center gap-2">
+                                <div className="flex w-full shrink-0 flex-wrap items-center gap-2 sm:w-auto">
                                     <StatusBadge status={store.status} />
 
                                     {store.status === 'pending' && (
@@ -430,7 +430,7 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
 
                 {/* Pagination */}
                 {stores.last_page > 1 && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex flex-wrap items-center gap-1">
                         {stores.links.map((link, i) => (
                             <Link
                                 key={i}
