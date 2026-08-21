@@ -1,21 +1,11 @@
 import { Form, Head, Link, router } from '@inertiajs/react';
 import { AlertTriangle, Search } from 'lucide-react';
 import { useRef, useState } from 'react';
+import ConfirmDialog from '@/components/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import { Textarea } from '@/components/ui/textarea';
 import {
     index as sellersIndex,
     approve,
@@ -96,7 +86,7 @@ function StatusBadge({ status }: { status: Store['status'] }) {
 
     if (status === 'suspended') {
         return (
-            <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
+            <Badge className="bg-attention-wash text-attention">
                 Suspended
             </Badge>
         );
@@ -106,144 +96,6 @@ function StatusBadge({ status }: { status: Store['status'] }) {
         <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
             Pending
         </Badge>
-    );
-}
-
-function RejectDialog({ store }: { store: Store }) {
-    const [reason, setReason] = useState('');
-
-    return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-destructive hover:text-destructive"
-                >
-                    Reject
-                </Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogTitle>Reject "{store.name}"</DialogTitle>
-                <DialogDescription>
-                    Provide a reason for rejection. This will be emailed to the
-                    seller.
-                </DialogDescription>
-                <Form
-                    action={reject.url(store.id)}
-                    method="post"
-                    className="space-y-4"
-                >
-                    {({ processing, errors }) => (
-                        <>
-                            <div className="grid gap-2">
-                                <Label htmlFor={`reason-${store.id}`}>
-                                    Reason
-                                </Label>
-                                <Textarea
-                                    id={`reason-${store.id}`}
-                                    name="reason"
-                                    rows={3}
-                                    required
-                                    placeholder="e.g. Missing business permit information"
-                                    value={reason}
-                                    onChange={(e) => setReason(e.target.value)}
-                                />
-                                {errors.reason && (
-                                    <p className="text-sm text-destructive">
-                                        {errors.reason}
-                                    </p>
-                                )}
-                            </div>
-                            <DialogFooter>
-                                <DialogClose asChild>
-                                    <Button type="button" variant="ghost">
-                                        Cancel
-                                    </Button>
-                                </DialogClose>
-                                <Button
-                                    type="submit"
-                                    variant="destructive"
-                                    disabled={processing || !reason.trim()}
-                                >
-                                    {processing && <Spinner />}
-                                    Confirm rejection
-                                </Button>
-                            </DialogFooter>
-                        </>
-                    )}
-                </Form>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
-function SuspendDialog({ store }: { store: Store }) {
-    const [reason, setReason] = useState('');
-
-    return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-orange-600 hover:text-orange-600"
-                >
-                    Suspend
-                </Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogTitle>Suspend "{store.name}"</DialogTitle>
-                <DialogDescription>
-                    This store will be hidden from customers and the seller will
-                    be locked out of their dashboard.
-                </DialogDescription>
-                <Form
-                    action={suspend.url(store.id)}
-                    method="post"
-                    className="space-y-4"
-                >
-                    {({ processing, errors }) => (
-                        <>
-                            <div className="grid gap-2">
-                                <Label htmlFor={`suspend-${store.id}`}>
-                                    Reason
-                                </Label>
-                                <Textarea
-                                    id={`suspend-${store.id}`}
-                                    name="reason"
-                                    rows={3}
-                                    required
-                                    placeholder="e.g. Violation of terms of service"
-                                    value={reason}
-                                    onChange={(e) => setReason(e.target.value)}
-                                />
-                                {errors.reason && (
-                                    <p className="text-sm text-destructive">
-                                        {errors.reason}
-                                    </p>
-                                )}
-                            </div>
-                            <DialogFooter>
-                                <DialogClose asChild>
-                                    <Button type="button" variant="ghost">
-                                        Cancel
-                                    </Button>
-                                </DialogClose>
-                                <Button
-                                    type="submit"
-                                    disabled={processing || !reason.trim()}
-                                    className="bg-orange-600 hover:bg-orange-700"
-                                >
-                                    {processing && <Spinner />}
-                                    Confirm suspension
-                                </Button>
-                            </DialogFooter>
-                        </>
-                    )}
-                </Form>
-            </DialogContent>
-        </Dialog>
     );
 }
 
@@ -395,12 +247,36 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                                                     </Button>
                                                 )}
                                             </Form>
-                                            <RejectDialog store={store} />
+                                            <ConfirmDialog
+                                                id={`reject-${store.id}`}
+                                                action={reject.url(store.id)}
+                                                triggerLabel="Reject"
+                                                title={`Reject "${store.name}"`}
+                                                description="The seller is emailed the reason and their store stays off the marketplace."
+                                                confirmLabel="Reject application"
+                                                tone="destructive"
+                                                reason={{
+                                                    placeholder:
+                                                        'e.g. Missing business permit information',
+                                                }}
+                                            />
                                         </>
                                     )}
 
                                     {store.status === 'approved' && (
-                                        <SuspendDialog store={store} />
+                                        <ConfirmDialog
+                                            id={`suspend-${store.id}`}
+                                            action={suspend.url(store.id)}
+                                            triggerLabel="Suspend"
+                                            title={`Suspend "${store.name}"`}
+                                            description="The store is hidden from customers and the seller loses access to their dashboard until reinstated."
+                                            confirmLabel="Suspend store"
+                                            tone="caution"
+                                            reason={{
+                                                placeholder:
+                                                    'e.g. Violation of terms of service',
+                                            }}
+                                        />
                                     )}
 
                                     {store.status === 'suspended' && (

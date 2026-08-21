@@ -1,21 +1,11 @@
 import { Form, Head, Link, router } from '@inertiajs/react';
 import { Search, ShieldBan, ShieldCheck } from 'lucide-react';
 import { useRef, useState } from 'react';
+import ConfirmDialog from '@/components/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import { Textarea } from '@/components/ui/textarea';
 import { index as usersIndex, ban, unban } from '@/routes/admin/users';
 
 type User = {
@@ -59,78 +49,6 @@ const STATUS_OPTIONS = [
     { value: 'active', label: 'Active' },
     { value: 'banned', label: 'Banned' },
 ];
-
-function BanDialog({ user }: { user: User }) {
-    const [reason, setReason] = useState('');
-
-    return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-destructive hover:text-destructive"
-                >
-                    <ShieldBan className="mr-1.5 size-3.5" />
-                    Ban
-                </Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogTitle>
-                    Ban {user.first_name} {user.last_name}
-                </DialogTitle>
-                <DialogDescription>
-                    This user will be immediately logged out and unable to log
-                    in.
-                </DialogDescription>
-                <Form
-                    action={ban.url(user.id)}
-                    method="post"
-                    className="space-y-4"
-                >
-                    {({ processing, errors }) => (
-                        <>
-                            <div className="grid gap-2">
-                                <Label htmlFor={`ban-reason-${user.id}`}>
-                                    Reason
-                                </Label>
-                                <Textarea
-                                    id={`ban-reason-${user.id}`}
-                                    name="reason"
-                                    rows={3}
-                                    required
-                                    placeholder="e.g. Violation of community guidelines"
-                                    value={reason}
-                                    onChange={(e) => setReason(e.target.value)}
-                                />
-                                {errors.reason && (
-                                    <p className="text-sm text-destructive">
-                                        {errors.reason}
-                                    </p>
-                                )}
-                            </div>
-                            <DialogFooter>
-                                <DialogClose asChild>
-                                    <Button type="button" variant="ghost">
-                                        Cancel
-                                    </Button>
-                                </DialogClose>
-                                <Button
-                                    type="submit"
-                                    variant="destructive"
-                                    disabled={processing || !reason.trim()}
-                                >
-                                    {processing && <Spinner />}
-                                    Confirm ban
-                                </Button>
-                            </DialogFooter>
-                        </>
-                    )}
-                </Form>
-            </DialogContent>
-        </Dialog>
-    );
-}
 
 export default function AdminUsersIndex({ users, filters }: Props) {
     const [search, setSearch] = useState(filters.search);
@@ -308,7 +226,20 @@ export default function AdminUsersIndex({ users, filters }: Props) {
                                                     )}
                                                 </Form>
                                             ) : (
-                                                <BanDialog user={user} />
+                                                <ConfirmDialog
+                                                    id={`ban-${user.id}`}
+                                                    action={ban.url(user.id)}
+                                                    triggerLabel="Ban"
+                                                    triggerIcon={ShieldBan}
+                                                    title={`Ban ${user.first_name} ${user.last_name}`}
+                                                    description="They are logged out immediately and cannot sign in again until unbanned."
+                                                    confirmLabel="Ban user"
+                                                    tone="destructive"
+                                                    reason={{
+                                                        placeholder:
+                                                            'e.g. Violation of community guidelines',
+                                                    }}
+                                                />
                                             )}
                                         </td>
                                     </tr>
