@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { Search, ShieldBan, ShieldCheck } from 'lucide-react';
 import { useRef, useState } from 'react';
 import ConfirmDialog from '@/components/confirm-dialog';
+import StatusBadge from '@/components/status-badge';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { index as usersIndex, ban, unban } from '@/routes/admin/users';
@@ -180,9 +181,7 @@ export default function AdminUsersIndex({ users, filters }: Props) {
                                         <td className="px-4 py-3">
                                             {user.banned_at ? (
                                                 <div>
-                                                    <Badge className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                                                        Banned
-                                                    </Badge>
+                                                    <StatusBadge standing="banned" />
                                                     {user.ban_reason && (
                                                         <p className="mt-0.5 text-xs text-muted-foreground">
                                                             {user.ban_reason}
@@ -190,9 +189,7 @@ export default function AdminUsersIndex({ users, filters }: Props) {
                                                     )}
                                                 </div>
                                             ) : (
-                                                <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                                                    Active
-                                                </Badge>
+                                                <StatusBadge standing="active" />
                                             )}
                                         </td>
                                         <td className="px-4 py-3 text-xs text-muted-foreground">
