@@ -1,11 +1,9 @@
-import { Form, Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Search, ShieldBan, ShieldCheck } from 'lucide-react';
 import { useRef, useState } from 'react';
 import ConfirmDialog from '@/components/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 import { index as usersIndex, ban, unban } from '@/routes/admin/users';
 
 type User = {
@@ -202,29 +200,16 @@ export default function AdminUsersIndex({ users, filters }: Props) {
                                         </td>
                                         <td className="sticky right-0 bg-inherit px-4 py-3 text-right">
                                             {user.banned_at ? (
-                                                <Form
+                                                <ConfirmDialog
+                                                    id={`unban-${user.id}`}
                                                     action={unban.url(user.id)}
-                                                    method="post"
-                                                >
-                                                    {({ processing }) => (
-                                                        <Button
-                                                            type="submit"
-                                                            variant="outline"
-                                                            size="sm"
-                                                            disabled={
-                                                                processing
-                                                            }
-                                                            className="text-green-700 hover:text-green-700"
-                                                        >
-                                                            {processing ? (
-                                                                <Spinner />
-                                                            ) : (
-                                                                <ShieldCheck className="mr-1.5 size-3.5" />
-                                                            )}
-                                                            Unban
-                                                        </Button>
-                                                    )}
-                                                </Form>
+                                                    triggerLabel="Unban"
+                                                    triggerIcon={ShieldCheck}
+                                                    title={`Unban ${user.first_name} ${user.last_name}`}
+                                                    description="They can sign in again straight away and the ban reason is cleared."
+                                                    confirmLabel="Unban user"
+                                                    tone="constructive"
+                                                />
                                             ) : (
                                                 <ConfirmDialog
                                                     id={`ban-${user.id}`}

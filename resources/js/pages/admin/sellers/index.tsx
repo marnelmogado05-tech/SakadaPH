@@ -1,11 +1,9 @@
-import { Form, Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { AlertTriangle, Search } from 'lucide-react';
 import { useRef, useState } from 'react';
 import ConfirmDialog from '@/components/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
 import {
     index as sellersIndex,
     approve,
@@ -272,23 +270,15 @@ export default function AdminSellersIndex({ stores, filters }: Props) {
                                     )}
 
                                     {store.status === 'suspended' && (
-                                        <Form
+                                        <ConfirmDialog
+                                            id={`reinstate-${store.id}`}
                                             action={unsuspend.url(store.id)}
-                                            method="post"
-                                        >
-                                            {({ processing }) => (
-                                                <Button
-                                                    type="submit"
-                                                    size="sm"
-                                                    variant="outline"
-                                                    disabled={processing}
-                                                    className="text-green-700 hover:text-green-700"
-                                                >
-                                                    {processing && <Spinner />}
-                                                    Reinstate
-                                                </Button>
-                                            )}
-                                        </Form>
+                                            triggerLabel="Reinstate"
+                                            title={`Reinstate "${store.name}"`}
+                                            description="The store becomes visible to customers again and the seller regains access to their dashboard."
+                                            confirmLabel="Reinstate store"
+                                            tone="constructive"
+                                        />
                                     )}
                                 </div>
                             </div>

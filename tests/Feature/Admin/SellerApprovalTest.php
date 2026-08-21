@@ -137,3 +137,44 @@ it('ignores suspend action on non-approved stores', function () {
     $store->refresh();
     expect($store->isSuspended())->toBeFalse();
 });
+
+it('reinstates a suspended store without telling them they were approved', function () {
+    Mail::fake();
+
+    $admin = User::factory()->admin()->create();
+    $store = Store::factory()->approved()->create([
+        'approved_at' => now()->subMonths(6),
+    ]);
+    $originalApproval = $store->approved_at;
+
+    $store->suspend($admin, 'Selling expired stock');
+    expect($store->fresh()->isSuspended())->toBeTrue();
+
+    $this->actingAs($admin)
+        ->post(route('admin.sellers.unsuspend', $store))
+        ->assertRedirect();
+
+    $store->refresh();
+
+    expect($store->isApproved())->toBeTrue()
+        ->and($store->rejection_reason)->toBeNull()
+        ->and($store->approved_by)->toBe($admin->id)
+        // reinstating is not re-approving
+        ->and($store->approved_at->timestamp)->toBe($originalApproval->timestamp);
+
+    Mail::assertNothingSent();
+});
+
+it('leaves a store alone when it is not suspended', function () {
+    Mail::fake();
+
+    $admin = User::factory()->admin()->create();
+    $store = Store::factory()->approved()->create();
+
+    $this->actingAs($admin)
+        ->post(route('admin.sellers.unsuspend', $store))
+        ->assertRedirect();
+
+    expect($store->fresh()->isApproved())->toBeTrue();
+    Mail::assertNothingSent();
+});
