@@ -19,7 +19,7 @@ use Inertia\Response;
 
 class OrderController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request, OrderStatusService $lifecycle): Response
     {
         $store = $this->store($request);
         $status = $request->string('status')->toString() ?: null;
@@ -42,6 +42,11 @@ class OrderController extends Controller
                 'total' => (float) $order->total,
                 'items_count' => $order->items_count,
                 'created_at' => $order->created_at?->toIso8601String(),
+                // Same affordances the detail page exposes, so the queue can act
+                // on an order without opening it.
+                'can_confirm' => $order->status === OrderStatus::Pending,
+                'can_reject' => $order->status === OrderStatus::Pending,
+                'next_status_label' => $lifecycle->nextStatus($order)?->label(),
             ]);
 
         return Inertia::render('seller/orders/index', [

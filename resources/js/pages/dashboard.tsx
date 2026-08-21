@@ -8,6 +8,8 @@ import {
     Store,
     Wallet,
 } from 'lucide-react';
+import OrderStatus from '@/components/order-status';
+import type { OrderState } from '@/components/order-status';
 import { following, notifications as notificationsRoute } from '@/routes';
 import { index as ordersIndex, show as orderShow } from '@/routes/orders';
 import { index as storesIndex } from '@/routes/stores';
@@ -16,7 +18,7 @@ type RecentOrder = {
     id: number;
     reference: string;
     store_name: string;
-    status: string;
+    status: OrderState;
     status_label: string;
     total: number;
     items_count: number;
@@ -31,22 +33,6 @@ type Props = {
         total_spent: number;
     };
     recent_orders: RecentOrder[];
-};
-
-const STATUS_STYLES: Record<string, string> = {
-    pending_payment:
-        'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
-    pending: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400',
-    confirmed: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    preparing: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    ready_for_pickup:
-        'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    out_for_delivery:
-        'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-400',
-    completed:
-        'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400',
-    cancelled: 'bg-secondary text-muted-foreground',
-    rejected: 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400',
 };
 
 function formatPrice(value: number): string {
@@ -173,14 +159,11 @@ export default function Dashboard({ stats, recent_orders }: Props) {
                                             {formatPrice(order.total)}
                                         </p>
                                     </div>
-                                    <span
-                                        className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-                                            STATUS_STYLES[order.status] ??
-                                            'bg-secondary text-muted-foreground'
-                                        }`}
-                                    >
-                                        {order.status_label}
-                                    </span>
+                                    <OrderStatus
+                                        state={order.status}
+                                        label={order.status_label}
+                                        variant="chip"
+                                    />
                                 </Link>
                             ))}
                         </div>

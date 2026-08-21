@@ -215,9 +215,9 @@ export default function AdminUsersIndex({ users, filters }: Props) {
                         No users match the current filter.
                     </p>
                 ) : (
-                    <div className="overflow-hidden rounded-lg border border-border">
-                        <table className="w-full text-sm">
-                            <thead className="bg-secondary/50">
+                    <div className="overflow-x-auto rounded-lg border border-border">
+                        <table className="w-full min-w-[44rem] text-sm">
+                            <thead className="bg-secondary">
                                 <tr>
                                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">
                                         Name
@@ -234,7 +234,7 @@ export default function AdminUsersIndex({ users, filters }: Props) {
                                     <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground">
                                         Joined
                                     </th>
-                                    <th className="px-4 py-3" />
+                                    <th className="sticky right-0 bg-secondary px-4 py-3" />
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
@@ -243,8 +243,8 @@ export default function AdminUsersIndex({ users, filters }: Props) {
                                         key={user.id}
                                         className={
                                             user.banned_at
-                                                ? 'bg-red-50/40 dark:bg-red-950/10'
-                                                : ''
+                                                ? 'bg-stock-empty-wash'
+                                                : 'bg-card'
                                         }
                                     >
                                         <td className="px-4 py-3 font-medium text-foreground">
@@ -282,7 +282,7 @@ export default function AdminUsersIndex({ users, filters }: Props) {
                                         <td className="px-4 py-3 text-xs text-muted-foreground">
                                             {user.created_at}
                                         </td>
-                                        <td className="px-4 py-3 text-right">
+                                        <td className="sticky right-0 bg-inherit px-4 py-3 text-right">
                                             {user.banned_at ? (
                                                 <Form
                                                     action={unban.url(user.id)}

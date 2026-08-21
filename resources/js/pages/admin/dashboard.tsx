@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Deferred, Head, Link } from '@inertiajs/react';
 import {
     AlertTriangle,
     CheckCircle,
@@ -7,6 +7,7 @@ import {
     Users,
     Wallet,
 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { dashboard } from '@/routes/admin';
 import { index as ordersIndex } from '@/routes/admin/orders';
 import { index as sellersIndex } from '@/routes/admin/sellers';
@@ -27,9 +28,19 @@ type OrderStats = {
     online_orders: number;
 };
 
+type StaleStore = { id: number; name: string; address: string };
+
+type Attention = {
+    pending_approvals: number;
+    stale_count: number;
+    stale_stores: StaleStore[];
+};
+
 type Props = {
+    attention: Attention;
     stats: Stats;
-    orderStats: OrderStats;
+    /** Deferred — absent until the follow-up request resolves. */
+    orderStats?: OrderStats;
 };
 
 function formatPrice(value: number): string {
@@ -57,7 +68,7 @@ function StatCard({
                 'flex items-start gap-4 rounded-xl border p-5 transition-shadow',
                 href ? 'cursor-pointer hover:shadow-md' : '',
                 highlight && value > 0
-                    ? 'border-amber-200 bg-amber-50 dark:border-amber-900/60 dark:bg-amber-950/20'
+                    ? 'border-attention/40 bg-attention-wash'
                     : 'border-border bg-card',
             ].join(' ')}
         >
@@ -65,7 +76,7 @@ function StatCard({
                 className={[
                     'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
                     highlight && value > 0
-                        ? 'bg-amber-100 dark:bg-amber-900/40'
+                        ? 'bg-attention-wash'
                         : 'bg-secondary',
                 ].join(' ')}
             >
@@ -73,13 +84,13 @@ function StatCard({
                     className={[
                         'size-5',
                         highlight && value > 0
-                            ? 'text-amber-600 dark:text-amber-400'
+                            ? 'text-attention'
                             : 'text-muted-foreground',
                     ].join(' ')}
                 />
             </div>
             <div>
-                <p className="text-2xl font-semibold text-foreground tabular-nums">
+                <p className="font-display text-2xl font-bold text-foreground tabular-nums">
                     {value}
                 </p>
                 <p className="text-sm font-medium text-foreground">{label}</p>
@@ -99,7 +110,183 @@ function StatCard({
     return inner;
 }
 
-export default function AdminDashboard({ stats, orderStats }: Props) {
+/**
+ * Leads the dashboard with whatever is waiting on a person, and renders nothing
+ * when both queues are clear — a proud zero is not worth the space.
+ */
+function NeedsYou({ attention }: { attention: Attention }) {
+    const approvals = attention.pending_approvals;
+    const stale = attention.stale_count;
+
+    if (approvals === 0 && stale === 0) {
+        return null;
+    }
+
+    return (
+        <section className="rounded-xl border border-attention/40 bg-attention-wash p-5">
+            <h2 className="font-display text-sm font-bold tracking-wide text-attention uppercase">
+                Needs you
+            </h2>
+
+            <div className="mt-3 space-y-3">
+                {approvals > 0 && (
+                    <Link
+                        href={sellersIndex.url({
+                            query: { status: 'pending' },
+                        })}
+                        className="flex min-h-11 items-center gap-3 text-sm text-foreground hover:underline"
+                    >
+                        <Clock className="size-4 shrink-0 text-attention" />
+                        <span>
+                            <span className="font-display font-bold tabular-nums">
+                                {approvals}
+                            </span>{' '}
+                            seller application{approvals === 1 ? '' : 's'}{' '}
+                            waiting for review
+                        </span>
+                    </Link>
+                )}
+
+                {stale > 0 && (
+                    <div>
+                        <p className="flex items-center gap-3 text-sm text-foreground">
+                            <AlertTriangle className="size-4 shrink-0 text-attention" />
+                            <span>
+                                <span className="font-display font-bold tabular-nums">
+                                    {stale}
+                                </span>{' '}
+                                approved store{stale === 1 ? '' : 's'} have not
+                                touched stock in 7 days
+                            </span>
+                        </p>
+                        <ul className="mt-1 ml-7">
+                            {attention.stale_stores.map((store) => (
+                                <li key={store.id}>
+                                    <Link
+                                        href={sellersIndex.url({
+                                            query: { search: store.name },
+                                        })}
+                                        className="inline-flex min-h-11 items-center gap-2 text-sm text-foreground hover:underline"
+                                    >
+                                        {store.name}
+                                        <span className="text-xs text-muted-foreground">
+                                            {store.address}
+                                        </span>
+                                    </Link>
+                                </li>
+                            ))}
+                            {stale > attention.stale_stores.length && (
+                                <li className="text-xs text-muted-foreground">
+                                    and {stale - attention.stale_stores.length}{' '}
+                                    more
+                                </li>
+                            )}
+                        </ul>
+                    </div>
+                )}
+            </div>
+        </section>
+    );
+}
+
+function OrderTotals({ orderStats }: { orderStats: OrderStats }) {
+    return (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <StatCard
+                label="Total orders"
+                value={orderStats.total_orders}
+                icon={Receipt}
+                href={ordersIndex.url()}
+                description="All orders placed on the platform"
+            />
+            <StatCard
+                label="Completed"
+                value={orderStats.completed_orders}
+                icon={CheckCircle}
+                href={ordersIndex.url({
+                    query: { status: 'completed' },
+                })}
+                description="Fulfilled and closed out"
+            />
+            <div className="flex items-start gap-4 rounded-xl border border-border bg-card p-5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary">
+                    <Wallet className="size-5 text-muted-foreground" />
+                </div>
+                <div>
+                    <p className="font-display text-2xl font-bold text-foreground tabular-nums">
+                        {formatPrice(orderStats.gmv)}
+                    </p>
+                    <p className="text-sm font-medium text-foreground">
+                        GMV (paid)
+                    </p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                        Value of paid orders
+                    </p>
+                </div>
+            </div>
+            <div className="flex items-start gap-4 rounded-xl border border-border bg-card p-5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary">
+                    <Receipt className="size-5 text-muted-foreground" />
+                </div>
+                <div>
+                    <p className="text-sm font-medium text-foreground">
+                        Payment mix
+                    </p>
+                    <div className="mt-1 flex items-center gap-3">
+                        <div>
+                            <p className="text-lg font-semibold text-foreground tabular-nums">
+                                {orderStats.cash_orders}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                cash
+                            </p>
+                        </div>
+                        <div className="h-8 w-px bg-border" />
+                        <div>
+                            <p className="text-lg font-semibold text-foreground tabular-nums">
+                                {orderStats.online_orders}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                                online
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function OrderTotalsSkeleton() {
+    return (
+        <div
+            className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
+            aria-busy="true"
+            aria-live="polite"
+        >
+            <span className="sr-only">Loading order totals</span>
+            {[0, 1, 2, 3].map((i) => (
+                <div
+                    key={i}
+                    className="flex items-start gap-4 rounded-xl border border-border bg-card p-5"
+                >
+                    <Skeleton className="size-10 shrink-0 rounded-lg" />
+                    <div className="flex-1">
+                        <Skeleton className="h-7 w-16" />
+                        <Skeleton className="mt-2 h-4 w-24" />
+                        <Skeleton className="mt-1.5 h-3 w-32" />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+export default function AdminDashboard({
+    attention,
+    stats,
+    orderStats,
+}: Props) {
     return (
         <>
             <Head title="Dashboard" />
@@ -113,6 +300,8 @@ export default function AdminDashboard({ stats, orderStats }: Props) {
                         Platform overview and quick actions.
                     </p>
                 </div>
+
+                <NeedsYou attention={attention} />
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <StatCard
@@ -156,69 +345,14 @@ export default function AdminDashboard({ stats, orderStats }: Props) {
                     <h2 className="mb-3 text-sm font-semibold text-foreground">
                         Orders
                     </h2>
-                    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                        <StatCard
-                            label="Total orders"
-                            value={orderStats.total_orders}
-                            icon={Receipt}
-                            href={ordersIndex.url()}
-                            description="All orders placed on the platform"
-                        />
-                        <StatCard
-                            label="Completed"
-                            value={orderStats.completed_orders}
-                            icon={CheckCircle}
-                            href={ordersIndex.url({
-                                query: { status: 'completed' },
-                            })}
-                            description="Fulfilled and closed out"
-                        />
-                        <div className="flex items-start gap-4 rounded-xl border border-border bg-card p-5">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary">
-                                <Wallet className="size-5 text-muted-foreground" />
-                            </div>
-                            <div>
-                                <p className="text-2xl font-semibold text-foreground tabular-nums">
-                                    {formatPrice(orderStats.gmv)}
-                                </p>
-                                <p className="text-sm font-medium text-foreground">
-                                    GMV (paid)
-                                </p>
-                                <p className="mt-0.5 text-xs text-muted-foreground">
-                                    Value of paid orders
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-4 rounded-xl border border-border bg-card p-5">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary">
-                                <Receipt className="size-5 text-muted-foreground" />
-                            </div>
-                            <div>
-                                <p className="text-sm font-medium text-foreground">
-                                    Payment mix
-                                </p>
-                                <div className="mt-1 flex items-center gap-3">
-                                    <div>
-                                        <p className="text-lg font-semibold text-foreground tabular-nums">
-                                            {orderStats.cash_orders}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                            cash
-                                        </p>
-                                    </div>
-                                    <div className="h-8 w-px bg-border" />
-                                    <div>
-                                        <p className="text-lg font-semibold text-foreground tabular-nums">
-                                            {orderStats.online_orders}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                            online
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Deferred
+                        data="orderStats"
+                        fallback={<OrderTotalsSkeleton />}
+                    >
+                        {orderStats ? (
+                            <OrderTotals orderStats={orderStats} />
+                        ) : null}
+                    </Deferred>
                 </div>
 
                 <div className="rounded-xl border border-border bg-card p-5">
@@ -230,7 +364,7 @@ export default function AdminDashboard({ stats, orderStats }: Props) {
                     </p>
                     <div className="flex items-center gap-4">
                         <div>
-                            <p className="text-xl font-semibold text-green-700 tabular-nums dark:text-green-400">
+                            <p className="font-display text-xl font-bold text-stock-full tabular-nums">
                                 {stats.in_stock_stores}
                             </p>
                             <p className="text-xs text-muted-foreground">
@@ -239,7 +373,7 @@ export default function AdminDashboard({ stats, orderStats }: Props) {
                         </div>
                         <div className="h-8 w-px bg-border" />
                         <div>
-                            <p className="text-xl font-semibold text-red-600 tabular-nums dark:text-red-400">
+                            <p className="font-display text-xl font-bold text-stock-empty tabular-nums">
                                 {Math.max(
                                     0,
                                     stats.approved_sellers -

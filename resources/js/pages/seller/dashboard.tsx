@@ -29,7 +29,13 @@ type Product = {
     last_updated_at: string | null;
 };
 
+type Attention = {
+    pending_orders: number;
+    out_of_stock: number;
+};
+
 type Props = {
+    attention: Attention;
     store: {
         name: string;
         status: string;
@@ -79,8 +85,64 @@ function StatCard({
                     <Icon className="size-4" />
                 </div>
             </div>
-            <p className="text-2xl font-bold text-foreground">{value}</p>
+            <p className="font-display text-2xl font-bold text-foreground tabular-nums">
+                {value}
+            </p>
         </div>
+    );
+}
+
+/**
+ * The seller opens this screen to find out what needs doing. Renders nothing
+ * when the queue is clear and everything is in stock.
+ */
+function NeedsYou({ attention }: { attention: Attention }) {
+    const { pending_orders: pending, out_of_stock: outOfStock } = attention;
+
+    if (pending === 0 && outOfStock === 0) {
+        return null;
+    }
+
+    return (
+        <section className="rounded-xl border border-attention/40 bg-attention-wash p-5">
+            <h2 className="font-display text-sm font-bold tracking-wide text-attention uppercase">
+                Needs you
+            </h2>
+
+            <div className="mt-3 space-y-2">
+                {pending > 0 && (
+                    <Link
+                        href={ordersIndex.url({ query: { status: 'pending' } })}
+                        className="flex min-h-11 items-center gap-3 text-sm text-foreground hover:underline"
+                    >
+                        <ClipboardList className="size-4 shrink-0 text-attention" />
+                        <span>
+                            <span className="font-display font-bold tabular-nums">
+                                {pending}
+                            </span>{' '}
+                            order{pending === 1 ? '' : 's'} waiting for you to
+                            confirm
+                        </span>
+                    </Link>
+                )}
+
+                {outOfStock > 0 && (
+                    <Link
+                        href={productsIndex()}
+                        className="flex min-h-11 items-center gap-3 text-sm text-foreground hover:underline"
+                    >
+                        <AlertTriangle className="size-4 shrink-0 text-attention" />
+                        <span>
+                            <span className="font-display font-bold tabular-nums">
+                                {outOfStock}
+                            </span>{' '}
+                            product{outOfStock === 1 ? '' : 's'} marked out of
+                            stock
+                        </span>
+                    </Link>
+                )}
+            </div>
+        </section>
     );
 }
 
@@ -90,6 +152,7 @@ export default function SellerDashboard({
     orderStats,
     rating,
     recent_products,
+    attention,
 }: Props) {
     return (
         <>
@@ -104,6 +167,8 @@ export default function SellerDashboard({
                         Here's an overview of your store.
                     </p>
                 </div>
+
+                <NeedsYou attention={attention} />
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                     <StatCard
@@ -181,7 +246,7 @@ export default function SellerDashboard({
                                 Store followers
                             </p>
                         </div>
-                        <p className="text-2xl font-bold text-foreground">
+                        <p className="font-display text-2xl font-bold text-foreground tabular-nums">
                             {store.followers_count}
                         </p>
                         <p className="mt-1 text-xs text-muted-foreground">
@@ -199,7 +264,7 @@ export default function SellerDashboard({
                         {rating.average !== null ? (
                             <>
                                 <div className="flex items-center gap-2">
-                                    <p className="text-2xl font-bold text-foreground">
+                                    <p className="font-display text-2xl font-bold text-foreground tabular-nums">
                                         {rating.average.toFixed(1)}
                                     </p>
                                     <StarRating
@@ -214,7 +279,7 @@ export default function SellerDashboard({
                             </>
                         ) : (
                             <>
-                                <p className="text-2xl font-bold text-muted-foreground">
+                                <p className="font-display text-2xl font-bold text-muted-foreground tabular-nums">
                                     —
                                 </p>
                                 <p className="mt-1 text-xs text-muted-foreground">

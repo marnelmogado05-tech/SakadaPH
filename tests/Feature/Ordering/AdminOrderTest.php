@@ -5,6 +5,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Order;
 use App\Models\Store;
 use App\Models\User;
+use Inertia\Inertia;
 
 function admin(): User
 {
@@ -68,14 +69,24 @@ it('exposes platform order stats on the admin dashboard', function () {
     Order::factory()->count(2)->create(['payment_status' => PaymentStatus::Paid, 'total' => 100]);
     Order::factory()->completed()->create(['total' => 250]);
 
+    // Platform totals scan the whole orders table, so they are deferred and
+    // arrive on a follow-up partial request rather than blocking first paint.
     $this->actingAs(admin())
         ->get(route('admin.dashboard'))
-        ->assertInertia(fn ($page) => $page
-            ->where('orderStats.total_orders', 3)
-            ->where('orderStats.completed_orders', 1)
-            ->has('orderStats.gmv')
-            ->has('orderStats.cash_orders')
-        );
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->missing('orderStats'));
+
+    $this->actingAs(admin())
+        ->get(route('admin.dashboard'), [
+            'X-Inertia' => 'true',
+            'X-Inertia-Partial-Component' => 'admin/dashboard',
+            'X-Inertia-Partial-Data' => 'orderStats',
+            'X-Inertia-Version' => Inertia::getVersion(),
+        ])
+        ->assertOk()
+        ->assertJsonPath('props.orderStats.total_orders', 3)
+        ->assertJsonPath('props.orderStats.completed_orders', 1)
+        ->assertJsonStructure(['props' => ['orderStats' => ['gmv', 'cash_orders']]]);
 });
 
 it('forbids consumers from admin orders', function () {

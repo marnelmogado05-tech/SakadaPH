@@ -74,3 +74,57 @@ it('redirects non-admins away from admin dashboard', function () {
     $user = User::factory()->create();
     $this->actingAs($user)->get('/admin/dashboard')->assertForbidden();
 });
+
+it('leads with what needs a person, naming the stale stores', function () {
+    Store::factory()->pending()->count(2)->create();
+    $stale = Store::factory()->approved()->create(['name' => 'Dormant Refilling']);
+    Product::factory()->for($stale)->create(['last_updated_at' => now()->subDays(30)]);
+
+    $fresh = Store::factory()->approved()->create(['name' => 'Busy Refilling']);
+    Product::factory()->for($fresh)->create(['last_updated_at' => now()]);
+
+    $this->actingAs($this->admin)
+        ->get(route('admin.dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('attention.pending_approvals', 2)
+            ->where('attention.stale_count', 1)
+            ->has('attention.stale_stores', 1)
+            ->where('attention.stale_stores.0.name', 'Dormant Refilling')
+        );
+});
+
+it('caps the named stale stores but still reports the true count', function () {
+    Store::factory()->approved()->count(8)->create()
+        ->each(fn (Store $store) => Product::factory()->for($store)
+            ->create(['last_updated_at' => now()->subDays(30)]));
+
+    $this->actingAs($this->admin)
+        ->get(route('admin.dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('attention.stale_count', 8)
+            ->has('attention.stale_stores', 5)
+        );
+});
+
+it('streams the platform order totals in rather than blocking first paint', function () {
+    $this->actingAs($this->admin)
+        ->get(route('admin.dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('stats')
+            ->has('attention')
+            ->missing('orderStats')
+        );
+
+    $this->actingAs($this->admin)
+        ->get(route('admin.dashboard'), [
+            'X-Inertia' => 'true',
+            'X-Inertia-Partial-Component' => 'admin/dashboard',
+            'X-Inertia-Partial-Data' => 'orderStats',
+            'X-Inertia-Version' => Inertia\Inertia::getVersion(),
+        ])
+        ->assertOk()
+        ->assertJsonPath('props.orderStats.total_orders', 0);
+});

@@ -95,8 +95,8 @@ export default function ProductsIndex({
                         </Button>
                     </div>
                 ) : (
-                    <div className="rounded-xl border border-border/60">
-                        <table className="w-full text-sm">
+                    <div className="overflow-x-auto rounded-xl border border-border/60">
+                        <table className="w-full text-sm sm:min-w-[40rem]">
                             <thead>
                                 <tr className="border-b border-border/60">
                                     <th className="px-4 py-3 text-left font-medium text-muted-foreground">
@@ -111,12 +111,15 @@ export default function ProductsIndex({
                                     <th className="hidden px-4 py-3 text-left font-medium text-muted-foreground sm:table-cell">
                                         Status
                                     </th>
-                                    <th className="px-4 py-3" />
+                                    <th className="sticky right-0 bg-card px-4 py-3" />
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/60">
                                 {products.map((product) => (
-                                    <tr key={product.id} className="group">
+                                    <tr
+                                        key={product.id}
+                                        className="group bg-card"
+                                    >
                                         <td className="px-4 py-3">
                                             <div className="flex items-center gap-3">
                                                 {product.image_url ? (
@@ -205,7 +208,7 @@ export default function ProductsIndex({
                                                 )}
                                             </Form>
                                         </td>
-                                        <td className="px-4 py-3">
+                                        <td className="sticky right-0 bg-inherit px-4 py-3">
                                             <div className="flex items-center justify-end gap-1">
                                                 <Button
                                                     variant="ghost"
